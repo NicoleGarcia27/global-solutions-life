@@ -1,10 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
-  <!-- Outer arc -->
-  <path d="M 100 15 A 85 85 0 1 0 185 100 L 155 100 A 55 55 0 1 1 100 45 Z" stroke="#00b4d8" stroke-width="10" fill="none" stroke-linecap="round"/>
-  <!-- Middle arc -->
-  <path d="M 100 35 A 65 65 0 1 0 165 100 L 140 100 A 40 40 0 1 1 100 60 Z" stroke="#00b4d8" stroke-width="8" fill="none" stroke-linecap="round"/>
-  <!-- Inner arc -->
-  <path d="M 100 55 A 45 45 0 1 0 145 100 L 125 100 A 25 25 0 1 1 100 75 Z" stroke="#00b4d8" stroke-width="7" fill="none" stroke-linecap="round"/>
-  <!-- G crossbar -->
-  <line x1="120" y1="100" x2="165" y2="100" stroke="#00b4d8" stroke-width="10" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 200" fill="none">
+  <!-- Arc 1 - outermost -->
+  <path d="M 105 10 A 90 90 0 1 0 185 95 L 185 115 L 155 115"
+        stroke="#3dbdb4" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Arc 2 - middle -->
+  <path d="M 105 32 A 68 68 0 1 0 163 95 L 163 115 L 140 115"
+        stroke="#3dbdb4" stroke-width="11" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Arc 3 - inner -->
+  <path d="M 105 54 A 46 46 0 1 0 141 95 L 141 115 L 122 115"
+        stroke="#3dbdb4" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
