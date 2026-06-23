@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -38,59 +38,82 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="bg-white rounded-2xl shadow-lg p-10 w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-white font-bold text-2xl">G</span>
+    <div className="min-h-screen flex" style={{ backgroundColor: "#f0f4f8" }}>
+      {/* Panel izquierdo azul marino */}
+      <div className="hidden lg:flex w-1/2 flex-col items-center justify-center p-12" style={{ backgroundColor: "#1a3a6b" }}>
+        <div className="text-center">
+          <div className="w-24 h-24 rounded-2xl flex items-center justify-center mx-auto mb-6 text-5xl font-black" style={{ backgroundColor: "#00b4d8", color: "#fff" }}>
+            G
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Global Solutions Life</h1>
-          <p className="text-gray-500 text-sm mt-1">Inicia sesión para continuar</p>
+          <h1 className="text-4xl font-black text-white mb-2">Global Solutions Life</h1>
+          <p className="text-lg mb-1" style={{ color: "#00b4d8" }}>Consultoría en Seguros & Inversiones</p>
+          <div className="mt-10 border-t border-white/10 pt-8">
+            <p className="text-white/60 text-sm">Sistema Institucional de</p>
+            <p className="text-white font-semibold text-lg">Gestión de Puestos & KPIs</p>
+          </div>
         </div>
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              placeholder="tu@correo.com"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              placeholder="••••••••"
-            />
+      {/* Panel derecho login */}
+      <div className="flex-1 flex items-center justify-center p-8">
+        <div className="bg-white rounded-2xl shadow-xl p-10 w-full max-w-md">
+          {/* Logo móvil */}
+          <div className="lg:hidden text-center mb-6">
+            <div className="w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-3 text-2xl font-black" style={{ backgroundColor: "#1a3a6b", color: "#fff" }}>
+              G
+            </div>
+            <h1 className="text-xl font-bold" style={{ color: "#1a3a6b" }}>Global Solutions Life</h1>
           </div>
 
-          {error && (
-            <p className="text-red-600 text-sm bg-red-50 border border-red-200 rounded-lg px-4 py-2">{error}</p>
-          )}
+          <h2 className="text-2xl font-bold mb-1" style={{ color: "#1a3a6b" }}>Bienvenida</h2>
+          <p className="text-gray-500 text-sm mb-8">Inicia sesión para continuar</p>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-lg transition disabled:opacity-50"
-          >
-            {loading ? "Ingresando..." : "Iniciar sesión"}
-          </button>
-        </form>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="block text-sm font-semibold mb-1" style={{ color: "#1a3a6b" }}>Correo electrónico</label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none transition"
+                style={{ borderColor: email ? "#00b4d8" : "" }}
+                placeholder="tu@correo.com"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-1" style={{ color: "#1a3a6b" }}>Contraseña</label>
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none transition"
+                placeholder="••••••••"
+              />
+            </div>
 
-        <p className="text-center text-sm text-gray-500 mt-6">
-          ¿No tienes cuenta?{" "}
-          <Link href="/registro" className="text-emerald-600 font-medium hover:underline">
-            Regístrate aquí
-          </Link>
-        </p>
+            {error && (
+              <p className="text-red-600 text-sm bg-red-50 border border-red-200 rounded-xl px-4 py-2">{error}</p>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full font-bold py-3 rounded-xl transition disabled:opacity-50 text-white"
+              style={{ backgroundColor: "#1a3a6b" }}
+            >
+              {loading ? "Ingresando..." : "Iniciar sesión"}
+            </button>
+          </form>
+
+          <p className="text-center text-sm text-gray-500 mt-6">
+            ¿No tienes cuenta?{" "}
+            <Link href="/registro" className="font-semibold hover:underline" style={{ color: "#00b4d8" }}>
+              Regístrate aquí
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
