@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Departamento {
+  id      Int      @id @default(autoincrement())
+  nombre  String
+  puestos Puesto[]
+}
+
+model Puesto {
+  id                Int               @id @default(autoincrement())
+  codigo            String            @unique
+  nombre            String
+  objetivo          String            @default("")
+  horario           String            @default("Lun-Vie 9:00-18:00 / Sab 9:00-13:00")
+  escolaridad       String            @default("Licenciatura")
+  experiencia       String            @default("")
+  edadMin           Int               @default(25)
+  edadMax           Int               @default(55)
+  reportaA          String            @default("")
+  supervisaA        String            @default("")
+  tiempoAdaptacion  String            @default("3 meses")
+  periodicidad      String            @default("Mensual")
+  herramientas      String            @default("")
+  formacion         String            @default("")
+  competencias      String            @default("")
+  titular           String            @default("")
+  estado            String            @default("pendiente")
+  departamentoId    Int
+  departamento      Departamento      @relation(fields: [departamentoId], references: [id])
+  responsabilidades Responsabilidad[]
+  kpis              Kpi[]
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+}
+
+model Responsabilidad {
+  id          Int    @id @default(autoincrement())
+  nombre      String
+  tiempoHoras Float  @default(1)
+  recurrencia String @default("Mensual")
+  nivel       String @default("Medio")
+  orden       Int    @default(0)
+  puestoId    Int
+  puesto      Puesto @relation(fields: [puestoId], references: [id], onDelete: Cascade)
+}
+
+model Kpi {
+  id         Int      @id @default(autoincrement())
+  area       String
+  metrica    String
+  meta       String
+  actual     String   @default("")
+  unidad     String   @default("%")
+  frecuencia String   @default("Mensual")
+  estado     String   @default("pendiente")
+  puestoId   Int
+  puesto     Puesto   @relation(fields: [puestoId], references: [id], onDelete: Cascade)
+  updatedAt  DateTime @updatedAt
+}
