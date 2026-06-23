@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import {
   LayoutDashboard,
   Users,
@@ -9,6 +10,8 @@ import {
   FileText,
   Network,
   Building2,
+  LogOut,
+  Shield,
 } from "lucide-react";
 
 const nav = [
@@ -24,6 +27,8 @@ const nav = [
 
 export default function Sidebar() {
   const path = usePathname();
+  const { data: session } = useSession();
+  const user = session?.user as any;
 
   return (
     <aside className="w-56 flex-shrink-0 bg-white border-r border-gray-200 flex flex-col">
@@ -65,10 +70,44 @@ export default function Sidebar() {
             </Link>
           );
         })}
+
+        {user?.role === "admin" && (
+          <>
+            <p className="text-[10px] uppercase tracking-widest text-gray-400 px-2 pt-4 pb-1">Admin</p>
+            <Link
+              href="/admin/usuarios"
+              className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors ${
+                path.startsWith("/admin") ? "bg-emerald-50 text-emerald-700 font-medium" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              }`}
+            >
+              <Shield size={16} />
+              Usuarios
+            </Link>
+          </>
+        )}
       </nav>
 
-      <div className="px-4 py-3 border-t border-gray-200">
-        <p className="text-[10px] text-gray-400">Sistema v1.0 · 2026</p>
+      <div className="px-4 py-3 border-t border-gray-200 space-y-2">
+        {user && (
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-xs">
+              {user.name?.[0]?.toUpperCase() ?? "?"}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-medium text-gray-900 truncate">{user.name}</p>
+              <p className="text-[10px] text-gray-500 truncate">
+                {user.role === "admin" ? "Administradora" : user.departamentoNombre ?? "Usuario"}
+              </p>
+            </div>
+          </div>
+        )}
+        <button
+          onClick={() => signOut({ callbackUrl: "/login" })}
+          className="flex items-center gap-2 text-xs text-gray-500 hover:text-red-600 transition-colors w-full"
+        >
+          <LogOut size={13} />
+          Cerrar sesión
+        </button>
       </div>
     </aside>
   );
