@@ -42,9 +42,7 @@ export default function LoginPage() {
       {/* Panel izquierdo azul marino */}
       <div className="hidden lg:flex w-1/2 flex-col items-center justify-center p-12" style={{ backgroundColor: "#1a3a6b" }}>
         <div className="text-center">
-          <div className="w-24 h-24 rounded-2xl flex items-center justify-center mx-auto mb-6 text-5xl font-black" style={{ backgroundColor: "#00b4d8", color: "#fff" }}>
-            G
-          </div>
+          <img src="/logo.svg" alt="GSL Logo" className="w-32 h-32 mx-auto mb-6" />
           <h1 className="text-4xl font-black text-white mb-2">Global Solutions Life</h1>
           <p className="text-lg mb-1" style={{ color: "#00b4d8" }}>Consultoría en Seguros & Inversiones</p>
           <div className="mt-10 border-t border-white/10 pt-8">
@@ -59,9 +57,7 @@ export default function LoginPage() {
         <div className="bg-white rounded-2xl shadow-xl p-10 w-full max-w-md">
           {/* Logo móvil */}
           <div className="lg:hidden text-center mb-6">
-            <div className="w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-3 text-2xl font-black" style={{ backgroundColor: "#1a3a6b", color: "#fff" }}>
-              G
-            </div>
+            <img src="/logo.svg" alt="GSL Logo" className="w-16 h-16 mx-auto mb-3" />
             <h1 className="text-xl font-bold" style={{ color: "#1a3a6b" }}>Global Solutions Life</h1>
           </div>
 

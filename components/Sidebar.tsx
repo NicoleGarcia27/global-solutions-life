@@ -34,9 +34,7 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="px-4 py-5 border-b border-white/10">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg flex items-center justify-center font-bold text-lg" style={{ backgroundColor: "#00b4d8", color: "#fff" }}>
-            G
-          </div>
+          <img src="/logo.svg" alt="GSL" className="w-9 h-9 flex-shrink-0" />
           <div>
             <p className="text-xs font-bold text-white leading-tight">Global Solutions Life</p>
             <p className="text-[10px]" style={{ color: "#00b4d8" }}>Consultoría en Seguros</p>
