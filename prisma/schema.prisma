@@ -23,13 +23,16 @@ model Usuario {
   role           String       @default("usuario")
   departamentoId Int?
   departamento   Departamento? @relation(fields: [departamentoId], references: [id])
+  puestos        Puesto[]
   createdAt      DateTime     @default(now())
 }
 
 model Puesto {
   id                Int               @id @default(autoincrement())
-  codigo            String            @unique
+  codigo            String            @default("")
   nombre            String
+  usuarioId         Int?
+  usuario           Usuario?          @relation(fields: [usuarioId], references: [id])
   objetivo          String            @default("")
   horario           String            @default("Lun-Vie 9:00-18:00 / Sab 9:00-13:00")
   escolaridad       String            @default("Licenciatura")
@@ -56,8 +59,9 @@ model Puesto {
 model Responsabilidad {
   id          Int    @id @default(autoincrement())
   nombre      String
+  descripcion String @default("")
   tiempoHoras Float  @default(1)
-  recurrencia String @default("Mensual")
+  recurrencia String @default("Diaria")
   nivel       String @default("Medio")
   orden       Int    @default(0)
   puestoId    Int
