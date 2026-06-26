@@ -43,7 +43,7 @@ export default function LoginPage() {
       <div className="hidden lg:flex w-1/2 flex-col items-center justify-center p-12" style={{ backgroundColor: "#1a3a6b" }}>
         <div className="text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-gsl-real.png" alt="GSL" width={180} height={180} className="mx-auto mb-6 object-contain" />
+          <img src="/api/logo" alt="GSL" width={180} height={180} className="mx-auto mb-6 object-contain" />
           <h1 className="text-4xl font-black text-white mb-2">Global Solutions Life</h1>
           <p className="text-lg mb-1" style={{ color: "#00b4d8" }}>Consultoría en Seguros & Inversiones</p>
           <div className="mt-10 border-t border-white/10 pt-8">
@@ -59,7 +59,7 @@ export default function LoginPage() {
           {/* Logo móvil */}
           <div className="lg:hidden text-center mb-6">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-gsl-real.png" alt="GSL" width={80} height={80} className="mx-auto mb-3 object-contain" />
+          <img src="/api/logo" alt="GSL" width={80} height={80} className="mx-auto mb-3 object-contain" />
             <h1 className="text-xl font-bold" style={{ color: "#1a3a6b" }}>Global Solutions Life</h1>
           </div>
 
