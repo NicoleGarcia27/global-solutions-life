@@ -4,7 +4,6 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import LogoGSL from "@/components/LogoGSL";
-import LogoGSL from "@/components/LogoGSL";
 
 export default function LoginPage() {
   const router = useRouter();
