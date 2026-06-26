@@ -48,6 +48,25 @@ model Puesto {
   competencias      String            @default("")
   titular           String            @default("")
   estado            String            @default("pendiente")
+  // Supervisión
+  tienePersonal           Boolean  @default(false)
+  numPersonasACargo       String   @default("")
+  comoSupervisa           String   @default("")
+  comoAudita              String   @default("")
+  comoEvalua              String   @default("")
+  autoridadSobre          String   @default("")
+  // Relaciones
+  internoConQuien         String   @default("")
+  externoConQuien         String   @default("")
+  // Documentos y decisiones
+  documentosQueGenera     String   @default("")
+  decisionesIndependientes String  @default("")
+  decisionesConAutorizacion String @default("")
+  // Situaciones
+  tareasNoCorresponden    String   @default("")
+  tareasQueNadieHace      String   @default("")
+  problemasFrecuentes     String   @default("")
+  comoMideSuTrabajo       String   @default("")
   departamentoId    Int
   departamento      Departamento      @relation(fields: [departamentoId], references: [id])
   responsabilidades Responsabilidad[]
