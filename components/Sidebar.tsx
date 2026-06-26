@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import LogoGSL from "./LogoGSL";
+import Image from "next/image";
 import {
   LayoutDashboard,
   Users,
@@ -36,8 +36,7 @@ export default function Sidebar() {
       <div className="px-4 py-5 border-b border-white/10">
         <div className="flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-gsl-real.png" alt="GSL" className="w-9 h-9 flex-shrink-0 object-contain" />
+          <Image src="/logo-gsl-real.png" alt="GSL" width={36} height={36} className="flex-shrink-0 object-contain" unoptimized />
           <div>
             <p className="text-xs font-bold text-white leading-tight">Global Solutions Life</p>
             <p className="text-[10px]" style={{ color: "#00b4d8" }}>Consultoría en Seguros</p>
