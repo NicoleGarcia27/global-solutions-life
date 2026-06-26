@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { logoGSL } from "@/lib/logoBase64";
+import LogoGSL from "@/components/LogoGSL";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -44,7 +44,7 @@ export default function LoginPage() {
       <div className="hidden lg:flex w-1/2 flex-col items-center justify-center p-12" style={{ backgroundColor: "#1a3a6b" }}>
         <div className="text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={logoGSL} alt="GSL" className="w-40 mx-auto mb-6" />
+          <img src="/logo-g.png" alt="GSL" className="w-40 mx-auto mb-6" />
           <h1 className="text-4xl font-black text-white mb-2">Global Solutions Life</h1>
           <p className="text-lg mb-1" style={{ color: "#00b4d8" }}>Consultoría en Seguros & Inversiones</p>
           <div className="mt-10 border-t border-white/10 pt-8">
@@ -60,7 +60,7 @@ export default function LoginPage() {
           {/* Logo móvil */}
           <div className="lg:hidden text-center mb-6">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={logoGSL} alt="GSL" className="w-20 mx-auto mb-3" />
+            <img src="/logo-g.png" alt="GSL" className="w-20 mx-auto mb-3" />
             <h1 className="text-xl font-bold" style={{ color: "#1a3a6b" }}>Global Solutions Life</h1>
           </div>
 
