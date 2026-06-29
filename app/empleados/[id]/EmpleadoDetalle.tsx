@@ -2,13 +2,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Pencil, Check, X, TrendingUp, Trash2, Plus, Palmtree, Scale } from "lucide-react";
-import { vacacionesPorLey } from "@/lib/vacaciones";
+import { ArrowLeft, Pencil, Check, X, TrendingUp, Trash2, Plus, Palmtree, Scale, CalendarClock } from "lucide-react";
+import { vacacionesPorLey, ventanaVacaciones } from "@/lib/vacaciones";
 
 type Empleado = {
   id: number; nombre: string; puesto: string; area: string; tipo: string; factura: boolean;
   sueldoActual: number; correo: string; telefono: string; notas: string; activo: boolean; fechaIngreso: string;
-  diasVacaciones: number;
+  diasVacaciones: number; diasExtra: number;
 };
 type Incremento = { id: number; fecha: string; sueldoNuevo: number; porcentaje: number; nota: string };
 type Vacacion = { id: number; fechaInicio: string; fechaFin: string; dias: number; estado: string; nota: string };
@@ -36,20 +36,21 @@ export default function EmpleadoDetalle({ empleado, incrementos, vacaciones, dep
   const [incOpen, setIncOpen] = useState(false);
   const [inc, setInc] = useState({ sueldoNuevo: "", fecha: new Date().toISOString().slice(0, 10), nota: "" });
   const [vacOpen, setVacOpen] = useState(false);
-  const [vac, setVac] = useState({ fechaInicio: "", fechaFin: "", dias: "", nota: "" });
+  const [vac, setVac] = useState({ fechaInicio: "", fechaFin: "", dias: "", nota: "", estado: "aprobada" });
 
   const anioActual = new Date().getFullYear();
   const tomados = vacaciones.filter((v) => new Date(v.fechaInicio).getFullYear() === anioActual).reduce((s, v) => s + v.dias, 0);
   const ley = vacacionesPorLey(empleado.fechaIngreso);
-  const corresponden = ley.dias;
+  const corresponden = ley.dias + (empleado.diasExtra || 0);
   const disponibles = corresponden - tomados;
+  const ventana = ventanaVacaciones(empleado.fechaIngreso);
   const fmtMes = (d: Date | null) => d ? d.toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" }) : "";
 
   async function registrarVacacion() {
     if (!vac.fechaInicio || !vac.fechaFin) return;
     setBusy(true);
     await fetch(`/api/empleados/${empleado.id}/vacacion`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(vac) });
-    setBusy(false); setVacOpen(false); setVac({ fechaInicio: "", fechaFin: "", dias: "", nota: "" }); router.refresh();
+    setBusy(false); setVacOpen(false); setVac({ fechaInicio: "", fechaFin: "", dias: "", nota: "", estado: "aprobada" }); router.refresh();
   }
   async function eliminarVacacion(vid: number) {
     if (!confirm("¿Eliminar este periodo de vacaciones?")) return;
@@ -124,8 +125,9 @@ export default function EmpleadoDetalle({ empleado, incrementos, vacaciones, dep
               <div><label className="text-xs text-gray-500">Sueldo actual</label><input type="number" className={`mt-1 ${inp}`} value={f.sueldoActual} onChange={(e) => set("sueldoActual", e.target.value as any)} /></div>
               <div><label className="text-xs text-gray-500">Correo</label><input className={`mt-1 ${inp}`} value={f.correo} onChange={(e) => set("correo", e.target.value)} /></div>
               <div><label className="text-xs text-gray-500">Teléfono</label><input className={`mt-1 ${inp}`} value={f.telefono} onChange={(e) => set("telefono", e.target.value)} /></div>
+              <div><label className="text-xs text-gray-500">Días extra de cortesía 🎁</label><input type="number" min={0} className={`mt-1 ${inp}`} value={f.diasExtra} onChange={(e) => set("diasExtra", e.target.value as any)} placeholder="0" /></div>
             </div>
-            <p className="text-xs text-gray-400">Los días de vacaciones se calculan solos según la fecha de ingreso (Art. 76 LFT).</p>
+            <p className="text-xs text-gray-400">Los días de ley se calculan solos por la fecha de ingreso (Art. 76 LFT). Los "días extra" son los que tú le regalas por buena onda.</p>
             <label className="flex items-center gap-2 text-sm text-gray-600"><input type="checkbox" checked={f.factura} onChange={(e) => set("factura", e.target.checked)} className="w-4 h-4" /> ¿Emite factura?</label>
             <div><label className="text-xs text-gray-500">Notas</label><textarea rows={2} className={`mt-1 ${inp} resize-none`} value={f.notas} onChange={(e) => set("notas", e.target.value)} /></div>
             <div className="flex gap-2">
@@ -199,13 +201,23 @@ export default function EmpleadoDetalle({ empleado, incrementos, vacaciones, dep
           <div className="rounded-lg p-3 text-center" style={{ backgroundColor: "#fffbeb" }}><p className="text-2xl font-bold" style={{ color: "#d97706" }}>{tomados}</p><p className="text-xs" style={{ color: "#d97706" }}>tomados</p></div>
           <div className="rounded-lg p-3 text-center" style={{ backgroundColor: disponibles < 0 ? "#fef2f2" : "#ecfdf5" }}><p className="text-2xl font-bold" style={{ color: disponibles < 0 ? "#dc2626" : "#059669" }}>{disponibles}</p><p className="text-xs" style={{ color: disponibles < 0 ? "#dc2626" : "#059669" }}>disponibles</p></div>
         </div>
-        <div className="flex items-start gap-2 text-xs mb-4 px-3 py-2 rounded-lg" style={{ backgroundColor: "#eef2f8", color: "#1a3a6b" }}>
-          <Scale size={13} className="mt-0.5 shrink-0" />
-          {!ley.tieneFecha
-            ? <span>Captura la <strong>fecha de ingreso</strong> (en Editar) para calcular sus días según la ley.</span>
-            : ley.anios < 1
-              ? <span>Aún no cumple su primer año. Tendrá derecho a <strong>12 días</strong> al cumplir el <strong>{fmtMes(ley.cumplePrimerAnio)}</strong> (Art. 76 LFT).</span>
-              : <span>Cálculo automático por <strong>{ley.anios} {ley.anios === 1 ? "año" : "años"}</strong> de antigüedad: <strong>{corresponden} días</strong> de ley (Art. 76 LFT).</span>}
+        <div className="space-y-2 mb-4">
+          <div className="flex items-start gap-2 text-xs px-3 py-2 rounded-lg" style={{ backgroundColor: "#eef2f8", color: "#1a3a6b" }}>
+            <Scale size={13} className="mt-0.5 shrink-0" />
+            {!ley.tieneFecha
+              ? <span>Captura la <strong>fecha de ingreso</strong> (en Editar) para calcular sus días según la ley.</span>
+              : ley.anios < 1
+                ? <span>Aún no cumple su primer año. Tendrá derecho a <strong>12 días</strong> al cumplir el <strong>{fmtMes(ley.cumplePrimerAnio)}</strong> (Art. 76 LFT).</span>
+                : <span><strong>{ley.dias} días</strong> de ley por <strong>{ley.anios} {ley.anios === 1 ? "año" : "años"}</strong> de antigüedad{empleado.diasExtra > 0 && <> + <strong>{empleado.diasExtra}</strong> de cortesía = <strong>{corresponden} días</strong></>} (Art. 76 LFT).</span>}
+          </div>
+          {ventana && (
+            <div className="flex items-start gap-2 text-xs px-3 py-2 rounded-lg" style={{ backgroundColor: "#fffbeb", color: "#92660a" }}>
+              <CalendarClock size={13} className="mt-0.5 shrink-0" />
+              {ventana.activadas
+                ? <span>Vacaciones <strong>activas</strong> desde el {fmtMes(ventana.fecha)}. Por ley deben otorgarse antes del <strong>{fmtMes(ventana.limite)}</strong> (Art. 81 LFT).</span>
+                : <span>Sus vacaciones <strong>se activan</strong> el <strong>{fmtMes(ventana.fecha)}</strong> y deben otorgarse antes del {fmtMes(ventana.limite)} (Art. 81 LFT).</span>}
+            </div>
+          )}
         </div>
 
         {vacOpen && (
@@ -215,7 +227,17 @@ export default function EmpleadoDetalle({ empleado, incrementos, vacaciones, dep
               <div><label className="text-xs text-gray-500">Al</label><input type="date" className={`mt-1 ${inp} bg-white`} value={vac.fechaFin} onChange={(e) => setVac({ ...vac, fechaFin: e.target.value })} /></div>
               <div><label className="text-xs text-gray-500">Días que cuentan</label><input type="number" min={1} className={`mt-1 ${inp} bg-white`} value={vac.dias} onChange={(e) => setVac({ ...vac, dias: e.target.value })} placeholder="ej. 5" /></div>
             </div>
-            <div><label className="text-xs text-gray-500">Nota (opcional)</label><input className={`mt-1 ${inp} bg-white`} value={vac.nota} onChange={(e) => setVac({ ...vac, nota: e.target.value })} placeholder="ej. Vacaciones de verano" /></div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs text-gray-500">Tipo</label>
+                <select className={`mt-1 ${inp} bg-white`} value={vac.estado} onChange={(e) => setVac({ ...vac, estado: e.target.value })}>
+                  <option value="aprobada">Normal (de su periodo)</option>
+                  <option value="adelantada">Adelantada / a cuenta 🎁</option>
+                  <option value="solicitada">Solo solicitada (pendiente)</option>
+                </select>
+              </div>
+              <div><label className="text-xs text-gray-500">Nota (opcional)</label><input className={`mt-1 ${inp} bg-white`} value={vac.nota} onChange={(e) => setVac({ ...vac, nota: e.target.value })} placeholder="ej. Vacaciones de verano" /></div>
+            </div>
             <div className="flex gap-2">
               <button onClick={registrarVacacion} disabled={busy || !vac.fechaInicio || !vac.fechaFin} className="flex items-center gap-1.5 px-4 py-2 text-xs text-white rounded-lg disabled:opacity-50" style={{ backgroundColor: "#1a3a6b" }}><Check size={13} /> Guardar</button>
               <button onClick={() => setVacOpen(false)} className="px-4 py-2 text-xs text-gray-500 border border-gray-200 rounded-lg">Cancelar</button>
@@ -230,7 +252,11 @@ export default function EmpleadoDetalle({ empleado, incrementos, vacaciones, dep
             {vacaciones.map((v) => (
               <div key={v.id} className="flex items-center justify-between border border-gray-100 rounded-lg px-4 py-2.5">
                 <div>
-                  <p className="text-sm text-gray-800">{fmtFecha(v.fechaInicio)} — {fmtFecha(v.fechaFin)}</p>
+                  <p className="text-sm text-gray-800 flex items-center gap-2">
+                    {fmtFecha(v.fechaInicio)} — {fmtFecha(v.fechaFin)}
+                    {v.estado === "adelantada" && <span className="text-[10px] px-1.5 py-0.5 rounded-full" style={{ backgroundColor: "#fef3c7", color: "#92660a" }}>adelantada</span>}
+                    {v.estado === "solicitada" && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-500">solicitada</span>}
+                  </p>
                   {v.nota && <p className="text-xs text-gray-400">{v.nota}</p>}
                 </div>
                 <div className="flex items-center gap-3">

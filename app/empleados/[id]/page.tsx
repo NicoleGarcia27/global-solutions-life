@@ -28,7 +28,7 @@ export default async function EmpleadoPage({ params }: Props) {
       empleado={{
         id: e.id, nombre: e.nombre, puesto: e.puesto, area: e.area, tipo: e.tipo,
         factura: e.factura, sueldoActual: e.sueldoActual, correo: e.correo, telefono: e.telefono,
-        notas: e.notas, activo: e.activo, diasVacaciones: e.diasVacaciones,
+        notas: e.notas, activo: e.activo, diasVacaciones: e.diasVacaciones, diasExtra: e.diasExtra,
         fechaIngreso: e.fechaIngreso ? e.fechaIngreso.toISOString().slice(0, 10) : "",
       }}
       incrementos={e.incrementos.map((i) => ({

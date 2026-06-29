@@ -24,3 +24,22 @@ export function vacacionesPorLey(fechaIngreso: string | Date | null): {
   const cumple = new Date(ing); cumple.setFullYear(ing.getFullYear() + 1);
   return { dias: diasVacacionesLey(anios), anios, tieneFecha: true, cumplePrimerAnio: cumple };
 }
+
+function masMeses(d: Date, meses: number): Date {
+  const r = new Date(d); r.setMonth(r.getMonth() + meses); return r;
+}
+
+// Ventana legal (Art. 81): se activan al aniversario y deben otorgarse dentro de 6 meses.
+export function ventanaVacaciones(fechaIngreso: string | Date | null, ref: Date = new Date()): {
+  activadas: boolean; fecha: Date; limite: Date;
+} | null {
+  if (!fechaIngreso) return null;
+  const ing = new Date(fechaIngreso);
+  const anios = aniosServicio(ing, ref);
+  if (anios < 1) {
+    const primer = new Date(ing); primer.setFullYear(ing.getFullYear() + 1);
+    return { activadas: false, fecha: primer, limite: masMeses(primer, 6) };
+  }
+  const ultima = new Date(ing); ultima.setFullYear(ing.getFullYear() + anios);
+  return { activadas: true, fecha: ultima, limite: masMeses(ultima, 6) };
+}
