@@ -2,9 +2,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { CalendarCheck, BarChart3 } from "lucide-react";
+import { CalendarCheck, BarChart3, MapPin, Check } from "lucide-react";
 
-type Reg = { estado: string; horaLlegada: string; horaSalida: string };
+type Reg = { estado: string; horaLlegada: string; horaSalida: string; ipLlegada: string; ipSalida: string; origen: string };
 type Emp = { id: number; nombre: string; area: string; horaEntrada: string; registro: Reg | null };
 
 const ESTADOS = [
@@ -14,8 +14,15 @@ const ESTADOS = [
   { val: "justificado", label: "Justificado", color: "#2563eb", bg: "#eff6ff" },
 ];
 
-export default function AsistenciaClient({ dia, hoy, empleados }: { dia: string; hoy: string; empleados: Emp[] }) {
+export default function AsistenciaClient({ dia, hoy, ipOficina, empleados }: { dia: string; hoy: string; ipOficina: string; empleados: Emp[] }) {
   const router = useRouter();
+  const [ipOf, setIpOf] = useState(ipOficina);
+  const [ipMsg, setIpMsg] = useState("");
+
+  async function guardarIp() {
+    await fetch("/api/config-ip", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ipOficina: ipOf }) });
+    setIpMsg("Guardada"); setTimeout(() => setIpMsg(""), 2000);
+  }
   const [rows, setRows] = useState<Record<number, Reg>>(() => {
     const o: Record<number, Reg> = {};
     empleados.forEach((e) => { o[e.id] = e.registro ?? { estado: "", horaLlegada: "", horaSalida: "" }; });
@@ -59,7 +66,17 @@ export default function AsistenciaClient({ dia, hoy, empleados }: { dia: string;
         </div>
       </div>
 
-      <p className="text-xs text-gray-400">{marcados} de {empleados.length} empleados registrados este día. Marca el estado y captura las horas.</p>
+      <p className="text-xs text-gray-400">{marcados} de {empleados.length} empleados registrados este día. Marca el estado o deja que ellos chequen desde su cuenta.</p>
+
+      {/* IP de oficina */}
+      <div className="bg-white rounded-xl border border-gray-200 p-3 flex items-center gap-2 flex-wrap">
+        <MapPin size={14} className="text-gray-400" />
+        <span className="text-xs text-gray-500">IP de la oficina (para verificar checadas):</span>
+        <input value={ipOf} onChange={(e) => setIpOf(e.target.value)} placeholder="ej. 187.190.x.x" className="border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#00b4d8] w-40" />
+        <button onClick={guardarIp} className="px-3 py-1 text-xs text-white rounded-lg" style={{ backgroundColor: "#1a3a6b" }}>Guardar</button>
+        {ipMsg && <span className="text-xs text-emerald-600">{ipMsg}</span>}
+        <span className="text-[11px] text-gray-400">Pídele a un empleado que cheque en la oficina y copia aquí la IP que aparezca.</span>
+      </div>
 
       {empleados.length === 0 ? (
         <div className="bg-white rounded-xl border border-gray-200 p-16 text-center text-gray-400">
@@ -90,15 +107,27 @@ export default function AsistenciaClient({ dia, hoy, empleados }: { dia: string;
                   </div>
                 </div>
                 {r?.estado && r.estado !== "falta" && (
-                  <div className="flex items-center gap-4 text-xs text-gray-500 pl-1">
-                    <label className="flex items-center gap-1.5">Llegó:
-                      <input type="time" value={r.horaLlegada} onChange={(ev) => guardar(e.id, { horaLlegada: ev.target.value })}
-                        className="border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[#00b4d8]" />
-                    </label>
-                    <label className="flex items-center gap-1.5">Salió:
-                      <input type="time" value={r.horaSalida} onChange={(ev) => guardar(e.id, { horaSalida: ev.target.value })}
-                        className="border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[#00b4d8]" />
-                    </label>
+                  <div className="space-y-1.5 pl-1">
+                    <div className="flex items-center gap-4 text-xs text-gray-500">
+                      <label className="flex items-center gap-1.5">Llegó:
+                        <input type="time" value={r.horaLlegada} onChange={(ev) => guardar(e.id, { horaLlegada: ev.target.value })}
+                          className="border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[#00b4d8]" />
+                      </label>
+                      <label className="flex items-center gap-1.5">Salió:
+                        <input type="time" value={r.horaSalida} onChange={(ev) => guardar(e.id, { horaSalida: ev.target.value })}
+                          className="border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[#00b4d8]" />
+                      </label>
+                      {r.origen === "empleado" && <span className="text-[10px] px-1.5 py-0.5 rounded-full" style={{ backgroundColor: "#e6f8fc", color: "#0a7d99" }}>auto-registro</span>}
+                    </div>
+                    {(r.ipLlegada || r.ipSalida) && (
+                      <div className="flex items-center gap-2 text-[11px] text-gray-400">
+                        <MapPin size={11} />
+                        <span>IP: {r.ipLlegada || r.ipSalida}</span>
+                        {ipOf && (r.ipLlegada || r.ipSalida) === ipOf
+                          ? <span className="flex items-center gap-0.5" style={{ color: "#059669" }}><Check size={10} /> en oficina</span>
+                          : ipOf ? <span style={{ color: "#d97706" }}>fuera de oficina</span> : null}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

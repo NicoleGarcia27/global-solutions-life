@@ -6,7 +6,7 @@ import { useSession, signOut } from "next-auth/react";
 import {
   LayoutDashboard, Users, ListChecks, BarChart3, FileText, Network, LogOut,
   Shield, TrendingUp, Copy, Mail, Inbox, Wrench, MessageSquareWarning,
-  ChevronDown, ChevronRight, UserCog, Palmtree, CalendarCheck, Megaphone,
+  ChevronDown, ChevronRight, UserCog, Palmtree, CalendarCheck, Megaphone, Fingerprint,
 } from "lucide-react";
 
 type Item = { href: string; label: string; icon: any };
@@ -16,6 +16,7 @@ type Grupo =
 
 const GRUPOS: Grupo[] = [
   { tipo: "single", href: "/", label: "Inicio", icon: LayoutDashboard },
+  { tipo: "single", href: "/checador", label: "Mi asistencia", icon: Fingerprint },
   {
     tipo: "folder", id: "perfiles", label: "Puestos y perfiles",
     items: [

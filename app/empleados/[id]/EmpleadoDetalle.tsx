@@ -8,9 +8,10 @@ import { vacacionesPorLey, ventanaVacaciones } from "@/lib/vacaciones";
 type Empleado = {
   id: number; nombre: string; puesto: string; area: string; tipo: string; factura: boolean;
   sueldoActual: number; correo: string; telefono: string; notas: string; activo: boolean; fechaIngreso: string;
-  diasVacaciones: number; diasExtra: number; horaEntrada: string;
+  diasVacaciones: number; diasExtra: number; horaEntrada: string; usuarioId: number | null;
 };
 type AsistenciaMes = { a_tiempo: number; retardo: number; falta: number; justificado: number };
+type UsuarioOpt = { id: number; nombre: string; email: string };
 type Incremento = { id: number; fecha: string; sueldoNuevo: number; porcentaje: number; nota: string };
 type Vacacion = { id: number; fechaInicio: string; fechaFin: string; dias: number; estado: string; nota: string };
 
@@ -29,7 +30,7 @@ function antiguedad(fecha: string) {
 }
 const fmtFecha = (iso: string) => iso ? new Date(iso).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" }) : "—";
 
-export default function EmpleadoDetalle({ empleado, incrementos, vacaciones, asistenciaMes, departamentos }: { empleado: Empleado; incrementos: Incremento[]; vacaciones: Vacacion[]; asistenciaMes: AsistenciaMes; departamentos: string[] }) {
+export default function EmpleadoDetalle({ empleado, incrementos, vacaciones, asistenciaMes, departamentos, usuarios }: { empleado: Empleado; incrementos: Incremento[]; vacaciones: Vacacion[]; asistenciaMes: AsistenciaMes; departamentos: string[]; usuarios: UsuarioOpt[] }) {
   const router = useRouter();
   const [edit, setEdit] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -131,6 +132,13 @@ export default function EmpleadoDetalle({ empleado, incrementos, vacaciones, asi
               <div><label className="text-xs text-gray-500">Teléfono</label><input className={`mt-1 ${inp}`} value={f.telefono} onChange={(e) => set("telefono", e.target.value)} /></div>
               <div><label className="text-xs text-gray-500">Días extra de cortesía 🎁</label><input type="number" min={0} className={`mt-1 ${inp}`} value={f.diasExtra} onChange={(e) => set("diasExtra", e.target.value as any)} placeholder="0" /></div>
               <div><label className="text-xs text-gray-500">Hora de entrada</label><input type="time" className={`mt-1 ${inp}`} value={f.horaEntrada} onChange={(e) => set("horaEntrada", e.target.value)} /></div>
+              <div>
+                <label className="text-xs text-gray-500">Cuenta de acceso (para checar)</label>
+                <select className={`mt-1 ${inp}`} value={f.usuarioId ?? ""} onChange={(e) => set("usuarioId", e.target.value as any)}>
+                  <option value="">— Sin vincular —</option>
+                  {usuarios.map((u) => <option key={u.id} value={u.id}>{u.nombre} ({u.email})</option>)}
+                </select>
+              </div>
             </div>
             <p className="text-xs text-gray-400">Los días de ley se calculan solos por la fecha de ingreso (Art. 76 LFT). Los "días extra" son los que tú le regalas por buena onda.</p>
             <label className="flex items-center gap-2 text-sm text-gray-600"><input type="checkbox" checked={f.factura} onChange={(e) => set("factura", e.target.checked)} className="w-4 h-4" /> ¿Emite factura?</label>

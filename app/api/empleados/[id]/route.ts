@@ -29,6 +29,8 @@ export async function PATCH(req: NextRequest, { params }: Params) {
       ...(b.activo !== undefined && { activo: b.activo }),
       ...(b.diasVacaciones !== undefined && { diasVacaciones: Number(b.diasVacaciones) || 0 }),
       ...(b.diasExtra !== undefined && { diasExtra: Number(b.diasExtra) || 0 }),
+      ...(b.horaEntrada !== undefined && { horaEntrada: b.horaEntrada }),
+      ...(b.usuarioId !== undefined && { usuarioId: b.usuarioId ? Number(b.usuarioId) : null }),
     },
   });
   return NextResponse.json(empleado);

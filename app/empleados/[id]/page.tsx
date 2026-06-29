@@ -28,6 +28,7 @@ export default async function EmpleadoPage({ params }: Props) {
   for (const a of e.asistencias) asisMes[a.estado as keyof typeof asisMes] = (asisMes[a.estado as keyof typeof asisMes] ?? 0) + 1;
 
   const departamentos = await prisma.departamento.findMany({ orderBy: { nombre: "asc" } });
+  const usuarios = await prisma.usuario.findMany({ where: { role: "usuario" }, select: { id: true, nombre: true, email: true }, orderBy: { nombre: "asc" } });
 
   return (
     <EmpleadoDetalle
@@ -35,9 +36,10 @@ export default async function EmpleadoPage({ params }: Props) {
         id: e.id, nombre: e.nombre, puesto: e.puesto, area: e.area, tipo: e.tipo,
         factura: e.factura, sueldoActual: e.sueldoActual, correo: e.correo, telefono: e.telefono,
         notas: e.notas, activo: e.activo, diasVacaciones: e.diasVacaciones, diasExtra: e.diasExtra,
-        horaEntrada: e.horaEntrada,
+        horaEntrada: e.horaEntrada, usuarioId: e.usuarioId,
         fechaIngreso: e.fechaIngreso ? e.fechaIngreso.toISOString().slice(0, 10) : "",
       }}
+      usuarios={usuarios}
       asistenciaMes={asisMes}
       incrementos={e.incrementos.map((i) => ({
         id: i.id, fecha: i.fecha.toISOString(), sueldoNuevo: i.sueldoNuevo, porcentaje: i.porcentaje, nota: i.nota,

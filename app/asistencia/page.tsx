@@ -17,14 +17,16 @@ export default async function AsistenciaPage({ searchParams }: Props) {
 
   const empleados = await prisma.empleado.findMany({ where: { activo: true }, orderBy: { nombre: "asc" } });
   const registros = await prisma.asistencia.findMany({ where: { fecha: new Date(`${dia}T00:00:00.000Z`) } });
+  const config = await prisma.config.findFirst();
 
-  const mapa: Record<number, { estado: string; horaLlegada: string; horaSalida: string }> = {};
-  for (const r of registros) mapa[r.empleadoId] = { estado: r.estado, horaLlegada: r.horaLlegada, horaSalida: r.horaSalida };
+  const mapa: Record<number, { estado: string; horaLlegada: string; horaSalida: string; ipLlegada: string; ipSalida: string; origen: string }> = {};
+  for (const r of registros) mapa[r.empleadoId] = { estado: r.estado, horaLlegada: r.horaLlegada, horaSalida: r.horaSalida, ipLlegada: r.ipLlegada, ipSalida: r.ipSalida, origen: r.origen };
 
   return (
     <AsistenciaClient
       dia={dia}
       hoy={hoy}
+      ipOficina={config?.ipOficina ?? ""}
       empleados={empleados.map((e) => ({ id: e.id, nombre: e.nombre, area: e.area, horaEntrada: e.horaEntrada, registro: mapa[e.id] ?? null }))}
     />
   );

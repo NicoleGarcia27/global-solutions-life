@@ -24,6 +24,7 @@ model Usuario {
   departamentoId Int?
   departamento   Departamento? @relation(fields: [departamentoId], references: [id])
   puestos        Puesto[]
+  empleado       Empleado?
   createdAt      DateTime     @default(now())
 }
 
@@ -130,6 +131,8 @@ model Empleado {
   diasVacaciones Int          @default(12)
   diasExtra      Int          @default(0)   // días de cortesía otorgados por la empresa
   horaEntrada    String       @default("09:00")
+  usuarioId      Int?         @unique
+  usuario        Usuario?     @relation(fields: [usuarioId], references: [id])
   incrementos    Incremento[]
   vacaciones     Vacacion[]
   asistencias    Asistencia[]
@@ -144,9 +147,17 @@ model Asistencia {
   estado      String   @default("a_tiempo") // a_tiempo | retardo | falta | justificado
   horaLlegada String   @default("")
   horaSalida  String   @default("")
+  ipLlegada   String   @default("")
+  ipSalida    String   @default("")
+  origen      String   @default("admin") // admin | empleado (autoregistro)
   nota        String   @default("")
 
   @@unique([empleadoId, fecha])
+}
+
+model Config {
+  id        Int    @id @default(autoincrement())
+  ipOficina String @default("")
 }
 
 model Comunicado {
