@@ -10,6 +10,11 @@ export default function ChecadorClient({ nombre, vinculado, horaEntrada, registr
   const [reloj, setReloj] = useState("");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
+  const [doneEntrada, setDoneEntrada] = useState(false);
+  const [doneSalida, setDoneSalida] = useState(false);
+
+  const entradaHecha = !!registro?.horaLlegada || doneEntrada;
+  const salidaHecha = !!registro?.horaSalida || doneSalida;
 
   useEffect(() => {
     const tick = () => setReloj(new Intl.DateTimeFormat("es-MX", { timeZone: "America/Mexico_City", hour12: true, hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(new Date()));
@@ -24,6 +29,7 @@ export default function ChecadorClient({ nombre, vinculado, horaEntrada, registr
     const data = await res.json();
     setBusy(false);
     if (!res.ok) { setMsg(data.error ?? "Error al registrar"); return; }
+    if (tipo === "entrada") setDoneEntrada(true); else setDoneSalida(true);
     setMsg(tipo === "entrada" ? `✓ Entrada registrada a las ${data.hora}` : `✓ Salida registrada a las ${data.hora}`);
     router.refresh();
   }
@@ -45,14 +51,27 @@ export default function ChecadorClient({ nombre, vinculado, horaEntrada, registr
           ) : (
             <>
               <div className="grid grid-cols-2 gap-3">
-                <button onClick={() => checar("entrada")} disabled={busy} className="flex flex-col items-center gap-1.5 py-5 rounded-xl text-white font-medium disabled:opacity-50" style={{ backgroundColor: "#059669" }}>
-                  <LogIn size={26} /> Registrar entrada
-                </button>
-                <button onClick={() => checar("salida")} disabled={busy} className="flex flex-col items-center gap-1.5 py-5 rounded-xl text-white font-medium disabled:opacity-50" style={{ backgroundColor: "#1a3a6b" }}>
-                  <LogOut size={26} /> Registrar salida
-                </button>
+                {entradaHecha ? (
+                  <div className="flex flex-col items-center justify-center gap-1 py-5 rounded-xl font-medium border-2" style={{ borderColor: "#059669", color: "#059669", backgroundColor: "#ecfdf5" }}>
+                    <CheckCircle2 size={24} /> <span className="text-sm">Entrada {registro?.horaLlegada}</span>
+                  </div>
+                ) : (
+                  <button onClick={() => checar("entrada")} disabled={busy} className="flex flex-col items-center gap-1.5 py-5 rounded-xl text-white font-medium disabled:opacity-50" style={{ backgroundColor: "#059669" }}>
+                    <LogIn size={26} /> Registrar entrada
+                  </button>
+                )}
+                {salidaHecha ? (
+                  <div className="flex flex-col items-center justify-center gap-1 py-5 rounded-xl font-medium border-2" style={{ borderColor: "#1a3a6b", color: "#1a3a6b", backgroundColor: "#eef2f8" }}>
+                    <CheckCircle2 size={24} /> <span className="text-sm">Salida {registro?.horaSalida}</span>
+                  </div>
+                ) : (
+                  <button onClick={() => checar("salida")} disabled={busy || !entradaHecha} className="flex flex-col items-center gap-1.5 py-5 rounded-xl text-white font-medium disabled:opacity-50" style={{ backgroundColor: "#1a3a6b" }}>
+                    <LogOut size={26} /> Registrar salida
+                  </button>
+                )}
               </div>
 
+              {entradaHecha && salidaHecha && <p className="mt-4 text-sm text-gray-500">Ya registraste tu entrada y salida de hoy. ¡Buen trabajo! ✓</p>}
               {msg && <p className="mt-4 text-sm font-medium" style={{ color: "#059669" }}>{msg}</p>}
 
               <div className="mt-6 pt-5 border-t border-gray-100 text-left space-y-2">
