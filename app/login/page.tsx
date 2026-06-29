@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, MessageSquareWarning } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -115,10 +115,17 @@ export default function LoginPage() {
               Regístrate aquí
             </Link>
           </p>
-          <div className="mt-4 pt-4 border-t border-gray-100 text-center">
-            <Link href="/buzon" className="text-xs text-gray-400 hover:text-[#00b4d8] inline-flex items-center gap-1.5">
-              <Lock size={11} /> Buzón de quejas y sugerencias (anónimo)
+          <div className="mt-6 pt-6 border-t border-gray-100">
+            <Link
+              href="/buzon"
+              className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl border-2 font-bold text-sm transition hover:brightness-105"
+              style={{ borderColor: "#00b4d8", color: "#0a7d99", backgroundColor: "#e6f8fc" }}
+            >
+              <MessageSquareWarning size={18} /> Buzón de quejas y sugerencias
             </Link>
+            <p className="text-center text-xs text-gray-400 mt-2 flex items-center justify-center gap-1">
+              <Lock size={11} /> 100% anónimo · no necesitas cuenta
+            </p>
           </div>
         </div>
       </div>
