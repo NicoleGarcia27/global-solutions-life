@@ -102,8 +102,13 @@ export default async function PuestoDetalle({ params }: Props) {
       {/* Tareas y Actividades */}
       {isAdmin ? (
         <Seccion title={`Tareas y Actividades (${puesto.responsabilidades.length})`}>
-          <p className="text-xs text-gray-400 -mt-2">Edita, elimina, agrega o reasigna tareas a la persona que le corresponden.</p>
-          <TaskManager puestoId={puesto.id} tareas={puesto.responsabilidades} otrosPuestos={otrosPuestos} />
+          <p className="text-xs text-gray-400 -mt-2">Para cada tarea: confírmala (✓ le corresponde), reasígnala a otra persona, o envíala al Banco si no es de su área.</p>
+          <TaskManager
+            puestoId={puesto.id}
+            tareas={puesto.responsabilidades}
+            otrosPuestos={otrosPuestos}
+            origenLabel={`${puesto.nombre} · ${puesto.departamento?.nombre ?? "Sin área"}`}
+          />
         </Seccion>
       ) : (
         puesto.responsabilidades.length > 0 && (

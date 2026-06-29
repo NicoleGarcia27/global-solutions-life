@@ -78,15 +78,17 @@ model Puesto {
 }
 
 model Responsabilidad {
-  id          Int    @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   nombre      String
-  descripcion String @default("")
-  tiempoHoras Float  @default(1)
-  recurrencia String @default("Diaria")
-  nivel       String @default("Medio")
-  orden       Int    @default(0)
-  puestoId    Int
-  puesto      Puesto @relation(fields: [puestoId], references: [id], onDelete: Cascade)
+  descripcion String  @default("")
+  tiempoHoras Float   @default(1)
+  recurrencia String  @default("Diaria")
+  nivel       String  @default("Medio")
+  orden       Int     @default(0)
+  estado      String  @default("pendiente") // pendiente | confirmada
+  origen      String  @default("")           // de dónde vino si está en el banco
+  puestoId    Int?
+  puesto      Puesto? @relation(fields: [puestoId], references: [id], onDelete: Cascade)
 }
 
 model Kpi {

@@ -18,6 +18,8 @@ export async function PATCH(req: NextRequest, { params }: Params) {
       ...(body.recurrencia !== undefined && { recurrencia: body.recurrencia }),
       ...(body.tiempoHoras !== undefined && { tiempoHoras: body.tiempoHoras }),
       ...(body.puestoId !== undefined && { puestoId: body.puestoId }),
+      ...(body.estado !== undefined && { estado: body.estado }),
+      ...(body.origen !== undefined && { origen: body.origen }),
     },
   });
   return NextResponse.json(resp);
