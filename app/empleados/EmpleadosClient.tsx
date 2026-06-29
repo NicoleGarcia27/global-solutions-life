@@ -20,6 +20,12 @@ function antiguedad(fecha: string | null) {
 
 const money = (n: number) => "$" + n.toLocaleString("es-MX");
 
+const TIPOS: Record<string, { label: string; cls: string }> = {
+  empleado: { label: "Empleado GSL", cls: "bg-blue-100 text-blue-700" },
+  proveedor: { label: "Factura a GSL", cls: "bg-purple-100 text-purple-700" },
+  sky: { label: "Factura a SKY SEGUROS", cls: "bg-amber-100 text-amber-700" },
+};
+
 export default function EmpleadosClient({ empleados, departamentos }: { empleados: Empleado[]; departamentos: string[] }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -48,14 +54,15 @@ export default function EmpleadosClient({ empleados, departamentos }: { empleado
   }
 
   const empleadosGSL = empleados.filter((e) => e.tipo === "empleado").length;
-  const proveedores = empleados.filter((e) => e.tipo === "proveedor").length;
+  const facturanGSL = empleados.filter((e) => e.tipo === "proveedor").length;
+  const facturanSky = empleados.filter((e) => e.tipo === "sky").length;
 
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-5">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold text-gray-900">Empleados</h1>
-          <p className="text-sm text-gray-400 mt-0.5">{empleados.length} en total · {empleadosGSL} de GSL · {proveedores} facturan a GSL</p>
+          <p className="text-sm text-gray-400 mt-0.5">{empleados.length} en total · {empleadosGSL} nómina GSL · {facturanGSL} factura GSL · {facturanSky} factura SKY</p>
         </div>
         <button onClick={() => setOpen(true)} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white rounded-lg" style={{ backgroundColor: "#1a3a6b" }}>
           <UserPlus size={15} /> Agregar empleado
@@ -90,8 +97,8 @@ export default function EmpleadosClient({ empleados, departamentos }: { empleado
                   </td>
                   <td className="px-4 py-3 text-gray-500 text-xs">{e.area || "—"}</td>
                   <td className="px-4 py-3">
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${e.tipo === "empleado" ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"}`}>
-                      {e.tipo === "empleado" ? "Empleado GSL" : "Factura a GSL"}
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${(TIPOS[e.tipo] ?? TIPOS.empleado).cls}`}>
+                      {(TIPOS[e.tipo] ?? TIPOS.empleado).label}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-gray-600 text-xs">{antiguedad(e.fechaIngreso)}</td>
@@ -137,6 +144,7 @@ export default function EmpleadosClient({ empleados, departamentos }: { empleado
                   <select className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00b4d8]" value={form.tipo} onChange={(e) => set("tipo", e.target.value)}>
                     <option value="empleado">Empleado de GSL</option>
                     <option value="proveedor">Factura a GSL</option>
+                    <option value="sky">Factura a SKY SEGUROS</option>
                   </select>
                 </div>
                 <div>

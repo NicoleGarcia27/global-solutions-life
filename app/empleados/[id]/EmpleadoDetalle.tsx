@@ -11,6 +11,11 @@ type Empleado = {
 type Incremento = { id: number; fecha: string; sueldoNuevo: number; porcentaje: number; nota: string };
 
 const money = (n: number) => "$" + (n || 0).toLocaleString("es-MX");
+const TIPOS: Record<string, { label: string; cls: string }> = {
+  empleado: { label: "Empleado GSL", cls: "bg-blue-100 text-blue-700" },
+  proveedor: { label: "Factura a GSL", cls: "bg-purple-100 text-purple-700" },
+  sky: { label: "Factura a SKY SEGUROS", cls: "bg-amber-100 text-amber-700" },
+};
 function antiguedad(fecha: string) {
   if (!fecha) return "—";
   const meses = Math.max(0, Math.round((Date.now() - new Date(fecha).getTime()) / (1000 * 60 * 60 * 24 * 30)));
@@ -68,8 +73,8 @@ export default function EmpleadoDetalle({ empleado, incrementos, departamentos }
             <p className="text-sm text-gray-400">{[empleado.puesto, empleado.area].filter(Boolean).join(" · ") || "Sin puesto"}</p>
           </div>
         </div>
-        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${empleado.tipo === "empleado" ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"}`}>
-          {empleado.tipo === "empleado" ? "Empleado GSL" : "Factura a GSL"}
+        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${(TIPOS[empleado.tipo] ?? TIPOS.empleado).cls}`}>
+          {(TIPOS[empleado.tipo] ?? TIPOS.empleado).label}
         </span>
       </div>
 
@@ -89,7 +94,7 @@ export default function EmpleadoDetalle({ empleado, incrementos, departamentos }
                 <select className={`mt-1 ${inp}`} value={f.area} onChange={(e) => set("area", e.target.value)}><option value="">—</option>{departamentos.map((d) => <option key={d}>{d}</option>)}</select>
               </div>
               <div><label className="text-xs text-gray-500">Tipo</label>
-                <select className={`mt-1 ${inp}`} value={f.tipo} onChange={(e) => set("tipo", e.target.value)}><option value="empleado">Empleado de GSL</option><option value="proveedor">Factura a GSL</option></select>
+                <select className={`mt-1 ${inp}`} value={f.tipo} onChange={(e) => set("tipo", e.target.value)}><option value="empleado">Empleado de GSL</option><option value="proveedor">Factura a GSL</option><option value="sky">Factura a SKY SEGUROS</option></select>
               </div>
               <div><label className="text-xs text-gray-500">Fecha de ingreso</label><input type="date" className={`mt-1 ${inp}`} value={f.fechaIngreso} onChange={(e) => set("fechaIngreso", e.target.value)} /></div>
               <div><label className="text-xs text-gray-500">Sueldo actual</label><input type="number" className={`mt-1 ${inp}`} value={f.sueldoActual} onChange={(e) => set("sueldoActual", e.target.value as any)} /></div>
