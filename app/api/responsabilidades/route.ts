@@ -7,7 +7,8 @@ export async function POST(req: NextRequest) {
   if (!token || token.role !== "admin") return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
   const body = await req.json();
-  const count = await prisma.responsabilidad.count({ where: { puestoId: body.puestoId } });
+  const puestoId = body.puestoId ?? null;
+  const count = await prisma.responsabilidad.count({ where: { puestoId } });
   const resp = await prisma.responsabilidad.create({
     data: {
       nombre: body.nombre,
@@ -15,8 +16,9 @@ export async function POST(req: NextRequest) {
       tiempoHoras: body.tiempoHoras ?? 1,
       recurrencia: body.recurrencia ?? "Diaria",
       nivel: body.nivel ?? "Medio",
+      origen: body.origen ?? "",
       orden: count,
-      puestoId: body.puestoId,
+      puestoId,
     },
   });
   return NextResponse.json(resp);

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, Printer } from "lucide-react";
 import AdminRevision from "./AdminRevision";
 import TaskManager from "./TaskManager";
+import ObservacionesAcciones from "./ObservacionesAcciones";
 
 export const dynamic = "force-dynamic";
 type Props = { params: Promise<{ id: string }> };
@@ -175,10 +176,27 @@ export default async function PuestoDetalle({ params }: Props) {
       {/* Observaciones del empleado */}
       {(puesto.tareasNoCorresponden || puesto.tareasQueNadieHace || puesto.problemasFrecuentes || puesto.comoMideSuTrabajo) && (
         <Seccion title="Observaciones del empleado">
-          <Campo label="Tareas que considera que no le corresponden" value={puesto.tareasNoCorresponden} />
-          <Campo label="Tareas que nadie hace pero deberían hacerse" value={puesto.tareasQueNadieHace} />
-          <Campo label="Problemas frecuentes en su trabajo" value={puesto.problemasFrecuentes} />
-          <Campo label="¿Cómo mide que hizo bien su trabajo?" value={puesto.comoMideSuTrabajo} />
+          {isAdmin ? (
+            <>
+              <p className="text-xs text-gray-400 -mt-2">Convierte en tarea (al Banco) lo que el empleado señaló que no le toca o que nadie hace.</p>
+              <ObservacionesAcciones
+                obs={{
+                  noCorresponden: puesto.tareasNoCorresponden,
+                  nadieHace: puesto.tareasQueNadieHace,
+                  problemas: puesto.problemasFrecuentes,
+                  comoMide: puesto.comoMideSuTrabajo,
+                }}
+                origenLabel={`${puesto.nombre} · ${puesto.departamento?.nombre ?? "Sin área"}`}
+              />
+            </>
+          ) : (
+            <>
+              <Campo label="Tareas que considera que no le corresponden" value={puesto.tareasNoCorresponden} />
+              <Campo label="Tareas que nadie hace pero deberían hacerse" value={puesto.tareasQueNadieHace} />
+              <Campo label="Problemas frecuentes en su trabajo" value={puesto.problemasFrecuentes} />
+              <Campo label="¿Cómo mide que hizo bien su trabajo?" value={puesto.comoMideSuTrabajo} />
+            </>
+          )}
         </Seccion>
       )}
     </div>
