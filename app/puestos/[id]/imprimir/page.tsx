@@ -24,11 +24,13 @@ export default async function ImprimirPuesto({ params }: Props) {
         .doc-root { background:#fff; color:#222; font-family: Arial, Helvetica, sans-serif; font-size:10pt; line-height:1.35; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
         .page { max-width:820px; margin:0 auto; padding:24px 32px 40px; }
 
+        .letterhead { text-align:center; margin-bottom:12px; padding-bottom:12px; border-bottom:2px solid #1a3a6b; }
+        .letterhead img { width:76px; height:76px; object-fit:contain; display:block; margin:0 auto; }
+        .letterhead .emp { font-size:14pt; font-weight:bold; color:#1a3a6b; letter-spacing:1.5px; margin-top:5px; }
+        .letterhead .tagline { font-size:8pt; color:#00b4d8; letter-spacing:.5px; margin-top:1px; }
+
         .doc-header { width:100%; border-collapse:collapse; margin-bottom:4px; }
-        .doc-header td { border:1px solid #1a3a6b; padding:8px 10px; vertical-align:middle; }
-        .dh-logo { width:120px; text-align:center; }
-        .dh-logo img { width:64px; height:64px; object-fit:contain; }
-        .dh-logo .emp { font-size:6.5pt; color:#1a3a6b; font-weight:bold; margin-top:4px; letter-spacing:.5px; }
+        .doc-header td { border:1px solid #1a3a6b; padding:8px 12px; vertical-align:middle; }
         .dh-center { text-align:center; }
         .dh-center .doc-type { font-size:8pt; letter-spacing:3px; color:#00b4d8; font-weight:bold; }
         .dh-center .doc-name { font-size:15pt; font-weight:bold; color:#1a3a6b; margin-top:2px; }
@@ -66,15 +68,18 @@ export default async function ImprimirPuesto({ params }: Props) {
       <PrintButton />
 
       <div className="page">
-        {/* Encabezado institucional */}
+        {/* Membrete con logo centrado */}
+        <div className="letterhead">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/api/logo" alt="GSL" />
+          <div className="emp">GLOBAL SOLUTIONS LIFE</div>
+          <div className="tagline">Consultoría en Seguros &amp; Inversiones</div>
+        </div>
+
+        {/* Bloque de control del documento */}
         <table className="doc-header">
           <tbody>
             <tr>
-              <td className="dh-logo" rowSpan={1}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/api/logo" alt="GSL" />
-                <div className="emp">GLOBAL SOLUTIONS LIFE</div>
-              </td>
               <td className="dh-center">
                 <div className="doc-type">DESCRIPCIÓN DE PUESTO</div>
                 <div className="doc-name">{p.nombre}</div>
