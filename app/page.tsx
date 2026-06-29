@@ -35,39 +35,48 @@ export default async function Dashboard() {
   }).filter((d) => d.total > 0);
 
   const stats = [
-    { label: "Puestos activos", value: `${puestosActivos} / ${totalPuestos}`, sub: "documentados", icon: Users, color: "text-emerald-600" },
-    { label: "KPIs en verde", value: kpisTotales ? `${Math.round((kpisVerdes / kpisTotales) * 100)}%` : "—", sub: `${kpisVerdes} de ${kpisTotales}`, icon: CheckCircle2, color: "text-emerald-600" },
-    { label: "KPIs en riesgo", value: String(kpisRiesgo), sub: "requieren atención", icon: AlertTriangle, color: "text-amber-500" },
-    { label: "Procesos mapeados", value: String(totalResp), sub: "en FRP", icon: TrendingUp, color: "text-blue-600" },
+    { label: "Puestos activos", value: `${puestosActivos} / ${totalPuestos}`, sub: "documentados", icon: Users, chip: "#1a3a6b", chipBg: "#eaf0f8" },
+    { label: "KPIs en verde", value: kpisTotales ? `${Math.round((kpisVerdes / kpisTotales) * 100)}%` : "—", sub: `${kpisVerdes} de ${kpisTotales}`, icon: CheckCircle2, chip: "#059669", chipBg: "#ecfdf5" },
+    { label: "KPIs en riesgo", value: String(kpisRiesgo), sub: "requieren atención", icon: AlertTriangle, chip: "#d97706", chipBg: "#fffbeb" },
+    { label: "Procesos mapeados", value: String(totalResp), sub: "en FRP", icon: TrendingUp, chip: "#00b4d8", chipBg: "#e6f8fc" },
   ];
 
   return (
     <div className="p-6 space-y-6 max-w-6xl mx-auto">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold text-gray-900">Dashboard</h1>
-          <p className="text-sm text-gray-500">
-            Global Solutions Life —{" "}
-            {new Date().toLocaleDateString("es-MX", { month: "long", year: "numeric" })}
+      {/* Encabezado con banda institucional */}
+      <div
+        className="rounded-2xl p-6 flex items-center justify-between text-white relative overflow-hidden"
+        style={{ background: "linear-gradient(120deg, #14305a 0%, #1a3a6b 60%, #1e4a86 100%)" }}
+      >
+        <div className="absolute -top-16 -right-10 w-64 h-64 rounded-full" style={{ background: "radial-gradient(circle, rgba(0,180,216,0.18), transparent 70%)" }} />
+        <div className="relative">
+          <h1 className="text-2xl font-bold">Panel de control</h1>
+          <p className="text-sm text-white/70 mt-0.5">
+            Global Solutions Life · {new Date().toLocaleDateString("es-MX", { month: "long", year: "numeric" })}
           </p>
         </div>
         <Link
-          href="/puestos/nuevo"
-          className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700 transition-colors"
+          href="/puestos"
+          className="relative flex items-center gap-2 px-4 py-2 text-sm rounded-lg font-medium transition-colors"
+          style={{ backgroundColor: "#00b4d8", color: "#fff" }}
         >
-          + Nuevo puesto
+          Ver puestos →
         </Link>
       </div>
 
       <div className="grid grid-cols-4 gap-4">
         {stats.map((c, i) => (
-          <div key={i} className="bg-white rounded-xl border border-gray-200 p-4">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-xs text-gray-500">{c.label}</p>
-              <c.icon size={16} className={c.color} />
+          <div key={i} className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: c.chipBg }}>
+                <c.icon size={20} style={{ color: c.chip }} />
+              </div>
+              <div className="min-w-0">
+                <p className="text-2xl font-bold text-gray-900 leading-none">{c.value}</p>
+                <p className="text-xs text-gray-500 mt-1">{c.label}</p>
+              </div>
             </div>
-            <p className={`text-2xl font-semibold ${c.color}`}>{c.value}</p>
-            <p className="text-xs text-gray-400 mt-1">{c.sub}</p>
+            <p className="text-[11px] text-gray-400 mt-2">{c.sub}</p>
           </div>
         ))}
       </div>
@@ -124,7 +133,7 @@ export default async function Dashboard() {
       <div className="bg-white rounded-xl border border-gray-200">
         <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
           <h2 className="text-sm font-medium text-gray-700">Puestos</h2>
-          <Link href="/puestos" className="text-xs text-emerald-600 hover:underline">Ver todos →</Link>
+          <Link href="/puestos" className="text-xs hover:underline" style={{ color: "#00b4d8" }}>Ver todos →</Link>
         </div>
         <table className="w-full text-sm">
           <thead>
@@ -144,7 +153,7 @@ export default async function Dashboard() {
               return (
                 <tr key={p.id} className="border-b border-gray-50 hover:bg-gray-50">
                   <td className="px-4 py-3">
-                    <Link href={`/puestos/${p.id}`} className="font-medium text-gray-900 hover:text-emerald-600">
+                    <Link href={`/puestos/${p.id}`} className="font-medium text-gray-900 hover:text-[#00b4d8]">
                       {p.nombre}
                     </Link>
                   </td>
