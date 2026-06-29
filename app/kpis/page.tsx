@@ -42,7 +42,7 @@ export default async function KpisPage() {
                 <Link href={`/puestos/${p.id}`} className="text-sm font-medium text-gray-900 hover:text-emerald-600">
                   {p.nombre}
                 </Link>
-                <span className="text-xs text-gray-400 ml-2">{p.departamento.nombre}</span>
+                <span className="text-xs text-gray-400 ml-2">{p.departamento?.nombre ?? "Sin área"}</span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2">

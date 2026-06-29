@@ -63,7 +63,7 @@ export default async function PuestosPage() {
                       <p className="text-gray-700 text-xs">{p.usuario?.nombre ?? "—"}</p>
                       <p className="text-gray-400 text-xs">{p.usuario?.email}</p>
                     </td>
-                    <td className="px-4 py-3 text-gray-500 text-xs">{p.departamento.nombre}</td>
+                    <td className="px-4 py-3 text-gray-500 text-xs">{p.departamento?.nombre ?? "Sin área"}</td>
                     <td className="px-4 py-3 text-gray-600 text-xs">{p.responsabilidades.length} tareas</td>
                     <td className="px-4 py-3">
                       <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
@@ -137,7 +137,7 @@ export default async function PuestosPage() {
               <div className="flex items-start justify-between">
                 <div>
                   <h2 className="font-semibold text-gray-900">{p.nombre}</h2>
-                  <p className="text-sm text-gray-400 mt-0.5">{p.departamento.nombre}</p>
+                  <p className="text-sm text-gray-400 mt-0.5">{p.departamento?.nombre ?? "Sin área"}</p>
                   {p.objetivo && <p className="text-sm text-gray-600 mt-2">{p.objetivo}</p>}
                 </div>
                 <div className="flex items-center gap-3">

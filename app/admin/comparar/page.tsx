@@ -55,7 +55,7 @@ export default async function CompararPage() {
                 <div key={p.id} className="flex-1 min-w-64 p-4">
                   <div className="mb-3">
                     <p className="text-xs font-bold text-gray-700">{p.usuario?.nombre ?? p.titular ?? "Sin nombre"}</p>
-                    <p className="text-xs text-gray-400">{p.departamento.nombre}</p>
+                    <p className="text-xs text-gray-400">{p.departamento?.nombre ?? "Sin área"}</p>
                   </div>
                   <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
                     {p.responsabilidades.length} tareas
@@ -108,7 +108,7 @@ export default async function CompararPage() {
                   <tr key={p.id} className="border-b border-gray-50 hover:bg-gray-50">
                     <td className="px-4 py-3 font-medium text-gray-700">{p.nombre}</td>
                     <td className="px-4 py-3 text-gray-500 text-xs">{p.usuario?.nombre ?? p.titular ?? "—"}</td>
-                    <td className="px-4 py-3 text-gray-400 text-xs">{p.departamento.nombre}</td>
+                    <td className="px-4 py-3 text-gray-400 text-xs">{p.departamento?.nombre ?? "Sin área"}</td>
                     <td className="px-4 py-3 text-gray-400 text-xs">{p.responsabilidades.length} tareas</td>
                     <td className="px-4 py-3"><a href={`/puestos/${p.id}`} className="text-xs text-blue-600 hover:underline">Ver →</a></td>
                   </tr>

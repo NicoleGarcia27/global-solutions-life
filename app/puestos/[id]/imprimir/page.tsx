@@ -57,7 +57,7 @@ export default async function ImprimirPuesto({ params }: Props) {
               <div>
                 <div className="empresa">GLOBAL SOLUTIONS LIFE</div>
                 <div className="titulo">{p.nombre}</div>
-                <div className="subtitulo">{p.departamento.nombre} {p.codigo && `· Código: ${p.codigo}`}</div>
+                <div className="subtitulo">{p.departamento?.nombre ?? "Sin área"} {p.codigo && `· Código: ${p.codigo}`}</div>
               </div>
               <div className="meta">
                 <div>Fecha: {fecha}</div>

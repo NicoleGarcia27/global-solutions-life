@@ -69,8 +69,8 @@ model Puesto {
   comoMideSuTrabajo       String   @default("")
   // Admin
   adminNotas              String   @default("")
-  departamentoId    Int
-  departamento      Departamento      @relation(fields: [departamentoId], references: [id])
+  departamentoId    Int?
+  departamento      Departamento?     @relation(fields: [departamentoId], references: [id])
   responsabilidades Responsabilidad[]
   kpis              Kpi[]
   createdAt         DateTime          @default(now())

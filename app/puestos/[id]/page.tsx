@@ -56,7 +56,7 @@ export default async function PuestoDetalle({ params }: Props) {
         <Link href="/puestos" className="text-gray-400 hover:text-gray-600"><ArrowLeft size={18} /></Link>
         <div className="flex-1">
           <h1 className="text-xl font-semibold text-gray-900">{puesto.nombre}</h1>
-          <p className="text-sm text-gray-400">{puesto.departamento.nombre} {puesto.usuario && `· Enviado por ${puesto.usuario.nombre}`}</p>
+          <p className="text-sm text-gray-400">{puesto.departamento?.nombre ?? "Sin área"} {puesto.usuario && `· Enviado por ${puesto.usuario.nombre}`}</p>
         </div>
         <Link
           href={`/puestos/${puesto.id}/imprimir`}
@@ -84,7 +84,7 @@ export default async function PuestoDetalle({ params }: Props) {
           <Campo label="Reporta a" value={puesto.reportaA} />
           <Campo label="Supervisa a" value={puesto.supervisaA} />
           <Campo label="Horario" value={puesto.horario} />
-          <Campo label="Departamento" value={puesto.departamento.nombre} />
+          <Campo label="Departamento" value={puesto.departamento?.nombre ?? "Sin área"} />
         </div>
         <Campo label="Objetivo del puesto" value={puesto.objetivo} />
       </Seccion>

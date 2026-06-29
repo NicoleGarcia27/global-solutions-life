@@ -28,7 +28,7 @@ export default async function PerfilPage() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">{p.nombre}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{p.departamento.nombre} · {p.codigo}</p>
+                <p className="text-xs text-gray-400 mt-0.5">{p.departamento?.nombre ?? "Sin área"} · {p.codigo}</p>
               </div>
               <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium flex-shrink-0 ${
                 p.estado === "activo" ? "bg-emerald-100 text-emerald-700" :

@@ -42,7 +42,7 @@ export default async function FrpPage() {
               <Link href={`/puestos/${p.id}`} className="text-sm font-medium text-gray-900 hover:text-emerald-600">
                 {p.nombre}
               </Link>
-              <span className="text-xs text-gray-400 ml-2">{p.departamento.nombre}</span>
+              <span className="text-xs text-gray-400 ml-2">{p.departamento?.nombre ?? "Sin área"}</span>
               {p.titular && <span className="text-xs text-gray-400 ml-2">· {p.titular}</span>}
             </div>
             <span className="text-xs text-gray-400">{p.responsabilidades.length} responsabilidades</span>

@@ -84,7 +84,7 @@ export default function NuevoPuestoForm({ departamentos }: { departamentos: Dep[
         body: JSON.stringify({
           ...form,
           tienePersonal,
-          departamentoId: Number(form.departamentoId),
+          departamentoId: form.departamentoId ? Number(form.departamentoId) : null,
           tareas: tareas.filter((t) => t.nombre.trim()),
         }),
       });

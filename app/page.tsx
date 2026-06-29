@@ -148,7 +148,7 @@ export default async function Dashboard() {
                       {p.nombre}
                     </Link>
                   </td>
-                  <td className="px-4 py-3 text-gray-500 text-xs">{p.departamento.nombre}</td>
+                  <td className="px-4 py-3 text-gray-500 text-xs">{p.departamento?.nombre ?? "Sin área"}</td>
                   <td className="px-4 py-3 text-gray-600">{p.titular || <span className="text-gray-300">—</span>}</td>
                   <td className="px-4 py-3">
                     {pctKpi !== null ? (

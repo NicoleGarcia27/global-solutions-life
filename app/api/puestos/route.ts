@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
       competencias: body.competencias ?? "",
       titular: body.titular ?? "",
       estado: body.estado ?? "pendiente",
-      departamentoId: body.departamentoId,
+      departamentoId: body.departamentoId || null,
       usuarioId: Number(token.sub),
       tienePersonal: body.tienePersonal ?? false,
       numPersonasACargo: body.numPersonasACargo ?? "",
