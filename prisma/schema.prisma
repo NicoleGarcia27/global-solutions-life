@@ -113,3 +113,30 @@ model Queja {
   leida     Boolean  @default(false)
   createdAt DateTime @default(now())
 }
+
+model Empleado {
+  id           Int          @id @default(autoincrement())
+  nombre       String
+  puesto       String       @default("")
+  area         String       @default("")
+  tipo         String       @default("empleado") // empleado | proveedor
+  factura      Boolean      @default(false)       // si emite factura
+  fechaIngreso DateTime?
+  sueldoActual Float        @default(0)
+  correo       String       @default("")
+  telefono     String       @default("")
+  notas        String       @default("")
+  activo       Boolean      @default(true)
+  incrementos  Incremento[]
+  createdAt    DateTime     @default(now())
+}
+
+model Incremento {
+  id          Int      @id @default(autoincrement())
+  empleadoId  Int
+  empleado    Empleado @relation(fields: [empleadoId], references: [id], onDelete: Cascade)
+  fecha       DateTime @default(now())
+  sueldoNuevo Float    @default(0)
+  porcentaje  Float    @default(0)
+  nota        String   @default("")
+}

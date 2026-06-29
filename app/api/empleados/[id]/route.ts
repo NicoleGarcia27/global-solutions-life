@@ -1,0 +1,40 @@
+import { prisma } from "@/lib/prisma";
+import { NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
+
+type Params = { params: Promise<{ id: string }> };
+
+async function requireAdmin(req: NextRequest) {
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  return token?.role === "admin";
+}
+
+export async function PATCH(req: NextRequest, { params }: Params) {
+  if (!(await requireAdmin(req))) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  const { id } = await params;
+  const b = await req.json();
+  const empleado = await prisma.empleado.update({
+    where: { id: Number(id) },
+    data: {
+      ...(b.nombre !== undefined && { nombre: b.nombre }),
+      ...(b.puesto !== undefined && { puesto: b.puesto }),
+      ...(b.area !== undefined && { area: b.area }),
+      ...(b.tipo !== undefined && { tipo: b.tipo }),
+      ...(b.factura !== undefined && { factura: b.factura }),
+      ...(b.fechaIngreso !== undefined && { fechaIngreso: b.fechaIngreso ? new Date(b.fechaIngreso) : null }),
+      ...(b.sueldoActual !== undefined && { sueldoActual: Number(b.sueldoActual) || 0 }),
+      ...(b.correo !== undefined && { correo: b.correo }),
+      ...(b.telefono !== undefined && { telefono: b.telefono }),
+      ...(b.notas !== undefined && { notas: b.notas }),
+      ...(b.activo !== undefined && { activo: b.activo }),
+    },
+  });
+  return NextResponse.json(empleado);
+}
+
+export async function DELETE(req: NextRequest, { params }: Params) {
+  if (!(await requireAdmin(req))) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  const { id } = await params;
+  await prisma.empleado.delete({ where: { id: Number(id) } });
+  return NextResponse.json({ ok: true });
+}
