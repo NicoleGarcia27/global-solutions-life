@@ -7,8 +7,9 @@ const AUTH_PAGES = ["/login", "/registro"];
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAuthPage = AUTH_PAGES.includes(pathname);
+  const isBarePage = pathname.endsWith("/imprimir");
 
-  if (isAuthPage) {
+  if (isAuthPage || isBarePage) {
     return <>{children}</>;
   }
 
