@@ -28,7 +28,7 @@ export default async function EmpleadoPage({ params }: Props) {
   for (const a of e.asistencias) asisMes[a.estado as keyof typeof asisMes] = (asisMes[a.estado as keyof typeof asisMes] ?? 0) + 1;
 
   const departamentos = await prisma.departamento.findMany({ orderBy: { nombre: "asc" } });
-  const usuarios = await prisma.usuario.findMany({ where: { role: "usuario" }, select: { id: true, nombre: true, email: true }, orderBy: { nombre: "asc" } });
+  const usuarios = await prisma.usuario.findMany({ select: { id: true, nombre: true, email: true }, orderBy: { nombre: "asc" } });
 
   return (
     <EmpleadoDetalle
