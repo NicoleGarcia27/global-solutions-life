@@ -115,6 +115,11 @@ export default function LoginPage() {
               Regístrate aquí
             </Link>
           </p>
+          <div className="mt-4 pt-4 border-t border-gray-100 text-center">
+            <Link href="/buzon" className="text-xs text-gray-400 hover:text-[#00b4d8] inline-flex items-center gap-1.5">
+              <Lock size={11} /> Buzón de quejas y sugerencias (anónimo)
+            </Link>
+          </div>
         </div>
       </div>
     </div>

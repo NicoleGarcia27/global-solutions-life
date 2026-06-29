@@ -104,3 +104,12 @@ model Kpi {
   puesto     Puesto   @relation(fields: [puestoId], references: [id], onDelete: Cascade)
   updatedAt  DateTime @updatedAt
 }
+
+model Queja {
+  id        Int      @id @default(autoincrement())
+  tipo      String   @default("queja") // queja | sugerencia | reconocimiento
+  area      String   @default("")
+  mensaje   String
+  leida     Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

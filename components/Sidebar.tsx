@@ -16,6 +16,7 @@ import {
   Mail,
   Inbox,
   Wrench,
+  MessageSquareWarning,
 } from "lucide-react";
 
 const nav = [
@@ -87,6 +88,7 @@ export default function Sidebar() {
               { href: "/admin/avance", label: "Panel de avance", icon: TrendingUp },
               { href: "/admin/banco", label: "Banco de tareas", icon: Inbox },
               { href: "/admin/mejoras", label: "Problemas / Mejoras", icon: Wrench },
+              { href: "/admin/buzon", label: "Buzón anónimo", icon: MessageSquareWarning },
               { href: "/admin/comparar", label: "Tareas repetidas", icon: Copy },
               { href: "/admin/invitar", label: "Invitar empleados", icon: Mail },
             ].map(({ href, label, icon: Icon }) => (
