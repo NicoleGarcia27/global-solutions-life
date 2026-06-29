@@ -69,8 +69,8 @@ export default function LoginPage() {
             <h1 className="text-lg font-bold" style={{ color: "#1a3a6b" }}>Global Solutions Life</h1>
           </div>
 
-          <h2 className="text-2xl font-bold" style={{ color: "#1a3a6b" }}>Bienvenida</h2>
-          <p className="text-gray-400 text-sm mb-7">Inicia sesión para continuar</p>
+          <h2 className="text-2xl font-bold text-center" style={{ color: "#1a3a6b" }}>Portal Institucional GSL</h2>
+          <p className="text-gray-400 text-sm mb-7 text-center">Inicia sesión para continuar</p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
