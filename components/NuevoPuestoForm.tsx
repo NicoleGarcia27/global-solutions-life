@@ -6,6 +6,18 @@ import { Plus, Trash2, ChevronDown } from "lucide-react";
 type Dep = { id: number; nombre: string };
 type Tarea = { nombre: string; descripcion: string; frecuencia: string; tiempoHoras: number };
 
+function Section({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
+      <div>
+        <h2 className="text-sm font-semibold text-gray-700">{title}</h2>
+        {subtitle && <p className="text-xs text-gray-400 mt-0.5">{subtitle}</p>}
+      </div>
+      {children}
+    </div>
+  );
+}
+
 const FRECUENCIAS = ["Diaria", "Semanal", "Quincenal", "Mensual", "Eventual"];
 
 export default function NuevoPuestoForm({ departamentos }: { departamentos: Dep[] }) {
@@ -99,16 +111,6 @@ export default function NuevoPuestoForm({ departamentos }: { departamentos: Dep[
           placeholder={opts?.placeholder}
         />
       )}
-    </div>
-  );
-
-  const Section = ({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) => (
-    <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
-      <div>
-        <h2 className="text-sm font-semibold text-gray-700">{title}</h2>
-        {subtitle && <p className="text-xs text-gray-400 mt-0.5">{subtitle}</p>}
-      </div>
-      {children}
     </div>
   );
 
