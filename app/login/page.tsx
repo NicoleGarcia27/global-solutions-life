@@ -50,8 +50,7 @@ export default function LoginPage() {
           <h1 className="text-4xl font-black text-white tracking-tight">Global Solutions Life</h1>
           <p className="text-lg mt-2" style={{ color: "#00b4d8" }}>Consultoría en Seguros &amp; Inversiones</p>
           <div className="mt-10 mx-auto w-16 border-t border-white/20" />
-          <p className="text-white/50 text-sm mt-8 uppercase tracking-[3px]">Sistema Institucional de</p>
-          <p className="text-white font-semibold text-lg mt-1">Gestión de Puestos &amp; KPIs</p>
+          <p className="text-white font-bold text-3xl mt-8 tracking-wide">Sistema Institucional</p>
         </div>
 
         <p className="absolute bottom-6 text-center text-white/35 text-xs w-full left-0">
