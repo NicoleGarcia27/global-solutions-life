@@ -2,13 +2,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Pencil, Check, X, TrendingUp, Trash2, Plus } from "lucide-react";
+import { ArrowLeft, Pencil, Check, X, TrendingUp, Trash2, Plus, Palmtree } from "lucide-react";
 
 type Empleado = {
   id: number; nombre: string; puesto: string; area: string; tipo: string; factura: boolean;
   sueldoActual: number; correo: string; telefono: string; notas: string; activo: boolean; fechaIngreso: string;
+  diasVacaciones: number;
 };
 type Incremento = { id: number; fecha: string; sueldoNuevo: number; porcentaje: number; nota: string };
+type Vacacion = { id: number; fechaInicio: string; fechaFin: string; dias: number; estado: string; nota: string };
 
 const money = (n: number) => "$" + (n || 0).toLocaleString("es-MX");
 const TIPOS: Record<string, { label: string; cls: string }> = {
@@ -25,13 +27,31 @@ function antiguedad(fecha: string) {
 }
 const fmtFecha = (iso: string) => iso ? new Date(iso).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" }) : "—";
 
-export default function EmpleadoDetalle({ empleado, incrementos, departamentos }: { empleado: Empleado; incrementos: Incremento[]; departamentos: string[] }) {
+export default function EmpleadoDetalle({ empleado, incrementos, vacaciones, departamentos }: { empleado: Empleado; incrementos: Incremento[]; vacaciones: Vacacion[]; departamentos: string[] }) {
   const router = useRouter();
   const [edit, setEdit] = useState(false);
   const [busy, setBusy] = useState(false);
   const [f, setF] = useState(empleado);
   const [incOpen, setIncOpen] = useState(false);
   const [inc, setInc] = useState({ sueldoNuevo: "", fecha: new Date().toISOString().slice(0, 10), nota: "" });
+  const [vacOpen, setVacOpen] = useState(false);
+  const [vac, setVac] = useState({ fechaInicio: "", fechaFin: "", dias: "", nota: "" });
+
+  const anioActual = new Date().getFullYear();
+  const tomados = vacaciones.filter((v) => new Date(v.fechaInicio).getFullYear() === anioActual).reduce((s, v) => s + v.dias, 0);
+  const disponibles = empleado.diasVacaciones - tomados;
+
+  async function registrarVacacion() {
+    if (!vac.fechaInicio || !vac.fechaFin) return;
+    setBusy(true);
+    await fetch(`/api/empleados/${empleado.id}/vacacion`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(vac) });
+    setBusy(false); setVacOpen(false); setVac({ fechaInicio: "", fechaFin: "", dias: "", nota: "" }); router.refresh();
+  }
+  async function eliminarVacacion(vid: number) {
+    if (!confirm("¿Eliminar este periodo de vacaciones?")) return;
+    await fetch(`/api/vacaciones/${vid}`, { method: "DELETE" });
+    router.refresh();
+  }
 
   function set(k: string, v: string | boolean) { setF((p) => ({ ...p, [k]: v })); }
 
@@ -100,6 +120,7 @@ export default function EmpleadoDetalle({ empleado, incrementos, departamentos }
               <div><label className="text-xs text-gray-500">Sueldo actual</label><input type="number" className={`mt-1 ${inp}`} value={f.sueldoActual} onChange={(e) => set("sueldoActual", e.target.value as any)} /></div>
               <div><label className="text-xs text-gray-500">Correo</label><input className={`mt-1 ${inp}`} value={f.correo} onChange={(e) => set("correo", e.target.value)} /></div>
               <div><label className="text-xs text-gray-500">Teléfono</label><input className={`mt-1 ${inp}`} value={f.telefono} onChange={(e) => set("telefono", e.target.value)} /></div>
+              <div><label className="text-xs text-gray-500">Días de vacaciones al año</label><input type="number" className={`mt-1 ${inp}`} value={f.diasVacaciones} onChange={(e) => set("diasVacaciones", e.target.value as any)} /></div>
             </div>
             <label className="flex items-center gap-2 text-sm text-gray-600"><input type="checkbox" checked={f.factura} onChange={(e) => set("factura", e.target.checked)} className="w-4 h-4" /> ¿Emite factura?</label>
             <div><label className="text-xs text-gray-500">Notas</label><textarea rows={2} className={`mt-1 ${inp} resize-none`} value={f.notas} onChange={(e) => set("notas", e.target.value)} /></div>
@@ -155,6 +176,54 @@ export default function EmpleadoDetalle({ empleado, incrementos, departamentos }
                 <div className="text-right">
                   {i.porcentaje > 0 && <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ backgroundColor: "#ecfdf5", color: "#3b6d11" }}>+{i.porcentaje}%</span>}
                   <p className="text-xs text-gray-400 mt-0.5">{fmtFecha(i.fecha)}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Vacaciones */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-sm font-semibold text-gray-700 flex items-center gap-2"><Palmtree size={15} style={{ color: "#00b4d8" }} /> Vacaciones {anioActual}</h2>
+          {!vacOpen && <button onClick={() => setVacOpen(true)} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg text-white" style={{ backgroundColor: "#1a3a6b" }}><Plus size={13} /> Registrar vacaciones</button>}
+        </div>
+
+        <div className="grid grid-cols-3 gap-3 mb-4">
+          <div className="bg-gray-50 rounded-lg p-3 text-center"><p className="text-2xl font-bold text-gray-800">{empleado.diasVacaciones}</p><p className="text-xs text-gray-400">le corresponden</p></div>
+          <div className="rounded-lg p-3 text-center" style={{ backgroundColor: "#fffbeb" }}><p className="text-2xl font-bold" style={{ color: "#d97706" }}>{tomados}</p><p className="text-xs" style={{ color: "#d97706" }}>tomados</p></div>
+          <div className="rounded-lg p-3 text-center" style={{ backgroundColor: disponibles < 0 ? "#fef2f2" : "#ecfdf5" }}><p className="text-2xl font-bold" style={{ color: disponibles < 0 ? "#dc2626" : "#059669" }}>{disponibles}</p><p className="text-xs" style={{ color: disponibles < 0 ? "#dc2626" : "#059669" }}>disponibles</p></div>
+        </div>
+
+        {vacOpen && (
+          <div className="border border-gray-100 rounded-lg p-4 bg-gray-50 mb-4 space-y-3">
+            <div className="grid grid-cols-3 gap-3">
+              <div><label className="text-xs text-gray-500">Del</label><input type="date" className={`mt-1 ${inp} bg-white`} value={vac.fechaInicio} onChange={(e) => setVac({ ...vac, fechaInicio: e.target.value })} /></div>
+              <div><label className="text-xs text-gray-500">Al</label><input type="date" className={`mt-1 ${inp} bg-white`} value={vac.fechaFin} onChange={(e) => setVac({ ...vac, fechaFin: e.target.value })} /></div>
+              <div><label className="text-xs text-gray-500">Días que cuentan</label><input type="number" min={1} className={`mt-1 ${inp} bg-white`} value={vac.dias} onChange={(e) => setVac({ ...vac, dias: e.target.value })} placeholder="ej. 5" /></div>
+            </div>
+            <div><label className="text-xs text-gray-500">Nota (opcional)</label><input className={`mt-1 ${inp} bg-white`} value={vac.nota} onChange={(e) => setVac({ ...vac, nota: e.target.value })} placeholder="ej. Vacaciones de verano" /></div>
+            <div className="flex gap-2">
+              <button onClick={registrarVacacion} disabled={busy || !vac.fechaInicio || !vac.fechaFin} className="flex items-center gap-1.5 px-4 py-2 text-xs text-white rounded-lg disabled:opacity-50" style={{ backgroundColor: "#1a3a6b" }}><Check size={13} /> Guardar</button>
+              <button onClick={() => setVacOpen(false)} className="px-4 py-2 text-xs text-gray-500 border border-gray-200 rounded-lg">Cancelar</button>
+            </div>
+          </div>
+        )}
+
+        {vacaciones.length === 0 ? (
+          <p className="text-sm text-gray-400">Sin vacaciones registradas.</p>
+        ) : (
+          <div className="space-y-2">
+            {vacaciones.map((v) => (
+              <div key={v.id} className="flex items-center justify-between border border-gray-100 rounded-lg px-4 py-2.5">
+                <div>
+                  <p className="text-sm text-gray-800">{fmtFecha(v.fechaInicio)} — {fmtFecha(v.fechaFin)}</p>
+                  {v.nota && <p className="text-xs text-gray-400">{v.nota}</p>}
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-medium text-gray-600">{v.dias} {v.dias === 1 ? "día" : "días"}</span>
+                  <button onClick={() => eliminarVacacion(v.id)} className="text-gray-300 hover:text-red-500"><Trash2 size={13} /></button>
                 </div>
               </div>
             ))}

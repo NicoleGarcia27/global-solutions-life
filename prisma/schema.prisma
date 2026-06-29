@@ -125,10 +125,24 @@ model Empleado {
   sueldoActual Float        @default(0)
   correo       String       @default("")
   telefono     String       @default("")
-  notas        String       @default("")
-  activo       Boolean      @default(true)
-  incrementos  Incremento[]
-  createdAt    DateTime     @default(now())
+  notas          String       @default("")
+  activo         Boolean      @default(true)
+  diasVacaciones Int          @default(12)
+  incrementos    Incremento[]
+  vacaciones     Vacacion[]
+  createdAt      DateTime     @default(now())
+}
+
+model Vacacion {
+  id          Int      @id @default(autoincrement())
+  empleadoId  Int
+  empleado    Empleado @relation(fields: [empleadoId], references: [id], onDelete: Cascade)
+  fechaInicio DateTime
+  fechaFin    DateTime
+  dias        Int      @default(1)
+  estado      String   @default("aprobada") // solicitada | aprobada | tomada
+  nota        String   @default("")
+  createdAt   DateTime @default(now())
 }
 
 model Incremento {

@@ -6,7 +6,7 @@ import { useSession, signOut } from "next-auth/react";
 import {
   LayoutDashboard, Users, ListChecks, BarChart3, FileText, Network, LogOut,
   Shield, TrendingUp, Copy, Mail, Inbox, Wrench, MessageSquareWarning,
-  ChevronDown, ChevronRight, UserCog,
+  ChevronDown, ChevronRight, UserCog, Palmtree,
 } from "lucide-react";
 
 type Item = { href: string; label: string; icon: any };
@@ -30,6 +30,7 @@ const GRUPOS: Grupo[] = [
     tipo: "folder", id: "personal", label: "Personal", adminOnly: true,
     items: [
       { href: "/empleados", label: "Empleados", icon: UserCog },
+      { href: "/vacaciones", label: "Vacaciones", icon: Palmtree },
     ],
   },
   {

@@ -14,7 +14,10 @@ export default async function EmpleadoPage({ params }: Props) {
   const { id } = await params;
   const e = await prisma.empleado.findUnique({
     where: { id: Number(id) },
-    include: { incrementos: { orderBy: { fecha: "desc" } } },
+    include: {
+      incrementos: { orderBy: { fecha: "desc" } },
+      vacaciones: { orderBy: { fechaInicio: "desc" } },
+    },
   });
   if (!e) notFound();
 
@@ -25,11 +28,14 @@ export default async function EmpleadoPage({ params }: Props) {
       empleado={{
         id: e.id, nombre: e.nombre, puesto: e.puesto, area: e.area, tipo: e.tipo,
         factura: e.factura, sueldoActual: e.sueldoActual, correo: e.correo, telefono: e.telefono,
-        notas: e.notas, activo: e.activo,
+        notas: e.notas, activo: e.activo, diasVacaciones: e.diasVacaciones,
         fechaIngreso: e.fechaIngreso ? e.fechaIngreso.toISOString().slice(0, 10) : "",
       }}
       incrementos={e.incrementos.map((i) => ({
         id: i.id, fecha: i.fecha.toISOString(), sueldoNuevo: i.sueldoNuevo, porcentaje: i.porcentaje, nota: i.nota,
+      }))}
+      vacaciones={e.vacaciones.map((v) => ({
+        id: v.id, fechaInicio: v.fechaInicio.toISOString(), fechaFin: v.fechaFin.toISOString(), dias: v.dias, estado: v.estado, nota: v.nota,
       }))}
       departamentos={departamentos.map((d) => d.nombre)}
     />
