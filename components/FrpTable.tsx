@@ -80,7 +80,7 @@ export default function FrpTable({ responsabilidades: initial, puestoId }: { res
           ))}
 
           {adding && (
-            <tr className="border-b border-emerald-100 bg-emerald-50">
+            <tr className="border-b border-[#cdeef6] bg-[#eef7fb]">
               <td className="px-4 py-2 text-xs text-gray-400">R{items.length + 1}</td>
               <td className="px-4 py-2">
                 <input className="w-full border border-gray-300 rounded px-2 py-1 text-xs" placeholder="Descripción de la responsabilidad" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} autoFocus />
@@ -100,7 +100,7 @@ export default function FrpTable({ responsabilidades: initial, puestoId }: { res
               </td>
               <td className="px-4 py-2">
                 <div className="flex gap-2">
-                  <button onClick={save} className="px-3 py-1 bg-emerald-600 text-white text-xs rounded-lg hover:bg-emerald-700">Guardar</button>
+                  <button onClick={save} className="px-3 py-1 text-white text-xs rounded-lg hover:brightness-110" style={{ backgroundColor: "#1a3a6b" }}>Guardar</button>
                   <button onClick={() => setAdding(false)} className="text-gray-400 hover:text-gray-600 text-xs">Cancelar</button>
                 </div>
               </td>
@@ -111,7 +111,7 @@ export default function FrpTable({ responsabilidades: initial, puestoId }: { res
 
       {!adding && (
         <div className="px-4 py-3 border-t border-gray-100">
-          <button onClick={() => setAdding(true)} className="flex items-center gap-1.5 text-sm text-emerald-600 hover:text-emerald-700">
+          <button onClick={() => setAdding(true)} className="flex items-center gap-1.5 text-sm hover:brightness-110" style={{ color: "#00b4d8" }}>
             <Plus size={14} /> Agregar responsabilidad
           </button>
         </div>

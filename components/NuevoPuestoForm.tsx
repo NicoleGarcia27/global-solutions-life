@@ -107,7 +107,7 @@ export default function NuevoPuestoForm({ departamentos }: { departamentos: Dep[
       <label className="text-xs text-gray-500">{label}</label>
       {opts?.textarea ? (
         <textarea
-          className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none"
+          className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#00b4d8] resize-none"
           rows={opts.rows ?? 2}
           value={(form as Record<string, string>)[key]}
           onChange={(e) => set(key, e.target.value)}
@@ -116,7 +116,7 @@ export default function NuevoPuestoForm({ departamentos }: { departamentos: Dep[
       ) : (
         <input
           type="text"
-          className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
+          className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#00b4d8]"
           value={(form as Record<string, string>)[key]}
           onChange={(e) => set(key, e.target.value)}
           placeholder={opts?.placeholder}
@@ -136,7 +136,7 @@ export default function NuevoPuestoForm({ departamentos }: { departamentos: Dep[
             <input
               type="text"
               required
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#00b4d8]"
               placeholder="ej. Gerente de Operación"
               value={form.nombre}
               onChange={(e) => set("nombre", e.target.value)}
@@ -146,7 +146,7 @@ export default function NuevoPuestoForm({ departamentos }: { departamentos: Dep[
             <label className="text-xs text-gray-500">Tu nombre completo</label>
             <input
               type="text"
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#00b4d8]"
               placeholder="Nombre de quien ocupa el puesto"
               value={form.titular}
               onChange={(e) => set("titular", e.target.value)}
@@ -157,7 +157,7 @@ export default function NuevoPuestoForm({ departamentos }: { departamentos: Dep[
           <div className="flex flex-col gap-1">
             <label className="text-xs text-gray-500">Área / Departamento <span className="text-red-400">*</span></label>
             <select
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#00b4d8]"
               value={form.departamentoId}
               onChange={(e) => set("departamentoId", e.target.value)}
             >
@@ -190,7 +190,7 @@ export default function NuevoPuestoForm({ departamentos }: { departamentos: Dep[
                 <label className="text-xs text-gray-500">¿Qué actividad realizas? <span className="text-red-400">*</span></label>
                 <input
                   type="text"
-                  className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#00b4d8]"
                   placeholder="ej. Seguimiento de pólizas, elaboración de reportes, atención a clientes..."
                   value={tarea.nombre}
                   onChange={(e) => setTarea(i, "nombre", e.target.value)}
@@ -199,7 +199,7 @@ export default function NuevoPuestoForm({ departamentos }: { departamentos: Dep[
               <div>
                 <label className="text-xs text-gray-500">¿Cómo la desarrollas?</label>
                 <textarea
-                  className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none"
+                  className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#00b4d8] resize-none"
                   rows={2}
                   placeholder="Describe el proceso: qué haces primero, qué herramientas usas, con quién interactúas, qué resultado produces..."
                   value={tarea.descripcion}
@@ -210,7 +210,7 @@ export default function NuevoPuestoForm({ departamentos }: { departamentos: Dep[
                 <div>
                   <label className="text-xs text-gray-500">Frecuencia</label>
                   <select
-                    className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#00b4d8]"
                     value={tarea.frecuencia}
                     onChange={(e) => setTarea(i, "frecuencia", e.target.value)}
                   >
@@ -223,7 +223,7 @@ export default function NuevoPuestoForm({ departamentos }: { departamentos: Dep[
                     type="number"
                     min={0.25}
                     step={0.25}
-                    className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#00b4d8]"
                     value={tarea.tiempoHoras}
                     onChange={(e) => setTarea(i, "tiempoHoras", Number(e.target.value))}
                   />
@@ -235,7 +235,7 @@ export default function NuevoPuestoForm({ departamentos }: { departamentos: Dep[
         <button
           type="button"
           onClick={addTarea}
-          className="flex items-center gap-1.5 text-xs px-4 py-2 rounded-lg border border-dashed border-emerald-300 text-emerald-700 hover:bg-emerald-50 w-full justify-center"
+          className="flex items-center gap-1.5 text-xs px-4 py-2 rounded-lg border border-dashed w-full justify-center hover:bg-[#e6f8fc]" style={{ borderColor: "#00b4d8", color: "#0a7d99" }}
         >
           <Plus size={13} /> Agregar otra tarea
         </button>

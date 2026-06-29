@@ -99,7 +99,7 @@ export default function KpiTable({ kpis: initial, puestoId }: { kpis: Kpi[]; pue
                         onChange={(e) => setEditActual(e.target.value)}
                         autoFocus
                       />
-                      <button onClick={() => updateActual(k)} className="text-emerald-600 hover:text-emerald-800">
+                      <button onClick={() => updateActual(k)} style={{ color: "#1a3a6b" }} className="hover:brightness-125">
                         <Check size={14} />
                       </button>
                       <button onClick={() => setEditId(null)} className="text-gray-400 hover:text-gray-600">
@@ -109,7 +109,7 @@ export default function KpiTable({ kpis: initial, puestoId }: { kpis: Kpi[]; pue
                   ) : (
                     <button
                       onClick={() => { setEditId(k.id); setEditActual(k.actual); }}
-                      className="text-gray-700 hover:text-emerald-600 hover:underline text-left"
+                      className="text-gray-700 hover:text-[#00b4d8] hover:underline text-left"
                     >
                       {k.actual ? `${k.actual} ${k.unidad}` : <span className="text-gray-300">Clic para ingresar</span>}
                     </button>
@@ -132,7 +132,7 @@ export default function KpiTable({ kpis: initial, puestoId }: { kpis: Kpi[]; pue
           })}
 
           {adding && (
-            <tr className="border-b border-emerald-100 bg-emerald-50">
+            <tr className="border-b border-[#cdeef6] bg-[#eef7fb]">
               <td className="px-4 py-2">
                 <input className="w-full border border-gray-300 rounded px-2 py-1 text-xs" placeholder="Área" value={form.area} onChange={(e) => setForm({ ...form, area: e.target.value })} />
               </td>
@@ -152,7 +152,7 @@ export default function KpiTable({ kpis: initial, puestoId }: { kpis: Kpi[]; pue
               </td>
               <td colSpan={2} className="px-4 py-2">
                 <div className="flex gap-2">
-                  <button onClick={saveKpi} className="px-3 py-1 bg-emerald-600 text-white text-xs rounded-lg hover:bg-emerald-700">Guardar</button>
+                  <button onClick={saveKpi} className="px-3 py-1 text-white text-xs rounded-lg hover:brightness-110" style={{ backgroundColor: "#1a3a6b" }}>Guardar</button>
                   <button onClick={() => setAdding(false)} className="px-3 py-1 text-gray-500 text-xs hover:text-gray-700">Cancelar</button>
                 </div>
               </td>
@@ -165,7 +165,7 @@ export default function KpiTable({ kpis: initial, puestoId }: { kpis: Kpi[]; pue
         <div className="px-4 py-3 border-t border-gray-100">
           <button
             onClick={() => setAdding(true)}
-            className="flex items-center gap-1.5 text-sm text-emerald-600 hover:text-emerald-700"
+            className="flex items-center gap-1.5 text-sm hover:brightness-110" style={{ color: "#00b4d8" }}
           >
             <Plus size={14} /> Agregar KPI
           </button>

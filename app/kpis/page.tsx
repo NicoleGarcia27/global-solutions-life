@@ -39,7 +39,7 @@ export default async function KpisPage() {
           <div key={p.id} className="bg-white rounded-xl border border-gray-200">
             <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
               <div>
-                <Link href={`/puestos/${p.id}`} className="text-sm font-medium text-gray-900 hover:text-emerald-600">
+                <Link href={`/puestos/${p.id}`} className="text-sm font-medium text-gray-900 hover:text-[#00b4d8]">
                   {p.nombre}
                 </Link>
                 <span className="text-xs text-gray-400 ml-2">{p.departamento?.nombre ?? "Sin área"}</span>

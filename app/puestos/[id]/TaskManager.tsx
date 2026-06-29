@@ -220,16 +220,16 @@ export default function TaskManager({
 
       {/* Agregar nueva tarea */}
       {adding ? (
-        <div className="border-2 border-dashed border-emerald-300 rounded-lg p-4 bg-emerald-50/40 space-y-2">
+        <div className="border-2 border-dashed rounded-lg p-4 space-y-2" style={{ borderColor: "#9bdcec", backgroundColor: "#f0fbfd" }}>
           <input
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#00b4d8]"
             value={nueva.nombre}
             onChange={(e) => setNueva({ ...nueva, nombre: e.target.value })}
             placeholder="Nombre de la nueva tarea"
             autoFocus
           />
           <textarea
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none"
+            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#00b4d8] resize-none"
             rows={2}
             value={nueva.descripcion}
             onChange={(e) => setNueva({ ...nueva, descripcion: e.target.value })}
@@ -251,7 +251,7 @@ export default function TaskManager({
           </div>
         </div>
       ) : (
-        <button onClick={() => setAdding(true)} className="flex items-center gap-2 text-xs px-4 py-2.5 rounded-lg border border-dashed border-emerald-300 text-emerald-700 hover:bg-emerald-50 w-full justify-center">
+        <button onClick={() => setAdding(true)} className="flex items-center gap-2 text-xs px-4 py-2.5 rounded-lg border border-dashed w-full justify-center hover:bg-[#f0fbfd]" style={{ borderColor: "#9bdcec", color: "#0a7d99" }}>
           <Plus size={14} /> Agregar tarea a este puesto
         </button>
       )}

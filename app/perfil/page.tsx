@@ -20,11 +20,11 @@ export default async function PerfilPage() {
           <Link
             key={p.id}
             href={`/puestos/${p.id}`}
-            className="bg-white rounded-xl border border-gray-200 p-4 hover:border-emerald-300 hover:shadow-sm transition-all group"
+            className="bg-white rounded-xl border border-gray-200 p-4 hover:border-[#00b4d8] hover:shadow-sm transition-all group"
           >
             <div className="flex items-start gap-3">
-              <div className="w-9 h-9 bg-emerald-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-emerald-100">
-                <FileText size={16} className="text-emerald-600" />
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: "#e6f8fc" }}>
+                <FileText size={16} style={{ color: "#00b4d8" }} />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">{p.nombre}</p>

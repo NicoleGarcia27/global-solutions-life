@@ -14,9 +14,9 @@ export default async function OrganigramaPage() {
       <h1 className="text-xl font-semibold text-gray-900">Organigrama</h1>
 
       <div className="flex flex-col items-center gap-2 py-4">
-        <div className="bg-white border-2 border-emerald-500 rounded-xl px-8 py-3 text-center shadow-sm">
+        <div className="bg-white border-2 rounded-xl px-8 py-3 text-center shadow-sm" style={{ borderColor: "#1a3a6b" }}>
           <p className="text-xs text-gray-400">Dirección General</p>
-          <p className="text-sm font-semibold text-gray-900">Global Solutions Life</p>
+          <p className="text-sm font-semibold" style={{ color: "#1a3a6b" }}>Global Solutions Life</p>
         </div>
         <div className="w-px h-6 bg-gray-200" />
       </div>
@@ -24,8 +24,8 @@ export default async function OrganigramaPage() {
       <div className="grid grid-cols-3 gap-4">
         {departamentos.map((dep) => (
           <div key={dep.id} className="bg-white rounded-xl border border-gray-200">
-            <div className="px-4 py-3 border-b border-gray-100 bg-emerald-50">
-              <p className="text-xs font-semibold text-emerald-700 uppercase tracking-wide">{dep.nombre}</p>
+            <div className="px-4 py-3 border-b border-gray-100" style={{ backgroundColor: "#eef2f8" }}>
+              <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "#1a3a6b" }}>{dep.nombre}</p>
             </div>
             <div className="p-3 space-y-2">
               {dep.puestos.length === 0 && (
@@ -39,9 +39,9 @@ export default async function OrganigramaPage() {
                   <Link
                     key={p.id}
                     href={`/puestos/${p.id}`}
-                    className="block p-3 rounded-lg border border-gray-100 hover:border-emerald-200 hover:bg-emerald-50 transition-colors group"
+                    className="block p-3 rounded-lg border border-gray-100 transition-colors group hover:border-[#00b4d8] hover:bg-[#f0fbfd]"
                   >
-                    <p className="text-sm font-medium text-gray-900 group-hover:text-emerald-700">{p.nombre}</p>
+                    <p className="text-sm font-medium text-gray-900 group-hover:text-[#0a7d99]">{p.nombre}</p>
                     {p.titular && <p className="text-xs text-gray-500 mt-0.5">{p.titular}</p>}
                     <div className="flex items-center justify-between mt-2">
                       <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
