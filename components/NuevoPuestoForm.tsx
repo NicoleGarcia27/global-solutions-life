@@ -77,18 +77,29 @@ export default function NuevoPuestoForm({ departamentos }: { departamentos: Dep[
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    const res = await fetch("/api/puestos", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...form,
-        tienePersonal,
-        departamentoId: Number(form.departamentoId),
-        tareas: tareas.filter((t) => t.nombre.trim()),
-      }),
-    });
-    const created = await res.json();
-    router.push(`/puestos/${created.id}`);
+    try {
+      const res = await fetch("/api/puestos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...form,
+          tienePersonal,
+          departamentoId: Number(form.departamentoId),
+          tareas: tareas.filter((t) => t.nombre.trim()),
+        }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        alert("Error al guardar: " + (err.error ?? "intenta de nuevo"));
+        setLoading(false);
+        return;
+      }
+      const created = await res.json();
+      router.push(`/puestos/${created.id}`);
+    } catch {
+      alert("Error de conexión, intenta de nuevo");
+      setLoading(false);
+    }
   }
 
   const field = (label: string, key: string, opts?: { textarea?: boolean; placeholder?: string; rows?: number }) => (
