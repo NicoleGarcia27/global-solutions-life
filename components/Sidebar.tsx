@@ -15,6 +15,7 @@ import {
   GitCompare,
   Mail,
   Inbox,
+  Wrench,
 } from "lucide-react";
 
 const nav = [
@@ -85,6 +86,7 @@ export default function Sidebar() {
               { href: "/admin/usuarios", label: "Usuarios", icon: Shield },
               { href: "/admin/avance", label: "Panel de avance", icon: TrendingUp },
               { href: "/admin/banco", label: "Banco de tareas", icon: Inbox },
+              { href: "/admin/mejoras", label: "Problemas / Mejoras", icon: Wrench },
               { href: "/admin/comparar", label: "Comparar puestos", icon: GitCompare },
               { href: "/admin/invitar", label: "Invitar empleados", icon: Mail },
             ].map(({ href, label, icon: Icon }) => (
