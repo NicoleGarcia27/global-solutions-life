@@ -67,6 +67,8 @@ model Puesto {
   tareasQueNadieHace      String   @default("")
   problemasFrecuentes     String   @default("")
   comoMideSuTrabajo       String   @default("")
+  // Admin
+  adminNotas              String   @default("")
   departamentoId    Int
   departamento      Departamento      @relation(fields: [departamentoId], references: [id])
   responsabilidades Responsabilidad[]

@@ -11,6 +11,9 @@ import {
   Network,
   LogOut,
   Shield,
+  TrendingUp,
+  GitCompare,
+  Mail,
 } from "lucide-react";
 
 const nav = [
@@ -77,17 +80,25 @@ export default function Sidebar() {
         {user?.role === "admin" && (
           <>
             <p className="text-[10px] uppercase tracking-widest px-2 pt-4 pb-1 font-semibold" style={{ color: "rgba(255,255,255,0.4)" }}>Admin</p>
-            <Link
-              href="/admin/usuarios"
-              className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors"
-              style={path.startsWith("/admin")
-                ? { backgroundColor: "#00b4d8", color: "#fff", fontWeight: 600 }
-                : { color: "rgba(255,255,255,0.75)" }
-              }
-            >
-              <Shield size={16} />
-              Usuarios
-            </Link>
+            {[
+              { href: "/admin/usuarios", label: "Usuarios", icon: Shield },
+              { href: "/admin/avance", label: "Panel de avance", icon: TrendingUp },
+              { href: "/admin/comparar", label: "Comparar puestos", icon: GitCompare },
+              { href: "/admin/invitar", label: "Invitar empleados", icon: Mail },
+            ].map(({ href, label, icon: Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors"
+                style={path.startsWith(href)
+                  ? { backgroundColor: "#00b4d8", color: "#fff", fontWeight: 600 }
+                  : { color: "rgba(255,255,255,0.75)" }
+                }
+              >
+                <Icon size={16} />
+                {label}
+              </Link>
+            ))}
           </>
         )}
       </nav>
