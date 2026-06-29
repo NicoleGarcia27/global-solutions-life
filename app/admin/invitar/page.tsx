@@ -1,134 +1,118 @@
 "use client";
 import { useState } from "react";
-import { Mail, Plus, Send, Trash2, CheckCircle } from "lucide-react";
+import { Mail, Plus, Trash2, Copy, CheckCircle, MessageCircle } from "lucide-react";
 
-type Invitado = { nombre: string; email: string; estado: "pendiente" | "enviado" | "error" };
+const LINK = "https://global-solutions-life.vercel.app/registro";
 
 export default function InvitarPage() {
-  const [lista, setLista] = useState<Invitado[]>([{ nombre: "", email: "", estado: "pendiente" }]);
-  const [enviando, setEnviando] = useState(false);
-  const [resultados, setResultados] = useState<boolean>(false);
+  const [lista, setLista] = useState([{ nombre: "", email: "" }]);
+  const [copiado, setCopiado] = useState<number | null>(null);
 
-  function agregarFila() {
-    setLista((l) => [...l, { nombre: "", email: "", estado: "pendiente" }]);
+  function agregar() {
+    setLista((l) => [...l, { nombre: "", email: "" }]);
   }
 
-  function eliminarFila(i: number) {
+  function eliminar(i: number) {
     setLista((l) => l.filter((_, idx) => idx !== i));
   }
 
-  function setFila(i: number, key: "nombre" | "email", val: string) {
+  function set(i: number, key: "nombre" | "email", val: string) {
     setLista((l) => l.map((item, idx) => idx === i ? { ...item, [key]: val } : item));
   }
 
-  async function enviarInvitaciones() {
-    setEnviando(true);
-    const nuevaLista = [...lista];
-    for (let i = 0; i < nuevaLista.length; i++) {
-      const inv = nuevaLista[i];
-      if (!inv.nombre || !inv.email) continue;
-      const res = await fetch("/api/admin/invitar", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nombre: inv.nombre, email: inv.email }),
-      });
-      nuevaLista[i] = { ...inv, estado: res.ok ? "enviado" : "error" };
-      setLista([...nuevaLista]);
-    }
-    setEnviando(false);
-    setResultados(true);
+  function mensajeWhatsApp(nombre: string) {
+    return `Hola ${nombre}, te invito a registrarte en el sistema institucional de Global Solutions Life para que puedas llenar la información de tu puesto.\n\nEntra aquí: ${LINK}\n\nCrea tu cuenta con tu correo y llena el formulario de tus actividades. Si tienes alguna duda comunícate con RH.`;
   }
 
-  const enviados = lista.filter((l) => l.estado === "enviado").length;
-  const validos = lista.filter((l) => l.nombre && l.email).length;
+  function copiar(i: number, nombre: string) {
+    navigator.clipboard.writeText(mensajeWhatsApp(nombre));
+    setCopiado(i);
+    setTimeout(() => setCopiado(null), 2000);
+  }
+
+  function abrirWhatsApp(nombre: string, email: string) {
+    const msg = encodeURIComponent(mensajeWhatsApp(nombre));
+    window.open(`https://wa.me/?text=${msg}`, "_blank");
+  }
 
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-6">
       <div>
         <h1 className="text-xl font-semibold text-gray-900">Invitar empleados</h1>
-        <p className="text-sm text-gray-400 mt-0.5">Envía el link de registro por correo a cada empleado</p>
+        <p className="text-sm text-gray-400 mt-0.5">Genera el mensaje de invitación listo para enviar por WhatsApp o correo</p>
       </div>
 
-      {/* Info box */}
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex gap-3">
-        <Mail size={18} className="text-blue-500 shrink-0 mt-0.5" />
-        <div>
-          <p className="text-sm font-medium text-blue-800">¿Cómo funciona?</p>
-          <p className="text-xs text-blue-600 mt-1 leading-relaxed">
-            Agrega el nombre y correo de cada empleado. Les llegará un correo con el link para registrarse en el sistema.
-            Una vez registrados, podrán llenar su formulario de puesto.
-          </p>
-          <p className="text-xs text-blue-500 mt-1 font-medium">
-            Link de registro: global-solutions-life.vercel.app/registro
-          </p>
+      {/* Link directo */}
+      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+        <p className="text-xs font-semibold text-blue-700 mb-1">Link de registro para compartir:</p>
+        <div className="flex items-center gap-2">
+          <code className="flex-1 text-sm text-blue-800 bg-white border border-blue-200 rounded-lg px-3 py-2">
+            {LINK}
+          </code>
+          <button
+            onClick={() => { navigator.clipboard.writeText(LINK); }}
+            className="flex items-center gap-1.5 px-3 py-2 text-xs text-blue-700 border border-blue-200 bg-white rounded-lg hover:bg-blue-50"
+          >
+            <Copy size={12} /> Copiar
+          </button>
         </div>
       </div>
 
-      {/* Tabla de invitados */}
+      {/* Lista de empleados */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="px-5 py-3 border-b border-gray-100">
-          <h2 className="text-sm font-medium text-gray-700">Lista de empleados a invitar</h2>
+          <h2 className="text-sm font-medium text-gray-700">Generar mensaje personalizado por empleado</h2>
+          <p className="text-xs text-gray-400 mt-0.5">Agrega su nombre y genera el mensaje listo para copiar o abrir en WhatsApp</p>
         </div>
+
         <div className="p-4 space-y-3">
           {lista.map((inv, i) => (
-            <div key={i} className="flex gap-3 items-center">
-              <div className="flex-1 grid grid-cols-2 gap-3">
+            <div key={i} className="border border-gray-100 rounded-xl p-4 space-y-3 bg-gray-50">
+              <div className="flex gap-3 items-center">
                 <input
                   type="text"
-                  placeholder="Nombre completo"
-                  className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  placeholder="Nombre del empleado"
+                  className="flex-1 border border-gray-200 bg-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                   value={inv.nombre}
-                  onChange={(e) => setFila(i, "nombre", e.target.value)}
-                  disabled={inv.estado === "enviado"}
+                  onChange={(e) => set(i, "nombre", e.target.value)}
                 />
-                <input
-                  type="email"
-                  placeholder="correo@ejemplo.com"
-                  className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  value={inv.email}
-                  onChange={(e) => setFila(i, "email", e.target.value)}
-                  disabled={inv.estado === "enviado"}
-                />
+                {lista.length > 1 && (
+                  <button onClick={() => eliminar(i)} className="text-gray-300 hover:text-red-400">
+                    <Trash2 size={14} />
+                  </button>
+                )}
               </div>
-              {inv.estado === "enviado" ? (
-                <CheckCircle size={18} className="text-emerald-500 shrink-0" />
-              ) : inv.estado === "error" ? (
-                <span className="text-xs text-red-500 shrink-0">Error</span>
-              ) : (
-                <button
-                  onClick={() => eliminarFila(i)}
-                  className="text-gray-300 hover:text-red-400 shrink-0"
-                  disabled={lista.length === 1}
-                >
-                  <Trash2 size={15} />
-                </button>
+
+              {inv.nombre && (
+                <>
+                  <div className="text-xs text-gray-500 bg-white border border-gray-200 rounded-lg px-3 py-2 whitespace-pre-wrap leading-relaxed">
+                    {mensajeWhatsApp(inv.nombre)}
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => copiar(i, inv.nombre)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-100"
+                    >
+                      {copiado === i ? <><CheckCircle size={12} className="text-emerald-500" /> Copiado</> : <><Copy size={12} /> Copiar mensaje</>}
+                    </button>
+                    <button
+                      onClick={() => abrirWhatsApp(inv.nombre, inv.email)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-white rounded-lg"
+                      style={{ backgroundColor: "#25D366" }}
+                    >
+                      <MessageCircle size={12} /> Abrir en WhatsApp
+                    </button>
+                  </div>
+                </>
               )}
             </div>
           ))}
 
           <button
-            onClick={agregarFila}
+            onClick={agregar}
             className="flex items-center gap-2 text-xs text-gray-500 hover:text-gray-700 px-2 py-1.5"
           >
             <Plus size={13} /> Agregar otro empleado
-          </button>
-        </div>
-
-        <div className="px-5 py-4 border-t border-gray-100 flex items-center justify-between bg-gray-50">
-          {resultados && enviados > 0 && (
-            <p className="text-sm text-emerald-600 font-medium">
-              ✓ {enviados} invitación{enviados !== 1 ? "es" : ""} enviada{enviados !== 1 ? "s" : ""} con éxito
-            </p>
-          )}
-          {!resultados && <p className="text-xs text-gray-400">{validos} empleado{validos !== 1 ? "s" : ""} listo{validos !== 1 ? "s" : ""} para invitar</p>}
-          <button
-            onClick={enviarInvitaciones}
-            disabled={enviando || validos === 0}
-            className="flex items-center gap-2 px-5 py-2 text-sm text-white rounded-lg disabled:opacity-50 font-medium"
-            style={{ backgroundColor: "#1a3a6b" }}
-          >
-            <Send size={14} />
-            {enviando ? "Enviando..." : "Enviar invitaciones"}
           </button>
         </div>
       </div>
