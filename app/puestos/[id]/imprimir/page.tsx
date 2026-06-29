@@ -14,152 +14,247 @@ export default async function ImprimirPuesto({ params }: Props) {
   if (!p) notFound();
 
   const fecha = new Date().toLocaleDateString("es-MX", { year: "numeric", month: "long", day: "numeric" });
+  const estado = p.estado === "activo" ? "Aprobado" : p.estado === "en_proceso" ? "En revisión" : "Pendiente";
+  const dash = "—";
 
   return (
     <div className="doc-root">
+      {/* eslint-disable-next-line react/no-unknown-property */}
       <style>{`
-        .doc-root { background: #fff; min-height: 100vh; color: #1a1a1a; font-family: Arial, sans-serif; font-size: 11pt; }
-        .page { max-width: 800px; margin: 0 auto; padding: 30px 40px; }
-        .header { border-bottom: 3px solid #1a3a6b; padding-bottom: 16px; margin-bottom: 20px; }
-        .header-top { display: flex; justify-content: space-between; align-items: flex-start; }
-        .empresa { font-size: 10pt; color: #00b4d8; font-weight: bold; }
-        .titulo { font-size: 18pt; font-weight: bold; color: #1a3a6b; margin-top: 4px; }
-        .subtitulo { font-size: 10pt; color: #666; margin-top: 2px; }
-        .meta { font-size: 9pt; color: #888; text-align: right; }
-        .seccion { margin-bottom: 18px; }
-        .seccion-titulo { background: #1a3a6b; color: white; padding: 5px 10px; font-size: 10pt; font-weight: bold; margin-bottom: 8px; }
-        .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; }
-        .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px 16px; }
-        .campo label { font-size: 8pt; color: #888; display: block; }
-        .campo p { font-size: 10pt; color: #1a1a1a; margin-top: 1px; }
-        .tarea { border: 1px solid #e5e7eb; border-radius: 4px; padding: 8px 10px; margin-bottom: 6px; }
-        .tarea-num { font-size: 8pt; color: #888; }
-        .tarea-nombre { font-size: 10pt; font-weight: bold; color: #1a3a6b; }
-        .tarea-desc { font-size: 9pt; color: #555; margin-top: 3px; }
-        .tarea-meta { font-size: 8pt; color: #888; margin-top: 4px; }
-        .obs { background: #fef9c3; border-left: 3px solid #f59e0b; padding: 8px 10px; font-size: 9pt; color: #555; margin-bottom: 6px; }
-        .notas-admin { background: #eff6ff; border-left: 3px solid #1a3a6b; padding: 8px 10px; font-size: 9pt; color: #1a3a6b; }
-        .firma-linea { border-top: 1px solid #333; padding-top: 4px; font-size: 9pt; text-align: center; }
-        @media print { .no-print { display: none !important; } .page { padding: 10px 15px; } }
+        .doc-root { background:#fff; color:#222; font-family: Arial, Helvetica, sans-serif; font-size:10pt; line-height:1.35; }
+        .page { max-width:820px; margin:0 auto; padding:24px 32px 40px; }
+
+        .doc-header { width:100%; border-collapse:collapse; margin-bottom:4px; }
+        .doc-header td { border:1px solid #1a3a6b; padding:8px 10px; vertical-align:middle; }
+        .dh-logo { width:110px; text-align:center; }
+        .dh-logo img { width:52px; height:52px; object-fit:contain; }
+        .dh-logo .emp { font-size:6.5pt; color:#1a3a6b; font-weight:bold; margin-top:3px; letter-spacing:.5px; }
+        .dh-center { text-align:center; }
+        .dh-center .doc-type { font-size:8pt; letter-spacing:3px; color:#00b4d8; font-weight:bold; }
+        .dh-center .doc-name { font-size:15pt; font-weight:bold; color:#1a3a6b; margin-top:2px; }
+        .dh-center .doc-dep { font-size:8.5pt; color:#777; margin-top:2px; }
+        .dh-right { width:175px; font-size:8pt; color:#555; line-height:1.6; }
+        .dh-right b { color:#1a3a6b; }
+
+        .sec-bar { background:#1a3a6b; color:#fff; font-size:9.5pt; font-weight:bold; padding:4px 10px; letter-spacing:.5px; margin-top:14px; }
+
+        .info { width:100%; border-collapse:collapse; }
+        .info td { border:1px solid #d4d9e0; padding:5px 9px; font-size:9.5pt; vertical-align:top; }
+        .info td.lbl { background:#eef2f7; color:#54627a; font-weight:bold; width:135px; font-size:8.3pt; text-transform:uppercase; letter-spacing:.3px; }
+
+        .tasks { width:100%; border-collapse:collapse; }
+        .tasks th { background:#1a3a6b; color:#fff; font-size:8.3pt; padding:5px 7px; text-align:left; text-transform:uppercase; letter-spacing:.3px; }
+        .tasks td { border:1px solid #d4d9e0; padding:5px 7px; font-size:9pt; vertical-align:top; }
+        .tasks td.num { text-align:center; width:26px; color:#888; font-weight:bold; }
+        .tasks td.act { width:30%; font-weight:bold; color:#1a3a6b; }
+        .tasks td.freq { width:72px; text-align:center; }
+        .tasks td.time { width:48px; text-align:center; }
+
+        .obs-row td { border:1px solid #d4d9e0; padding:5px 9px; font-size:9.3pt; vertical-align:top; }
+        .obs-row td.lbl { background:#fff7e6; color:#92660a; font-weight:bold; width:200px; font-size:8.3pt; }
+
+        .firmas { width:100%; border-collapse:collapse; margin-top:38px; }
+        .firmas td { text-align:center; font-size:8.5pt; color:#444; width:33.33%; padding:0 14px; }
+        .firmas .line { border-top:1px solid #333; padding-top:5px; }
+        .firmas .role { color:#888; font-size:7.5pt; margin-top:2px; }
+
+        .foot { margin-top:24px; border-top:1px solid #d4d9e0; padding-top:6px; font-size:7.5pt; color:#999; display:flex; justify-content:space-between; }
+
+        @media print { .no-print{ display:none !important; } .page{ padding:0; } @page{ margin:14mm; } }
       `}</style>
 
       <PrintButton />
 
       <div className="page">
-        {/* Header */}
-        <div className="header">
-          <div className="header-top">
-            <div>
-              <div className="empresa">GLOBAL SOLUTIONS LIFE</div>
-              <div className="titulo">{p.nombre}</div>
-              <div className="subtitulo">{p.departamento?.nombre ?? "Sin área"} {p.codigo && `· Código: ${p.codigo}`}</div>
-            </div>
-            <div className="meta">
-              <div>Fecha: {fecha}</div>
-              {p.usuario && <div>Elaboró: {p.usuario.nombre}</div>}
-              <div>Estado: {p.estado === "activo" ? "Revisado" : p.estado === "en_proceso" ? "En revisión" : "Pendiente"}</div>
-            </div>
-          </div>
-        </div>
+        {/* Encabezado institucional */}
+        <table className="doc-header">
+          <tbody>
+            <tr>
+              <td className="dh-logo" rowSpan={1}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/api/logo" alt="GSL" />
+                <div className="emp">GLOBAL SOLUTIONS LIFE</div>
+              </td>
+              <td className="dh-center">
+                <div className="doc-type">DESCRIPCIÓN DE PUESTO</div>
+                <div className="doc-name">{p.nombre}</div>
+                <div className="doc-dep">{p.departamento?.nombre ?? "Sin área asignada"}</div>
+              </td>
+              <td className="dh-right">
+                <div><b>Código:</b> {p.codigo || dash}</div>
+                <div><b>Versión:</b> 1</div>
+                <div><b>Fecha:</b> {fecha}</div>
+                <div><b>Estado:</b> {estado}</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-        {/* Datos generales */}
-        <div className="seccion">
-          <div className="seccion-titulo">I. IDENTIFICACIÓN DEL PUESTO</div>
-          <div className="grid3">
-            {p.titular && <div className="campo"><label>Titular</label><p>{p.titular}</p></div>}
-            {p.reportaA && <div className="campo"><label>Reporta a</label><p>{p.reportaA}</p></div>}
-            {p.supervisaA && <div className="campo"><label>Supervisa a</label><p>{p.supervisaA}</p></div>}
-            <div className="campo"><label>Horario</label><p>{p.horario}</p></div>
-            <div className="campo"><label>Escolaridad requerida</label><p>{p.escolaridad}</p></div>
-            {p.experiencia && <div className="campo"><label>Experiencia</label><p>{p.experiencia}</p></div>}
-            <div className="campo"><label>Rango de edad</label><p>{p.edadMin}–{p.edadMax} años</p></div>
-            <div className="campo"><label>Tiempo de adaptación</label><p>{p.tiempoAdaptacion}</p></div>
-            <div className="campo"><label>Periodicidad de medición</label><p>{p.periodicidad}</p></div>
-          </div>
-          {p.objetivo && <div className="campo" style={{ marginTop: 10 }}><label>Objetivo del puesto</label><p>{p.objetivo}</p></div>}
-        </div>
+        {/* I. Identificación */}
+        <div className="sec-bar">I.&nbsp;&nbsp;IDENTIFICACIÓN DEL PUESTO</div>
+        <table className="info">
+          <tbody>
+            <tr>
+              <td className="lbl">Titular</td><td>{p.titular || dash}</td>
+              <td className="lbl">Reporta a</td><td>{p.reportaA || dash}</td>
+            </tr>
+            <tr>
+              <td className="lbl">Departamento</td><td>{p.departamento?.nombre ?? dash}</td>
+              <td className="lbl">Supervisa a</td><td>{p.supervisaA || dash}</td>
+            </tr>
+            <tr>
+              <td className="lbl">Escolaridad</td><td>{p.escolaridad || dash}</td>
+              <td className="lbl">Experiencia</td><td>{p.experiencia || dash}</td>
+            </tr>
+            <tr>
+              <td className="lbl">Rango de edad</td><td>{p.edadMin}–{p.edadMax} años</td>
+              <td className="lbl">Horario</td><td>{p.horario || dash}</td>
+            </tr>
+            <tr>
+              <td className="lbl">T. de adaptación</td><td>{p.tiempoAdaptacion || dash}</td>
+              <td className="lbl">Periodicidad</td><td>{p.periodicidad || dash}</td>
+            </tr>
+            <tr>
+              <td className="lbl">Objetivo del puesto</td>
+              <td colSpan={3}>{p.objetivo || dash}</td>
+            </tr>
+          </tbody>
+        </table>
 
-        {/* Tareas */}
+        {/* II. Tareas */}
         {p.responsabilidades.length > 0 && (
-          <div className="seccion">
-            <div className="seccion-titulo">II. TAREAS Y ACTIVIDADES ({p.responsabilidades.length})</div>
-            {p.responsabilidades.map((r, i) => (
-              <div key={r.id} className="tarea">
-                <div className="tarea-num">Tarea {i + 1}</div>
-                <div className="tarea-nombre">{r.nombre}</div>
-                {r.descripcion && <div className="tarea-desc">{r.descripcion}</div>}
-                <div className="tarea-meta">Frecuencia: {r.recurrencia} · Tiempo estimado: {r.tiempoHoras}h</div>
-              </div>
-            ))}
-          </div>
+          <>
+            <div className="sec-bar">II.&nbsp;&nbsp;TAREAS Y ACTIVIDADES</div>
+            <table className="tasks">
+              <thead>
+                <tr>
+                  <th style={{ width: 26 }}>#</th>
+                  <th>Actividad</th>
+                  <th>¿Cómo la desarrolla?</th>
+                  <th style={{ width: 72 }}>Frecuencia</th>
+                  <th style={{ width: 48 }}>Tiempo</th>
+                </tr>
+              </thead>
+              <tbody>
+                {p.responsabilidades.map((r, i) => (
+                  <tr key={r.id}>
+                    <td className="num">{i + 1}</td>
+                    <td className="act">{r.nombre}</td>
+                    <td>{r.descripcion || dash}</td>
+                    <td className="freq">{r.recurrencia}</td>
+                    <td className="time">{r.tiempoHoras}h</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
         )}
 
-        {/* Personal a cargo */}
+        {/* III. Personal a cargo */}
         {p.tienePersonal && (
-          <div className="seccion">
-            <div className="seccion-titulo">III. PERSONAL A CARGO</div>
-            <div className="grid2">
-              {p.numPersonasACargo && <div className="campo"><label>Número de personas</label><p>{p.numPersonasACargo}</p></div>}
-              {p.autoridadSobre && <div className="campo"><label>Autoridad sobre el personal</label><p>{p.autoridadSobre}</p></div>}
-            </div>
-            {p.comoSupervisa && <div className="campo" style={{ marginTop: 8 }}><label>¿Cómo supervisa?</label><p>{p.comoSupervisa}</p></div>}
-            {p.comoAudita && <div className="campo" style={{ marginTop: 8 }}><label>¿Cómo audita?</label><p>{p.comoAudita}</p></div>}
-            {p.comoEvalua && <div className="campo" style={{ marginTop: 8 }}><label>¿Cómo evalúa?</label><p>{p.comoEvalua}</p></div>}
-          </div>
+          <>
+            <div className="sec-bar">III.&nbsp;&nbsp;PERSONAL A CARGO Y SUPERVISIÓN</div>
+            <table className="info">
+              <tbody>
+                <tr>
+                  <td className="lbl">Personas a cargo</td><td>{p.numPersonasACargo || dash}</td>
+                  <td className="lbl">Autoridad</td><td>{p.autoridadSobre || dash}</td>
+                </tr>
+                <tr><td className="lbl">¿Cómo supervisa?</td><td colSpan={3}>{p.comoSupervisa || dash}</td></tr>
+                <tr><td className="lbl">¿Cómo audita?</td><td colSpan={3}>{p.comoAudita || dash}</td></tr>
+                <tr><td className="lbl">¿Cómo evalúa?</td><td colSpan={3}>{p.comoEvalua || dash}</td></tr>
+              </tbody>
+            </table>
+          </>
         )}
 
-        {/* Relaciones */}
+        {/* IV. Relaciones */}
         {(p.internoConQuien || p.externoConQuien) && (
-          <div className="seccion">
-            <div className="seccion-titulo">IV. RELACIONES DE TRABAJO</div>
-            {p.internoConQuien && <div className="campo"><label>Relaciones internas</label><p>{p.internoConQuien}</p></div>}
-            {p.externoConQuien && <div className="campo" style={{ marginTop: 8 }}><label>Relaciones externas</label><p>{p.externoConQuien}</p></div>}
-          </div>
+          <>
+            <div className="sec-bar">IV.&nbsp;&nbsp;RELACIONES DE TRABAJO</div>
+            <table className="info">
+              <tbody>
+                <tr><td className="lbl">Relaciones internas</td><td colSpan={3}>{p.internoConQuien || dash}</td></tr>
+                <tr><td className="lbl">Relaciones externas</td><td colSpan={3}>{p.externoConQuien || dash}</td></tr>
+              </tbody>
+            </table>
+          </>
         )}
 
-        {/* Documentos y decisiones */}
+        {/* V. Documentos y decisiones */}
         {(p.documentosQueGenera || p.decisionesIndependientes || p.decisionesConAutorizacion) && (
-          <div className="seccion">
-            <div className="seccion-titulo">V. DOCUMENTOS Y NIVEL DE DECISIÓN</div>
-            {p.documentosQueGenera && <div className="campo"><label>Documentos que genera</label><p>{p.documentosQueGenera}</p></div>}
-            {p.decisionesIndependientes && <div className="campo" style={{ marginTop: 8 }}><label>Decisiones independientes</label><p>{p.decisionesIndependientes}</p></div>}
-            {p.decisionesConAutorizacion && <div className="campo" style={{ marginTop: 8 }}><label>Decisiones con autorización</label><p>{p.decisionesConAutorizacion}</p></div>}
-          </div>
+          <>
+            <div className="sec-bar">V.&nbsp;&nbsp;DOCUMENTOS Y NIVEL DE DECISIÓN</div>
+            <table className="info">
+              <tbody>
+                <tr><td className="lbl">Documentos que genera</td><td colSpan={3}>{p.documentosQueGenera || dash}</td></tr>
+                <tr><td className="lbl">Decisiones autónomas</td><td colSpan={3}>{p.decisionesIndependientes || dash}</td></tr>
+                <tr><td className="lbl">Decisiones c/ autorización</td><td colSpan={3}>{p.decisionesConAutorizacion || dash}</td></tr>
+              </tbody>
+            </table>
+          </>
         )}
 
-        {/* Herramientas y formación */}
+        {/* VI. Perfil y herramientas */}
         {(p.herramientas || p.formacion || p.competencias) && (
-          <div className="seccion">
-            <div className="seccion-titulo">VI. PERFIL Y HERRAMIENTAS</div>
-            {p.herramientas && <div className="campo"><label>Herramientas de trabajo</label><p>{p.herramientas}</p></div>}
-            {p.formacion && <div className="campo" style={{ marginTop: 8 }}><label>Formación deseable</label><p>{p.formacion}</p></div>}
-            {p.competencias && <div className="campo" style={{ marginTop: 8 }}><label>Competencias requeridas</label><p>{p.competencias}</p></div>}
-          </div>
+          <>
+            <div className="sec-bar">VI.&nbsp;&nbsp;PERFIL Y HERRAMIENTAS</div>
+            <table className="info">
+              <tbody>
+                {p.herramientas && <tr><td className="lbl">Herramientas</td><td colSpan={3}>{p.herramientas}</td></tr>}
+                {p.formacion && <tr><td className="lbl">Formación deseable</td><td colSpan={3}>{p.formacion}</td></tr>}
+                {p.competencias && <tr><td className="lbl">Competencias</td><td colSpan={3}>{p.competencias}</td></tr>}
+              </tbody>
+            </table>
+          </>
         )}
 
-        {/* Observaciones */}
+        {/* VII. Observaciones */}
         {(p.tareasNoCorresponden || p.tareasQueNadieHace || p.problemasFrecuentes) && (
-          <div className="seccion">
-            <div className="seccion-titulo">VII. OBSERVACIONES DEL EMPLEADO</div>
-            {p.tareasNoCorresponden && <div className="obs"><strong>Tareas que considera que no le corresponden:</strong> {p.tareasNoCorresponden}</div>}
-            {p.tareasQueNadieHace && <div className="obs"><strong>Tareas que nadie hace:</strong> {p.tareasQueNadieHace}</div>}
-            {p.problemasFrecuentes && <div className="obs"><strong>Problemas frecuentes:</strong> {p.problemasFrecuentes}</div>}
-          </div>
+          <>
+            <div className="sec-bar">VII.&nbsp;&nbsp;OBSERVACIONES DEL EMPLEADO</div>
+            <table className="info">
+              <tbody>
+                {p.tareasNoCorresponden && (
+                  <tr className="obs-row"><td className="lbl">Tareas que no le corresponden</td><td colSpan={3}>{p.tareasNoCorresponden}</td></tr>
+                )}
+                {p.tareasQueNadieHace && (
+                  <tr className="obs-row"><td className="lbl">Tareas que nadie realiza</td><td colSpan={3}>{p.tareasQueNadieHace}</td></tr>
+                )}
+                {p.problemasFrecuentes && (
+                  <tr className="obs-row"><td className="lbl">Problemas frecuentes</td><td colSpan={3}>{p.problemasFrecuentes}</td></tr>
+                )}
+              </tbody>
+            </table>
+          </>
         )}
 
-        {/* Notas admin */}
+        {/* VIII. Notas de auditoría */}
         {p.adminNotas && (
-          <div className="seccion">
-            <div className="seccion-titulo">VIII. NOTAS DE AUDITORÍA</div>
-            <div className="notas-admin">{p.adminNotas}</div>
-          </div>
+          <>
+            <div className="sec-bar">VIII.&nbsp;&nbsp;NOTAS DE AUDITORÍA (RH / DIRECCIÓN)</div>
+            <table className="info">
+              <tbody>
+                <tr><td colSpan={4} style={{ background: "#f5f8ff" }}>{p.adminNotas}</td></tr>
+              </tbody>
+            </table>
+          </>
         )}
 
         {/* Firmas */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 40, marginTop: 50 }}>
-          <div className="firma-linea">Titular del puesto</div>
-          <div className="firma-linea">Revisó: RH / Dirección</div>
-          <div className="firma-linea">Autorizó</div>
+        <table className="firmas">
+          <tbody>
+            <tr>
+              <td><div className="line">{p.titular || "Titular del puesto"}</div><div className="role">Titular del puesto</div></td>
+              <td><div className="line">&nbsp;</div><div className="role">Revisó — Recursos Humanos</div></td>
+              <td><div className="line">&nbsp;</div><div className="role">Autorizó — Dirección General</div></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div className="foot">
+          <span>Global Solutions Life · Consultoría en Seguros &amp; Inversiones</span>
+          <span>Documento generado el {fecha}</span>
         </div>
       </div>
     </div>
