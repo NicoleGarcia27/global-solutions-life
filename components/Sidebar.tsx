@@ -12,7 +12,7 @@ import {
   LogOut,
   Shield,
   TrendingUp,
-  GitCompare,
+  Copy,
   Mail,
   Inbox,
   Wrench,
@@ -87,7 +87,7 @@ export default function Sidebar() {
               { href: "/admin/avance", label: "Panel de avance", icon: TrendingUp },
               { href: "/admin/banco", label: "Banco de tareas", icon: Inbox },
               { href: "/admin/mejoras", label: "Problemas / Mejoras", icon: Wrench },
-              { href: "/admin/comparar", label: "Comparar puestos", icon: GitCompare },
+              { href: "/admin/comparar", label: "Tareas repetidas", icon: Copy },
               { href: "/admin/invitar", label: "Invitar empleados", icon: Mail },
             ].map(({ href, label, icon: Icon }) => (
               <Link
