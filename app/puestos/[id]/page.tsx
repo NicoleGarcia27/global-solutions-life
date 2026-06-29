@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Printer } from "lucide-react";
 import AdminRevision from "./AdminRevision";
+import TaskManager from "./TaskManager";
 
 export const dynamic = "force-dynamic";
 type Props = { params: Promise<{ id: string }> };
@@ -49,6 +50,15 @@ export default async function PuestoDetalle({ params }: Props) {
   // Empleado solo puede ver su propio puesto
   if (!isAdmin && puesto.usuarioId !== Number(user?.id)) notFound();
 
+  // Para reasignar tareas: lista de otros puestos (solo admin)
+  const otrosPuestos = isAdmin
+    ? (await prisma.puesto.findMany({
+        where: { id: { not: puesto.id } },
+        select: { id: true, nombre: true, titular: true, usuario: { select: { nombre: true } } },
+        orderBy: { nombre: "asc" },
+      })).map((op) => ({ id: op.id, nombre: op.nombre, titular: op.titular, usuarioNombre: op.usuario?.nombre ?? null }))
+    : [];
+
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-5">
       {/* Header */}
@@ -90,27 +100,34 @@ export default async function PuestoDetalle({ params }: Props) {
       </Seccion>
 
       {/* Tareas y Actividades */}
-      {puesto.responsabilidades.length > 0 && (
+      {isAdmin ? (
         <Seccion title={`Tareas y Actividades (${puesto.responsabilidades.length})`}>
-          <div className="space-y-3">
-            {puesto.responsabilidades.map((r, i) => (
-              <div key={r.id} className="border border-gray-100 rounded-lg p-4 bg-gray-50">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-800">
-                      <span className="text-gray-400 mr-2">T{i + 1}.</span>{r.nombre}
-                    </p>
-                    {r.descripcion && <p className="text-xs text-gray-500 mt-1.5 leading-relaxed">{r.descripcion}</p>}
-                  </div>
-                  <div className="flex gap-3 text-xs text-gray-400 shrink-0">
-                    <span className="bg-white border border-gray-200 px-2 py-0.5 rounded">{r.recurrencia}</span>
-                    <span className="bg-white border border-gray-200 px-2 py-0.5 rounded">{r.tiempoHoras}h</span>
+          <p className="text-xs text-gray-400 -mt-2">Edita, elimina, agrega o reasigna tareas a la persona que le corresponden.</p>
+          <TaskManager puestoId={puesto.id} tareas={puesto.responsabilidades} otrosPuestos={otrosPuestos} />
+        </Seccion>
+      ) : (
+        puesto.responsabilidades.length > 0 && (
+          <Seccion title={`Tareas y Actividades (${puesto.responsabilidades.length})`}>
+            <div className="space-y-3">
+              {puesto.responsabilidades.map((r, i) => (
+                <div key={r.id} className="border border-gray-100 rounded-lg p-4 bg-gray-50">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-800">
+                        <span className="text-gray-400 mr-2">T{i + 1}.</span>{r.nombre}
+                      </p>
+                      {r.descripcion && <p className="text-xs text-gray-500 mt-1.5 leading-relaxed">{r.descripcion}</p>}
+                    </div>
+                    <div className="flex gap-3 text-xs text-gray-400 shrink-0">
+                      <span className="bg-white border border-gray-200 px-2 py-0.5 rounded">{r.recurrencia}</span>
+                      <span className="bg-white border border-gray-200 px-2 py-0.5 rounded">{r.tiempoHoras}h</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </Seccion>
+              ))}
+            </div>
+          </Seccion>
+        )
       )}
 
       {/* Personal a cargo */}
