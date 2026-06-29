@@ -14,6 +14,7 @@ import {
   TrendingUp,
   GitCompare,
   Mail,
+  Lightbulb,
 } from "lucide-react";
 
 const nav = [
@@ -83,6 +84,7 @@ export default function Sidebar() {
             {[
               { href: "/admin/usuarios", label: "Usuarios", icon: Shield },
               { href: "/admin/avance", label: "Panel de avance", icon: TrendingUp },
+              { href: "/admin/observaciones", label: "Observaciones", icon: Lightbulb },
               { href: "/admin/comparar", label: "Comparar puestos", icon: GitCompare },
               { href: "/admin/invitar", label: "Invitar empleados", icon: Mail },
             ].map(({ href, label, icon: Icon }) => (

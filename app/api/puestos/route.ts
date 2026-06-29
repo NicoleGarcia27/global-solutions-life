@@ -22,6 +22,9 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const tareas: { nombre: string; descripcion: string; frecuencia: string; tiempoHoras: number }[] = body.tareas ?? [];
 
+  // Si es admin creando una vacante, el puesto no pertenece a ningún empleado
+  const esVacante = body.vacante === true && token.role === "admin";
+
   const puesto = await prisma.puesto.create({
     data: {
       codigo: body.codigo || "",
@@ -42,7 +45,7 @@ export async function POST(req: NextRequest) {
       titular: body.titular ?? "",
       estado: body.estado ?? "pendiente",
       departamentoId: body.departamentoId || null,
-      usuarioId: Number(token.sub),
+      usuarioId: esVacante ? null : Number(token.sub),
       tienePersonal: body.tienePersonal ?? false,
       numPersonasACargo: body.numPersonasACargo ?? "",
       comoSupervisa: body.comoSupervisa ?? "",

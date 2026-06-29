@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import Link from "next/link";
 import { Plus, FileText, ClipboardList } from "lucide-react";
+import CrearPuestoButton from "./CrearPuestoButton";
 
 export const dynamic = "force-dynamic";
 
@@ -22,21 +23,23 @@ export default async function PuestosPage() {
       },
       orderBy: { createdAt: "desc" },
     });
+    const departamentos = await prisma.departamento.findMany({ orderBy: { nombre: "asc" } });
 
     return (
       <div className="p-6 max-w-6xl mx-auto space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">Puestos enviados</h1>
-            <p className="text-sm text-gray-400 mt-0.5">{puestos.length} formulario{puestos.length !== 1 ? "s" : ""} recibido{puestos.length !== 1 ? "s" : ""} de empleados</p>
+            <h1 className="text-xl font-semibold text-gray-900">Puestos</h1>
+            <p className="text-sm text-gray-400 mt-0.5">{puestos.length} puesto{puestos.length !== 1 ? "s" : ""} en total (enviados por empleados y vacantes)</p>
           </div>
+          <CrearPuestoButton departamentos={departamentos} />
         </div>
 
         {puestos.length === 0 ? (
           <div className="bg-white rounded-xl border border-gray-200 p-16 text-center">
             <ClipboardList size={40} className="mx-auto text-gray-200 mb-4" />
-            <p className="text-gray-500 font-medium">Ningún empleado ha llenado su formulario aún</p>
-            <p className="text-gray-400 text-sm mt-1">Cuando los empleados envíen su información, aparecerá aquí</p>
+            <p className="text-gray-500 font-medium">Aún no hay puestos</p>
+            <p className="text-gray-400 text-sm mt-1">Cuando los empleados envíen su información aparecerá aquí, o crea un puesto/vacante con el botón de arriba</p>
           </div>
         ) : (
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -60,8 +63,14 @@ export default async function PuestosPage() {
                       {p.titular && <p className="text-xs text-gray-400">{p.titular}</p>}
                     </td>
                     <td className="px-4 py-3">
-                      <p className="text-gray-700 text-xs">{p.usuario?.nombre ?? "—"}</p>
-                      <p className="text-gray-400 text-xs">{p.usuario?.email}</p>
+                      {p.usuario ? (
+                        <>
+                          <p className="text-gray-700 text-xs">{p.usuario.nombre}</p>
+                          <p className="text-gray-400 text-xs">{p.usuario.email}</p>
+                        </>
+                      ) : (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 font-medium">Vacante</span>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-gray-500 text-xs">{p.departamento?.nombre ?? "Sin área"}</td>
                     <td className="px-4 py-3 text-gray-600 text-xs">{p.responsabilidades.length} tareas</td>
