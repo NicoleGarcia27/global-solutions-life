@@ -2,7 +2,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Pencil, Check, X, TrendingUp, Trash2, Plus, Palmtree } from "lucide-react";
+import { ArrowLeft, Pencil, Check, X, TrendingUp, Trash2, Plus, Palmtree, Scale } from "lucide-react";
+import { vacacionesPorLey } from "@/lib/vacaciones";
 
 type Empleado = {
   id: number; nombre: string; puesto: string; area: string; tipo: string; factura: boolean;
@@ -39,7 +40,10 @@ export default function EmpleadoDetalle({ empleado, incrementos, vacaciones, dep
 
   const anioActual = new Date().getFullYear();
   const tomados = vacaciones.filter((v) => new Date(v.fechaInicio).getFullYear() === anioActual).reduce((s, v) => s + v.dias, 0);
-  const disponibles = empleado.diasVacaciones - tomados;
+  const ley = vacacionesPorLey(empleado.fechaIngreso);
+  const corresponden = ley.dias;
+  const disponibles = corresponden - tomados;
+  const fmtMes = (d: Date | null) => d ? d.toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" }) : "";
 
   async function registrarVacacion() {
     if (!vac.fechaInicio || !vac.fechaFin) return;
@@ -120,8 +124,8 @@ export default function EmpleadoDetalle({ empleado, incrementos, vacaciones, dep
               <div><label className="text-xs text-gray-500">Sueldo actual</label><input type="number" className={`mt-1 ${inp}`} value={f.sueldoActual} onChange={(e) => set("sueldoActual", e.target.value as any)} /></div>
               <div><label className="text-xs text-gray-500">Correo</label><input className={`mt-1 ${inp}`} value={f.correo} onChange={(e) => set("correo", e.target.value)} /></div>
               <div><label className="text-xs text-gray-500">Teléfono</label><input className={`mt-1 ${inp}`} value={f.telefono} onChange={(e) => set("telefono", e.target.value)} /></div>
-              <div><label className="text-xs text-gray-500">Días de vacaciones al año</label><input type="number" className={`mt-1 ${inp}`} value={f.diasVacaciones} onChange={(e) => set("diasVacaciones", e.target.value as any)} /></div>
             </div>
+            <p className="text-xs text-gray-400">Los días de vacaciones se calculan solos según la fecha de ingreso (Art. 76 LFT).</p>
             <label className="flex items-center gap-2 text-sm text-gray-600"><input type="checkbox" checked={f.factura} onChange={(e) => set("factura", e.target.checked)} className="w-4 h-4" /> ¿Emite factura?</label>
             <div><label className="text-xs text-gray-500">Notas</label><textarea rows={2} className={`mt-1 ${inp} resize-none`} value={f.notas} onChange={(e) => set("notas", e.target.value)} /></div>
             <div className="flex gap-2">
@@ -190,10 +194,18 @@ export default function EmpleadoDetalle({ empleado, incrementos, vacaciones, dep
           {!vacOpen && <button onClick={() => setVacOpen(true)} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg text-white" style={{ backgroundColor: "#1a3a6b" }}><Plus size={13} /> Registrar vacaciones</button>}
         </div>
 
-        <div className="grid grid-cols-3 gap-3 mb-4">
-          <div className="bg-gray-50 rounded-lg p-3 text-center"><p className="text-2xl font-bold text-gray-800">{empleado.diasVacaciones}</p><p className="text-xs text-gray-400">le corresponden</p></div>
+        <div className="grid grid-cols-3 gap-3 mb-3">
+          <div className="bg-gray-50 rounded-lg p-3 text-center"><p className="text-2xl font-bold text-gray-800">{corresponden}</p><p className="text-xs text-gray-400">le corresponden</p></div>
           <div className="rounded-lg p-3 text-center" style={{ backgroundColor: "#fffbeb" }}><p className="text-2xl font-bold" style={{ color: "#d97706" }}>{tomados}</p><p className="text-xs" style={{ color: "#d97706" }}>tomados</p></div>
           <div className="rounded-lg p-3 text-center" style={{ backgroundColor: disponibles < 0 ? "#fef2f2" : "#ecfdf5" }}><p className="text-2xl font-bold" style={{ color: disponibles < 0 ? "#dc2626" : "#059669" }}>{disponibles}</p><p className="text-xs" style={{ color: disponibles < 0 ? "#dc2626" : "#059669" }}>disponibles</p></div>
+        </div>
+        <div className="flex items-start gap-2 text-xs mb-4 px-3 py-2 rounded-lg" style={{ backgroundColor: "#eef2f8", color: "#1a3a6b" }}>
+          <Scale size={13} className="mt-0.5 shrink-0" />
+          {!ley.tieneFecha
+            ? <span>Captura la <strong>fecha de ingreso</strong> (en Editar) para calcular sus días según la ley.</span>
+            : ley.anios < 1
+              ? <span>Aún no cumple su primer año. Tendrá derecho a <strong>12 días</strong> al cumplir el <strong>{fmtMes(ley.cumplePrimerAnio)}</strong> (Art. 76 LFT).</span>
+              : <span>Cálculo automático por <strong>{ley.anios} {ley.anios === 1 ? "año" : "años"}</strong> de antigüedad: <strong>{corresponden} días</strong> de ley (Art. 76 LFT).</span>}
         </div>
 
         {vacOpen && (

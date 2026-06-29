@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Palmtree } from "lucide-react";
+import { vacacionesPorLey } from "@/lib/vacaciones";
 
 export const dynamic = "force-dynamic";
 const fmt = (d: Date) => d.toLocaleDateString("es-MX", { day: "numeric", month: "short" });
@@ -23,7 +24,8 @@ export default async function VacacionesPage() {
   const filas = empleados.map((e) => {
     const tomados = e.vacaciones.filter((v) => new Date(v.fechaInicio).getFullYear() === anio).reduce((s, v) => s + v.dias, 0);
     const enVacaciones = e.vacaciones.find((v) => new Date(v.fechaInicio) <= hoy && new Date(v.fechaFin) >= hoy);
-    return { id: e.id, nombre: e.nombre, area: e.area, corresponden: e.diasVacaciones, tomados, disponibles: e.diasVacaciones - tomados, enVacaciones };
+    const corresponden = vacacionesPorLey(e.fechaIngreso).dias;
+    return { id: e.id, nombre: e.nombre, area: e.area, corresponden, tomados, disponibles: corresponden - tomados, enVacaciones };
   });
 
   const ahoraEnVacaciones = filas.filter((f) => f.enVacaciones);
