@@ -129,9 +129,23 @@ model Empleado {
   activo         Boolean      @default(true)
   diasVacaciones Int          @default(12)
   diasExtra      Int          @default(0)   // días de cortesía otorgados por la empresa
+  horaEntrada    String       @default("09:00")
   incrementos    Incremento[]
   vacaciones     Vacacion[]
+  asistencias    Asistencia[]
   createdAt      DateTime     @default(now())
+}
+
+model Asistencia {
+  id          Int      @id @default(autoincrement())
+  empleadoId  Int
+  empleado    Empleado @relation(fields: [empleadoId], references: [id], onDelete: Cascade)
+  fecha       DateTime
+  estado      String   @default("a_tiempo") // a_tiempo | retardo | falta | justificado
+  horaLlegada String   @default("")
+  nota        String   @default("")
+
+  @@unique([empleadoId, fecha])
 }
 
 model Vacacion {

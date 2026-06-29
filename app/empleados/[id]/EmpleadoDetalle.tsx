@@ -2,14 +2,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Pencil, Check, X, TrendingUp, Trash2, Plus, Palmtree, Scale, CalendarClock } from "lucide-react";
+import { ArrowLeft, Pencil, Check, X, TrendingUp, Trash2, Plus, Palmtree, Scale, CalendarClock, CalendarCheck } from "lucide-react";
 import { vacacionesPorLey, ventanaVacaciones } from "@/lib/vacaciones";
 
 type Empleado = {
   id: number; nombre: string; puesto: string; area: string; tipo: string; factura: boolean;
   sueldoActual: number; correo: string; telefono: string; notas: string; activo: boolean; fechaIngreso: string;
-  diasVacaciones: number; diasExtra: number;
+  diasVacaciones: number; diasExtra: number; horaEntrada: string;
 };
+type AsistenciaMes = { a_tiempo: number; retardo: number; falta: number; justificado: number };
 type Incremento = { id: number; fecha: string; sueldoNuevo: number; porcentaje: number; nota: string };
 type Vacacion = { id: number; fechaInicio: string; fechaFin: string; dias: number; estado: string; nota: string };
 
@@ -28,7 +29,7 @@ function antiguedad(fecha: string) {
 }
 const fmtFecha = (iso: string) => iso ? new Date(iso).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" }) : "—";
 
-export default function EmpleadoDetalle({ empleado, incrementos, vacaciones, departamentos }: { empleado: Empleado; incrementos: Incremento[]; vacaciones: Vacacion[]; departamentos: string[] }) {
+export default function EmpleadoDetalle({ empleado, incrementos, vacaciones, asistenciaMes, departamentos }: { empleado: Empleado; incrementos: Incremento[]; vacaciones: Vacacion[]; asistenciaMes: AsistenciaMes; departamentos: string[] }) {
   const router = useRouter();
   const [edit, setEdit] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -45,6 +46,9 @@ export default function EmpleadoDetalle({ empleado, incrementos, vacaciones, dep
   const disponibles = corresponden - tomados;
   const ventana = ventanaVacaciones(empleado.fechaIngreso);
   const fmtMes = (d: Date | null) => d ? d.toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" }) : "";
+  const totalAsis = asistenciaMes.a_tiempo + asistenciaMes.retardo + asistenciaMes.falta + asistenciaMes.justificado;
+  const pctPuntual = totalAsis ? Math.round((asistenciaMes.a_tiempo / totalAsis) * 100) : null;
+  const mesNombre = new Date().toLocaleDateString("es-MX", { month: "long" });
 
   async function registrarVacacion() {
     if (!vac.fechaInicio || !vac.fechaFin) return;
@@ -126,6 +130,7 @@ export default function EmpleadoDetalle({ empleado, incrementos, vacaciones, dep
               <div><label className="text-xs text-gray-500">Correo</label><input className={`mt-1 ${inp}`} value={f.correo} onChange={(e) => set("correo", e.target.value)} /></div>
               <div><label className="text-xs text-gray-500">Teléfono</label><input className={`mt-1 ${inp}`} value={f.telefono} onChange={(e) => set("telefono", e.target.value)} /></div>
               <div><label className="text-xs text-gray-500">Días extra de cortesía 🎁</label><input type="number" min={0} className={`mt-1 ${inp}`} value={f.diasExtra} onChange={(e) => set("diasExtra", e.target.value as any)} placeholder="0" /></div>
+              <div><label className="text-xs text-gray-500">Hora de entrada</label><input type="time" className={`mt-1 ${inp}`} value={f.horaEntrada} onChange={(e) => set("horaEntrada", e.target.value)} /></div>
             </div>
             <p className="text-xs text-gray-400">Los días de ley se calculan solos por la fecha de ingreso (Art. 76 LFT). Los "días extra" son los que tú le regalas por buena onda.</p>
             <label className="flex items-center gap-2 text-sm text-gray-600"><input type="checkbox" checked={f.factura} onChange={(e) => set("factura", e.target.checked)} className="w-4 h-4" /> ¿Emite factura?</label>
@@ -266,6 +271,30 @@ export default function EmpleadoDetalle({ empleado, incrementos, vacaciones, dep
               </div>
             ))}
           </div>
+        )}
+      </div>
+
+      {/* Puntualidad del mes */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-sm font-semibold text-gray-700 flex items-center gap-2"><CalendarCheck size={15} style={{ color: "#00b4d8" }} /> Puntualidad de {mesNombre}</h2>
+          <Link href={`/asistencia`} className="text-xs hover:underline" style={{ color: "#00b4d8" }}>Registrar asistencia →</Link>
+        </div>
+        {totalAsis === 0 ? (
+          <p className="text-sm text-gray-400">Sin registros este mes. Regístrala en la sección Asistencia.</p>
+        ) : (
+          <>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="text-3xl font-bold" style={{ color: (pctPuntual ?? 0) >= 90 ? "#059669" : (pctPuntual ?? 0) >= 70 ? "#d97706" : "#dc2626" }}>{pctPuntual}%</div>
+              <div className="text-xs text-gray-500">a tiempo<br />de {totalAsis} {totalAsis === 1 ? "día registrado" : "días registrados"}</div>
+            </div>
+            <div className="grid grid-cols-4 gap-2">
+              <div className="rounded-lg p-2 text-center" style={{ backgroundColor: "#ecfdf5" }}><p className="text-lg font-bold" style={{ color: "#059669" }}>{asistenciaMes.a_tiempo}</p><p className="text-[10px]" style={{ color: "#059669" }}>a tiempo</p></div>
+              <div className="rounded-lg p-2 text-center" style={{ backgroundColor: "#fffbeb" }}><p className="text-lg font-bold" style={{ color: "#d97706" }}>{asistenciaMes.retardo}</p><p className="text-[10px]" style={{ color: "#d97706" }}>retardos</p></div>
+              <div className="rounded-lg p-2 text-center" style={{ backgroundColor: "#fef2f2" }}><p className="text-lg font-bold" style={{ color: "#dc2626" }}>{asistenciaMes.falta}</p><p className="text-[10px]" style={{ color: "#dc2626" }}>faltas</p></div>
+              <div className="rounded-lg p-2 text-center" style={{ backgroundColor: "#eff6ff" }}><p className="text-lg font-bold" style={{ color: "#2563eb" }}>{asistenciaMes.justificado}</p><p className="text-[10px]" style={{ color: "#2563eb" }}>justific.</p></div>
+            </div>
+          </>
         )}
       </div>
 
