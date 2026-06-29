@@ -148,15 +148,15 @@ export default function TaskManager({
                   <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded">{t.tiempoHoras}h</span>
                 </div>
               </div>
-              <div className="flex items-center gap-1 shrink-0">
-                <button onClick={() => startEdit(t)} title="Editar" className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg">
-                  <Pencil size={14} />
+              <div className="flex flex-wrap items-center gap-2 shrink-0">
+                <button onClick={() => startEdit(t)} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-lg text-gray-600 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200">
+                  <Pencil size={13} /> Editar
                 </button>
-                <button onClick={() => { setReassignId(reassignId === t.id ? null : t.id); setEditId(null); }} title="Reasignar a otra persona" className="p-1.5 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg">
-                  <ArrowRightLeft size={14} />
+                <button onClick={() => { setReassignId(reassignId === t.id ? null : t.id); setEditId(null); }} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-amber-200 rounded-lg text-amber-700 bg-amber-50 hover:bg-amber-100">
+                  <ArrowRightLeft size={13} /> Reasignar
                 </button>
-                <button onClick={() => eliminar(t.id)} title="Eliminar" className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg">
-                  <Trash2 size={14} />
+                <button onClick={() => eliminar(t.id)} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-lg text-gray-600 hover:bg-red-50 hover:text-red-600 hover:border-red-200">
+                  <Trash2 size={13} /> Eliminar
                 </button>
               </div>
             </div>
@@ -169,20 +169,23 @@ export default function TaskManager({
                 <ArrowRightLeft size={12} /> Mover esta tarea al puesto de:
               </p>
               {otrosPuestos.length === 0 ? (
-                <p className="text-xs text-gray-500">No hay otros puestos registrados todavía.</p>
+                <p className="text-xs text-gray-500">No hay otros puestos todavía. Crea uno en la sección <a href="/puestos" className="underline font-medium">Puestos</a> y vuelve aquí.</p>
               ) : (
-                <div className="flex flex-wrap gap-2">
-                  {otrosPuestos.map((op) => (
-                    <button
-                      key={op.id}
-                      onClick={() => reasignar(t.id, op.id)}
-                      disabled={busy}
-                      className="text-xs px-3 py-1.5 bg-white border border-amber-200 rounded-lg hover:bg-amber-100 text-amber-800"
-                    >
-                      {op.nombre}{op.usuarioNombre ? ` · ${op.usuarioNombre}` : op.titular ? ` · ${op.titular}` : ""}
-                    </button>
-                  ))}
-                </div>
+                <>
+                  <div className="flex flex-wrap gap-2">
+                    {otrosPuestos.map((op) => (
+                      <button
+                        key={op.id}
+                        onClick={() => reasignar(t.id, op.id)}
+                        disabled={busy}
+                        className="text-xs px-3 py-1.5 bg-white border border-amber-200 rounded-lg hover:bg-amber-100 text-amber-800"
+                      >
+                        {op.nombre}{op.usuarioNombre ? ` · ${op.usuarioNombre}` : op.titular ? ` · ${op.titular}` : " · Vacante"}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-[11px] text-amber-600 mt-2">¿No aparece el puesto correcto? Créalo en <a href="/puestos" className="underline font-medium">Puestos</a> (botón &quot;Crear puesto / vacante&quot;) y regresa.</p>
+                </>
               )}
             </div>
           )}
