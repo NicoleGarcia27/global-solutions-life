@@ -69,7 +69,7 @@ export default function EmpleadoDetalle({ empleado, incrementos, departamentos }
           </div>
         </div>
         <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${empleado.tipo === "empleado" ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"}`}>
-          {empleado.tipo === "empleado" ? "Empleado GSL" : "Proveedor"}
+          {empleado.tipo === "empleado" ? "Empleado GSL" : "Factura a GSL"}
         </span>
       </div>
 
@@ -89,7 +89,7 @@ export default function EmpleadoDetalle({ empleado, incrementos, departamentos }
                 <select className={`mt-1 ${inp}`} value={f.area} onChange={(e) => set("area", e.target.value)}><option value="">—</option>{departamentos.map((d) => <option key={d}>{d}</option>)}</select>
               </div>
               <div><label className="text-xs text-gray-500">Tipo</label>
-                <select className={`mt-1 ${inp}`} value={f.tipo} onChange={(e) => set("tipo", e.target.value)}><option value="empleado">Empleado de GSL</option><option value="proveedor">Proveedor externo</option></select>
+                <select className={`mt-1 ${inp}`} value={f.tipo} onChange={(e) => set("tipo", e.target.value)}><option value="empleado">Empleado de GSL</option><option value="proveedor">Factura a GSL</option></select>
               </div>
               <div><label className="text-xs text-gray-500">Fecha de ingreso</label><input type="date" className={`mt-1 ${inp}`} value={f.fechaIngreso} onChange={(e) => set("fechaIngreso", e.target.value)} /></div>
               <div><label className="text-xs text-gray-500">Sueldo actual</label><input type="number" className={`mt-1 ${inp}`} value={f.sueldoActual} onChange={(e) => set("sueldoActual", e.target.value as any)} /></div>

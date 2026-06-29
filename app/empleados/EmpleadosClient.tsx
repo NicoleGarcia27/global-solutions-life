@@ -55,7 +55,7 @@ export default function EmpleadosClient({ empleados, departamentos }: { empleado
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold text-gray-900">Empleados</h1>
-          <p className="text-sm text-gray-400 mt-0.5">{empleados.length} en total · {empleadosGSL} de GSL · {proveedores} proveedores</p>
+          <p className="text-sm text-gray-400 mt-0.5">{empleados.length} en total · {empleadosGSL} de GSL · {proveedores} facturan a GSL</p>
         </div>
         <button onClick={() => setOpen(true)} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white rounded-lg" style={{ backgroundColor: "#1a3a6b" }}>
           <UserPlus size={15} /> Agregar empleado
@@ -91,9 +91,8 @@ export default function EmpleadosClient({ empleados, departamentos }: { empleado
                   <td className="px-4 py-3 text-gray-500 text-xs">{e.area || "—"}</td>
                   <td className="px-4 py-3">
                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${e.tipo === "empleado" ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"}`}>
-                      {e.tipo === "empleado" ? "Empleado GSL" : "Proveedor"}
+                      {e.tipo === "empleado" ? "Empleado GSL" : "Factura a GSL"}
                     </span>
-                    {e.factura && <span className="ml-1 text-[10px] text-gray-400">factura</span>}
                   </td>
                   <td className="px-4 py-3 text-gray-600 text-xs">{antiguedad(e.fechaIngreso)}</td>
                   <td className="px-4 py-3 text-gray-700">{e.sueldoActual ? money(e.sueldoActual) : "—"}</td>
@@ -137,7 +136,7 @@ export default function EmpleadosClient({ empleados, departamentos }: { empleado
                   <label className="text-xs text-gray-500 font-medium">Tipo</label>
                   <select className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00b4d8]" value={form.tipo} onChange={(e) => set("tipo", e.target.value)}>
                     <option value="empleado">Empleado de GSL</option>
-                    <option value="proveedor">Proveedor externo</option>
+                    <option value="proveedor">Factura a GSL</option>
                   </select>
                 </div>
                 <div>
