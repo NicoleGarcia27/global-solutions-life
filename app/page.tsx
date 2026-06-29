@@ -1,18 +1,19 @@
 import { prisma } from "@/lib/prisma";
 import { seedIfEmpty } from "@/lib/seed";
 import Link from "next/link";
-import { AlertTriangle, CheckCircle2, Users, TrendingUp } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Users, TrendingUp, Megaphone, Pin } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
 export default async function Dashboard() {
   await seedIfEmpty();
 
-  const [puestos, kpis, departamentos, totalResp] = await Promise.all([
+  const [puestos, kpis, departamentos, totalResp, comunicados] = await Promise.all([
     prisma.puesto.findMany({ include: { departamento: true, kpis: true } }),
     prisma.kpi.findMany(),
     prisma.departamento.findMany({ include: { puestos: { include: { kpis: true } } } }),
     prisma.responsabilidad.count(),
+    prisma.comunicado.findMany({ orderBy: [{ fijado: "desc" }, { createdAt: "desc" }], take: 4 }),
   ]);
 
   const totalPuestos = puestos.length;
@@ -63,6 +64,27 @@ export default async function Dashboard() {
           Ver puestos →
         </Link>
       </div>
+
+      {/* Comunicados — visibles para todos */}
+      {comunicados.length > 0 && (
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="px-5 py-3 border-b border-gray-100 flex items-center gap-2" style={{ backgroundColor: "#eef2f8" }}>
+            <Megaphone size={16} style={{ color: "#1a3a6b" }} />
+            <h2 className="text-sm font-semibold" style={{ color: "#1a3a6b" }}>Comunicados</h2>
+          </div>
+          <div className="divide-y divide-gray-50">
+            {comunicados.map((c) => (
+              <div key={c.id} className="px-5 py-3">
+                <p className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                  {c.fijado && <Pin size={13} style={{ color: "#d97706" }} />}{c.titulo}
+                </p>
+                <p className="text-sm text-gray-600 mt-1 whitespace-pre-wrap leading-relaxed">{c.mensaje}</p>
+                <p className="text-xs text-gray-400 mt-1.5">{c.autor} · {new Date(c.createdAt).toLocaleDateString("es-MX", { day: "numeric", month: "long" })}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-4 gap-4">
         {stats.map((c, i) => (

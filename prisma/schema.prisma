@@ -149,6 +149,15 @@ model Asistencia {
   @@unique([empleadoId, fecha])
 }
 
+model Comunicado {
+  id        Int      @id @default(autoincrement())
+  titulo    String
+  mensaje   String
+  fijado    Boolean  @default(false)
+  autor     String   @default("")
+  createdAt DateTime @default(now())
+}
+
 model Vacacion {
   id          Int      @id @default(autoincrement())
   empleadoId  Int

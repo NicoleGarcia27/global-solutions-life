@@ -6,7 +6,7 @@ import { useSession, signOut } from "next-auth/react";
 import {
   LayoutDashboard, Users, ListChecks, BarChart3, FileText, Network, LogOut,
   Shield, TrendingUp, Copy, Mail, Inbox, Wrench, MessageSquareWarning,
-  ChevronDown, ChevronRight, UserCog, Palmtree, CalendarCheck,
+  ChevronDown, ChevronRight, UserCog, Palmtree, CalendarCheck, Megaphone,
 } from "lucide-react";
 
 type Item = { href: string; label: string; icon: any };
@@ -38,6 +38,7 @@ const GRUPOS: Grupo[] = [
     tipo: "folder", id: "admin", label: "Administración", adminOnly: true,
     items: [
       { href: "/admin/usuarios", label: "Usuarios", icon: Shield },
+      { href: "/admin/comunicados", label: "Comunicados", icon: Megaphone },
       { href: "/admin/avance", label: "Panel de avance", icon: TrendingUp },
       { href: "/admin/banco", label: "Banco de tareas", icon: Inbox },
       { href: "/admin/mejoras", label: "Problemas / Mejoras", icon: Wrench },
