@@ -143,6 +143,7 @@ model Asistencia {
   fecha       DateTime
   estado      String   @default("a_tiempo") // a_tiempo | retardo | falta | justificado
   horaLlegada String   @default("")
+  horaSalida  String   @default("")
   nota        String   @default("")
 
   @@unique([empleadoId, fecha])

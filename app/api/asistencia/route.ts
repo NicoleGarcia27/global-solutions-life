@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
   const fecha = new Date(`${b.fecha}T00:00:00.000Z`);
   const empleadoId = Number(b.empleadoId);
 
-  const data = { estado: b.estado ?? "a_tiempo", horaLlegada: b.horaLlegada ?? "", nota: b.nota ?? "" };
+  const data = { estado: b.estado ?? "a_tiempo", horaLlegada: b.horaLlegada ?? "", horaSalida: b.horaSalida ?? "", nota: b.nota ?? "" };
   await prisma.asistencia.upsert({
     where: { empleadoId_fecha: { empleadoId, fecha } },
     update: data,
