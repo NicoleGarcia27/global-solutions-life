@@ -150,6 +150,7 @@ model Asistencia {
   ipLlegada   String   @default("")
   ipSalida    String   @default("")
   origen      String   @default("admin") // admin | empleado (autoregistro)
+  verificado  Boolean  @default(false)   // RH revisó/confirmó el registro
   nota        String   @default("")
 
   @@unique([empleadoId, fecha])

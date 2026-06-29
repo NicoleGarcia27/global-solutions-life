@@ -12,7 +12,8 @@ export async function POST(req: NextRequest) {
   const fecha = new Date(`${b.fecha}T00:00:00.000Z`);
   const empleadoId = Number(b.empleadoId);
 
-  const data = { estado: b.estado ?? "a_tiempo", horaLlegada: b.horaLlegada ?? "", horaSalida: b.horaSalida ?? "", nota: b.nota ?? "" };
+  // Cuando RH registra/edita desde el panel, queda verificado.
+  const data = { estado: b.estado ?? "a_tiempo", horaLlegada: b.horaLlegada ?? "", horaSalida: b.horaSalida ?? "", nota: b.nota ?? "", verificado: b.verificado ?? true };
   await prisma.asistencia.upsert({
     where: { empleadoId_fecha: { empleadoId, fecha } },
     update: data,

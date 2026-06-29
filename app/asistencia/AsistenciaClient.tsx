@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { CalendarCheck, BarChart3, MapPin, Check } from "lucide-react";
 
-type Reg = { estado: string; horaLlegada: string; horaSalida: string; ipLlegada: string; ipSalida: string; origen: string };
+type Reg = { estado: string; horaLlegada: string; horaSalida: string; ipLlegada: string; ipSalida: string; origen: string; verificado: boolean };
 type Emp = { id: number; nombre: string; area: string; horaEntrada: string; registro: Reg | null };
 
 const ESTADOS = [
@@ -23,15 +23,16 @@ export default function AsistenciaClient({ dia, hoy, ipOficina, empleados }: { d
     await fetch("/api/config-ip", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ipOficina: ipOf }) });
     setIpMsg("Guardada"); setTimeout(() => setIpMsg(""), 2000);
   }
+  const vacio: Reg = { estado: "", horaLlegada: "", horaSalida: "", ipLlegada: "", ipSalida: "", origen: "admin", verificado: false };
   const [rows, setRows] = useState<Record<number, Reg>>(() => {
     const o: Record<number, Reg> = {};
-    empleados.forEach((e) => { o[e.id] = e.registro ?? { estado: "", horaLlegada: "", horaSalida: "" }; });
+    empleados.forEach((e) => { o[e.id] = e.registro ?? { ...vacio }; });
     return o;
   });
   const [guardando, setGuardando] = useState<number | null>(null);
 
   async function guardar(empId: number, patch: Partial<Reg>) {
-    const nuevo = { ...rows[empId], ...patch };
+    const nuevo = { ...rows[empId], ...patch, verificado: true }; // RH actúa = verificado
     if (!nuevo.estado) nuevo.estado = "a_tiempo";
     setRows((s) => ({ ...s, [empId]: nuevo }));
     setGuardando(empId);
@@ -118,6 +119,14 @@ export default function AsistenciaClient({ dia, hoy, ipOficina, empleados }: { d
                           className="border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[#00b4d8]" />
                       </label>
                       {r.origen === "empleado" && <span className="text-[10px] px-1.5 py-0.5 rounded-full" style={{ backgroundColor: "#e6f8fc", color: "#0a7d99" }}>auto-registro</span>}
+                      {r.verificado
+                        ? <span className="flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full" style={{ backgroundColor: "#ecfdf5", color: "#059669" }}><Check size={10} /> Verificado por RH</span>
+                        : (
+                          <>
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-full" style={{ backgroundColor: "#fffbeb", color: "#d97706" }}>Por verificar</span>
+                            <button onClick={() => guardar(e.id, {})} disabled={guardando === e.id} className="text-[11px] px-2 py-0.5 rounded-lg text-white" style={{ backgroundColor: "#059669" }}>✓ Verificar</button>
+                          </>
+                        )}
                     </div>
                     {(r.ipLlegada || r.ipSalida) && (
                       <div className="flex items-center gap-2 text-[11px] text-gray-400">
