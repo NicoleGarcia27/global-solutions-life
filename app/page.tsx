@@ -209,7 +209,7 @@ async function EmpleadoHome({ user }: { user: any }) {
         <div className="absolute -top-16 -right-10 w-64 h-64 rounded-full" style={{ background: "radial-gradient(circle, rgba(0,180,216,0.18), transparent 70%)" }} />
         <div className="relative">
           <p className="text-sm text-white/70 capitalize">{ahora.toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "long" })}</p>
-          <h1 className="text-2xl font-bold mt-0.5">¡Hola, {user.name?.split(" ")[0] ?? user.name}! 👋</h1>
+          <h1 className="text-2xl font-bold mt-0.5">¡Hola, {user.name?.split(" ")[0] ?? user.name}!</h1>
           <p className="text-sm text-white/70 mt-0.5">Bienvenida a tu portal de Global Solutions Life</p>
         </div>
       </div>
