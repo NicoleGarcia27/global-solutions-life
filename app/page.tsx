@@ -212,14 +212,29 @@ async function EmpleadoHome({ user }: { user: any }) {
 
   return (
     <div className="p-6 space-y-6 max-w-5xl mx-auto">
-      <div className="rounded-2xl p-6 text-white relative overflow-hidden" style={{ background: "linear-gradient(120deg, #14305a 0%, #1a3a6b 60%, #1e4a86 100%)" }}>
-        <div className="absolute -top-16 -right-10 w-64 h-64 rounded-full" style={{ background: "radial-gradient(circle, rgba(0,180,216,0.18), transparent 70%)" }} />
-        <div className="relative">
-          <p className="text-sm text-white/70 capitalize">{ahora.toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "long" })}</p>
-          <h1 className="text-2xl font-bold mt-0.5">¡Hola, {user.name?.split(" ")[0] ?? user.name}!</h1>
-          <p className="text-sm text-white/70 mt-0.5">Bienvenida a tu portal de Global Solutions Life</p>
-        </div>
+      <div className="flex items-baseline justify-between">
+        <h1 className="text-xl font-semibold text-gray-900">Inicio</h1>
+        <p className="text-sm text-gray-400 capitalize">{ahora.toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "long" })}</p>
       </div>
+
+      {/* Comunicados — arriba por ser importante */}
+      {comunicados.length > 0 && (
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="px-5 py-3 border-b border-gray-100 flex items-center gap-2" style={{ backgroundColor: "#eef2f8" }}>
+            <Megaphone size={16} style={{ color: "#1a3a6b" }} />
+            <h2 className="text-sm font-semibold" style={{ color: "#1a3a6b" }}>Comunicados</h2>
+          </div>
+          <div className="divide-y divide-gray-50">
+            {comunicados.map((c) => (
+              <div key={c.id} className="px-5 py-3">
+                <p className="text-sm font-semibold text-gray-900 flex items-center gap-2">{c.fijado && <Pin size={13} style={{ color: "#d97706" }} />}{c.titulo}</p>
+                <p className="text-sm text-gray-600 mt-1 whitespace-pre-wrap leading-relaxed">{c.mensaje}</p>
+                <p className="text-xs text-gray-400 mt-1.5">{c.autor} · {new Date(c.createdAt).toLocaleDateString("es-MX", { day: "numeric", month: "long" })}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Accesos rápidos */}
       <div className="grid sm:grid-cols-3 gap-4">
@@ -256,25 +271,6 @@ async function EmpleadoHome({ user }: { user: any }) {
 
       {/* Calendario (solo lectura) */}
       <CalendarioWidget eventos={eventosData} soloLectura />
-
-      {/* Comunicados */}
-      {comunicados.length > 0 && (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="px-5 py-3 border-b border-gray-100 flex items-center gap-2" style={{ backgroundColor: "#eef2f8" }}>
-            <Megaphone size={16} style={{ color: "#1a3a6b" }} />
-            <h2 className="text-sm font-semibold" style={{ color: "#1a3a6b" }}>Comunicados</h2>
-          </div>
-          <div className="divide-y divide-gray-50">
-            {comunicados.map((c) => (
-              <div key={c.id} className="px-5 py-3">
-                <p className="text-sm font-semibold text-gray-900 flex items-center gap-2">{c.fijado && <Pin size={13} style={{ color: "#d97706" }} />}{c.titulo}</p>
-                <p className="text-sm text-gray-600 mt-1 whitespace-pre-wrap leading-relaxed">{c.mensaje}</p>
-                <p className="text-xs text-gray-400 mt-1.5">{c.autor} · {new Date(c.createdAt).toLocaleDateString("es-MX", { day: "numeric", month: "long" })}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
