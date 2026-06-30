@@ -18,6 +18,7 @@ const GRUPOS: Grupo[] = [
   { tipo: "single", href: "/", label: "Inicio", icon: LayoutDashboard },
   { tipo: "single", href: "/checador", label: "Mi asistencia", icon: Fingerprint },
   { tipo: "single", href: "/puestos", label: "Mi puesto", icon: FileText, soloEmpleado: true },
+  { tipo: "single", href: "/buzon", label: "Buzón", icon: MessageSquareWarning, soloEmpleado: true },
   {
     tipo: "folder", id: "perfiles", label: "Puestos y perfiles", adminOnly: true,
     items: [

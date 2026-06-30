@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { vacacionesPorLey } from "@/lib/vacaciones";
 import Link from "next/link";
-import { AlertTriangle, CheckCircle2, Users, TrendingUp, Megaphone, Pin, Fingerprint, FileText, MessageSquareWarning, Palmtree, ArrowRight, ClipboardList, CalendarDays, Video, Mail, Palette } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Users, TrendingUp, Megaphone, Pin, FileText, Palmtree, ClipboardList, CalendarDays, Video, Mail, Palette } from "lucide-react";
 import CalendarioWidget from "@/components/CalendarioWidget";
 import NotasWidget from "@/components/NotasWidget";
 
@@ -185,7 +185,6 @@ async function EmpleadoHome({ user }: { user: any }) {
     where: { usuarioId: Number(user.id) },
     include: { vacaciones: true, asistencias: true },
   });
-  const misPuestos = await prisma.puesto.count({ where: { usuarioId: Number(user.id) } });
   const eventos = await prisma.evento.findMany({ orderBy: { fecha: "asc" } });
   const eventosData = eventos.map((e) => ({ id: e.id, titulo: e.titulo, fecha: e.fecha.toISOString(), hora: e.hora, tipo: e.tipo }));
   const notas = await prisma.nota.findMany({ where: { usuarioId: Number(user.id) }, orderBy: { createdAt: "desc" } });
@@ -203,12 +202,6 @@ async function EmpleadoHome({ user }: { user: any }) {
     const aTiempo = mes.filter((a) => a.estado === "a_tiempo").length;
     puntualidad = mes.length ? Math.round((aTiempo / mes.length) * 100) : null;
   }
-
-  const acciones = [
-    { href: "/checador", label: "Marcar asistencia", desc: "Registra tu entrada y salida", icon: Fingerprint, color: "#059669", bg: "#ecfdf5" },
-    { href: "/puestos", label: "Mi puesto", desc: misPuestos > 0 ? "Ver mi información" : "Llenar mi formulario", icon: FileText, color: "#1a3a6b", bg: "#eef2f8" },
-    { href: "/buzon", label: "Buzón anónimo", desc: "Quejas y sugerencias", icon: MessageSquareWarning, color: "#0a7d99", bg: "#e6f8fc" },
-  ];
 
   return (
     <div className="p-6 space-y-6 max-w-5xl mx-auto">
@@ -235,19 +228,6 @@ async function EmpleadoHome({ user }: { user: any }) {
           </div>
         </div>
       )}
-
-      {/* Accesos rápidos */}
-      <div className="grid sm:grid-cols-3 gap-4">
-        {acciones.map((a) => (
-          <Link key={a.href} href={a.href} className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md hover:border-gray-300 transition group">
-            <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3" style={{ backgroundColor: a.bg }}>
-              <a.icon size={22} style={{ color: a.color }} />
-            </div>
-            <p className="font-semibold text-gray-900 flex items-center gap-1">{a.label}<ArrowRight size={14} className="text-gray-300 group-hover:translate-x-0.5 transition-transform" /></p>
-            <p className="text-xs text-gray-400 mt-0.5">{a.desc}</p>
-          </Link>
-        ))}
-      </div>
 
       {/* Stats personales */}
       {empleado && (
