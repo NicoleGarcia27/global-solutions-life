@@ -11,14 +11,15 @@ import {
 
 type Item = { href: string; label: string; icon: any };
 type Grupo =
-  | { tipo: "single"; href: string; label: string; icon: any }
+  | { tipo: "single"; href: string; label: string; icon: any; adminOnly?: boolean; soloEmpleado?: boolean }
   | { tipo: "folder"; id: string; label: string; adminOnly?: boolean; items: Item[] };
 
 const GRUPOS: Grupo[] = [
   { tipo: "single", href: "/", label: "Inicio", icon: LayoutDashboard },
   { tipo: "single", href: "/checador", label: "Mi asistencia", icon: Fingerprint },
+  { tipo: "single", href: "/puestos", label: "Mi puesto", icon: FileText, soloEmpleado: true },
   {
-    tipo: "folder", id: "perfiles", label: "Puestos y perfiles",
+    tipo: "folder", id: "perfiles", label: "Puestos y perfiles", adminOnly: true,
     items: [
       { href: "/puestos", label: "Puestos", icon: Users },
       { href: "/frp", label: "FRP — Procesos", icon: ListChecks },
@@ -85,6 +86,8 @@ export default function Sidebar() {
       <nav className="flex-1 px-2 py-4 space-y-0.5 overflow-y-auto">
         {GRUPOS.map((g) => {
           if (g.tipo === "single") {
+            if (g.adminOnly && !isAdmin) return null;
+            if (g.soloEmpleado && isAdmin) return null;
             const active = isActive(g.href);
             const Icon = g.icon;
             return (

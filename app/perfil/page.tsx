@@ -1,10 +1,16 @@
 import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { FileText } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
 export default async function PerfilPage() {
+  const session = await getServerSession(authOptions);
+  if ((session?.user as any)?.role !== "admin") redirect("/");
+
   const puestos = await prisma.puesto.findMany({
     include: { departamento: true },
     orderBy: { nombre: "asc" },
