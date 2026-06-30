@@ -50,43 +50,34 @@ export default function CalendarioWidget({ eventos, soloLectura = false }: { eve
   async function eliminar(id: number) { if (!confirm("¿Eliminar este evento?")) return; await fetch(`/api/eventos/${id}`, { method: "DELETE" }); router.refresh(); }
 
   return (
-    <div className="relative pt-14">
-      <style>{`@keyframes gslFlota{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,-7px)}}`}</style>
-      {/* Mascota asomándose sobre el calendario */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/api/mascota" alt="" className="pointer-events-none select-none absolute left-1/2 top-0 w-32 z-0" style={{ transform: "translateX(-50%)", animation: "gslFlota 3s ease-in-out infinite" }} />
+    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-md max-w-3xl mx-auto">
+      <style>{`@keyframes gslFlota{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}`}</style>
 
-      <div className="relative z-10 bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-md">
-        {/* Encabezado */}
-        <div className="flex items-center justify-between px-5 pt-4 pb-2" style={{ background: "linear-gradient(180deg, #eaf4fb 0%, #ffffff 100%)" }}>
-          <div>
-            <h2 className="text-base font-bold leading-tight" style={{ color: "#1a3a6b" }}>Calendario</h2>
-            <p className="text-[11px] text-gray-400">Eventos y recordatorios</p>
-          </div>
-          {!soloLectura && (
-            <button onClick={() => { setForm({ titulo: "", fecha: hoyKey, hora: "", tipo: "evento" }); setOpen(true); }} className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-white rounded-lg hover:brightness-110" style={{ backgroundColor: "#1a3a6b" }}>
-              <Plus size={13} /> Agregar
-            </button>
-          )}
-        </div>
+      {/* Mascota sobre fondo blanco */}
+      <div className="flex justify-center pt-4 pb-1 bg-white">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/api/mascota" alt="Mascota GSL" className="w-28 h-28 object-contain" style={{ animation: "gslFlota 3s ease-in-out infinite" }} />
+      </div>
 
-        <div className="grid md:grid-cols-5 gap-4 p-4">
-        {/* Mes compacto */}
+      {/* Barra del mes (azul) */}
+      <div className="flex items-center justify-between px-4 py-2.5 text-white" style={{ backgroundColor: "#1a3a6b" }}>
+        <button onClick={() => cambiarMes(-1)} className="p-1 rounded-lg hover:bg-white/10"><ChevronLeft size={18} /></button>
+        <span className="text-sm font-semibold capitalize">{nombreMes}</span>
+        <button onClick={() => cambiarMes(1)} className="p-1 rounded-lg hover:bg-white/10"><ChevronRight size={18} /></button>
+      </div>
+
+      <div className="grid md:grid-cols-5 gap-4 p-4">
+        {/* Días */}
         <div className="md:col-span-3">
-          <div className="flex items-center justify-between mb-1.5">
-            <button onClick={() => cambiarMes(-1)} className="p-1 rounded-lg hover:bg-gray-100 text-gray-400"><ChevronLeft size={15} /></button>
-            <span className="text-xs font-semibold text-gray-700 capitalize">{nombreMes}</span>
-            <button onClick={() => cambiarMes(1)} className="p-1 rounded-lg hover:bg-gray-100 text-gray-400"><ChevronRight size={15} /></button>
-          </div>
           <div className="grid grid-cols-7 gap-0.5 text-center">
-            {DIAS.map((d, i) => <div key={i} className="text-[10px] font-semibold text-gray-300 py-0.5">{d}</div>)}
+            {DIAS.map((d, i) => <div key={i} className="text-[10px] font-semibold text-gray-300 py-1">{d}</div>)}
             {celdas.map((day, i) => {
               if (day === null) return <div key={`b${i}`} />;
               const key = `${anio}-${pad(mes + 1)}-${pad(day)}`;
               const evs = porDia[key] ?? [];
               const esHoy = key === hoyKey;
               return (
-                <button key={key} onClick={() => abrirEn(day)} disabled={soloLectura} className="h-9 rounded-lg flex flex-col items-center justify-center hover:bg-gray-50 transition disabled:hover:bg-transparent disabled:cursor-default" style={esHoy ? { backgroundColor: "#1a3a6b" } : {}}>
+                <button key={key} onClick={() => abrirEn(day)} disabled={soloLectura} className="h-9 rounded-lg flex flex-col items-center justify-center hover:bg-blue-50 transition disabled:hover:bg-transparent disabled:cursor-default" style={esHoy ? { backgroundColor: "#1a3a6b" } : {}}>
                   <span className={`text-xs leading-none ${esHoy ? "text-white font-bold" : "text-gray-600"}`}>{day}</span>
                   {evs.length > 0 && (
                     <span className="flex gap-0.5 mt-0.5">
@@ -97,16 +88,23 @@ export default function CalendarioWidget({ eventos, soloLectura = false }: { eve
               );
             })}
           </div>
-          <div className="flex flex-wrap gap-2.5 mt-2.5">
+          <div className="flex flex-wrap gap-2.5 mt-3">
             {Object.values(TIPOS).map((t) => (
               <span key={t.label} className="flex items-center gap-1 text-[10px] text-gray-400"><span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: t.color }} />{t.label}</span>
             ))}
           </div>
         </div>
 
-        {/* Próximos eventos */}
-        <div className="md:col-span-2">
-          <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Próximos</p>
+        {/* Próximos */}
+        <div className="md:col-span-2 md:border-l md:border-gray-100 md:pl-4">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Próximos</p>
+            {!soloLectura && (
+              <button onClick={() => { setForm({ titulo: "", fecha: hoyKey, hora: "", tipo: "evento" }); setOpen(true); }} className="flex items-center gap-1 px-2 py-1 text-[11px] text-white rounded-lg" style={{ backgroundColor: "#1a3a6b" }}>
+                <Plus size={12} /> Agregar
+              </button>
+            )}
+          </div>
           {proximos.length === 0 ? (
             <p className="text-xs text-gray-400">Sin eventos próximos.</p>
           ) : (
@@ -159,7 +157,6 @@ export default function CalendarioWidget({ eventos, soloLectura = false }: { eve
           </div>
         </div>
       )}
-      </div>
     </div>
   );
 }
