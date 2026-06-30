@@ -20,9 +20,9 @@ export default function ChecadorClient({ nombre, vinculado, horaEntrada, minutos
   const [done, setDone] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
-    const tick = () => setReloj(new Intl.DateTimeFormat("es-MX", { timeZone: "America/Mexico_City", hour12: true, hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(new Date()));
+    const tick = () => setReloj(new Intl.DateTimeFormat("es-MX", { timeZone: "America/Mexico_City", hour12: true, hour: "2-digit", minute: "2-digit" }).format(new Date()));
     tick();
-    const id = setInterval(tick, 1000);
+    const id = setInterval(tick, 15000);
     return () => clearInterval(id);
   }, []);
 
@@ -67,13 +67,13 @@ export default function ChecadorClient({ nombre, vinculado, horaEntrada, minutos
       <div className="grid lg:grid-cols-5 gap-6 items-stretch">
         {/* Panel izquierdo: mascota + reloj */}
         <div className="lg:col-span-2 rounded-2xl border border-gray-200 p-6 flex flex-col items-center text-center" style={{ background: "linear-gradient(160deg, #eaf4fb 0%, #ffffff 70%)" }}>
-          <div className="w-full bg-white rounded-xl border border-gray-100 shadow-sm py-4 px-3">
-            <div className="text-4xl lg:text-5xl font-bold tracking-tight tabular-nums" style={{ color: "#1a3a6b" }}>{reloj}</div>
+          <div className="w-full bg-white rounded-xl border border-gray-100 shadow-sm py-3 px-3">
+            <div className="text-4xl lg:text-5xl font-bold tracking-tight whitespace-nowrap" style={{ color: "#1a3a6b" }}>{reloj}</div>
             <p className="text-xs text-gray-400 capitalize mt-1">{fechaHoy}</p>
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/api/mascota" alt="Mascota GSL" className="w-52 h-52 lg:w-60 lg:h-60 object-contain drop-shadow-lg my-3" />
-          <p className="text-base text-gray-700">¡Hola <strong style={{ color: "#1a3a6b" }}>{nombre}</strong>!</p>
+          <img src="/api/mascota" alt="Mascota GSL" className="w-full max-w-[340px] h-auto object-contain drop-shadow-lg my-2" />
+          <p className="text-lg text-gray-700">¡Hola <strong style={{ color: "#1a3a6b" }}>{nombre}</strong>!</p>
           <p className="text-xs text-gray-400 mt-0.5">Que tengas un excelente día 🐾</p>
         </div>
 
