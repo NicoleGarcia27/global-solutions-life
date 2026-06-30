@@ -33,11 +33,12 @@ export default async function Dashboard() {
   const porRevisar = puestos.filter((p) => p.estado !== "activo");
 
   const primerNombre = (sessionUser?.name as string)?.split(" ")[0] ?? "Administradora";
-  const resumenPartes: string[] = [];
-  if (porRevisar.length) resumenPartes.push(`${porRevisar.length} puesto${porRevisar.length !== 1 ? "s" : ""} por revisar`);
-  if (noLeidas) resumenPartes.push(`${noLeidas} aviso${noLeidas !== 1 ? "s" : ""} nuevo${noLeidas !== 1 ? "s" : ""}`);
-  const resumen = resumenPartes.length ? `Tienes ${resumenPartes.join(" y ")}.` : "Todo al día por aquí ✨";
   const fechaLarga = new Date().toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  const chips = [
+    { n: porRevisar.length, label: "Por revisar", href: "/puestos" },
+    { n: noLeidas, label: "Avisos nuevos", href: "/notificaciones" },
+    { n: empleadosCount, label: "Empleados", href: "/empleados" },
+  ];
 
   const stats = [
     { label: "Empleados", value: String(empleadosCount), sub: "en el sistema", icon: Users, chip: "#1a3a6b", chipBg: "#eaf0f8", href: "/empleados" },
@@ -59,14 +60,21 @@ export default async function Dashboard() {
   return (
     <div className="p-6 space-y-6 max-w-6xl mx-auto">
       {/* Banner de bienvenida */}
-      <div className="rounded-2xl p-6 pr-32 text-white relative overflow-hidden" style={{ background: "linear-gradient(120deg, #14305a 0%, #1a3a6b 60%, #1e4a86 100%)" }}>
-        <div className="absolute -top-16 -right-10 w-64 h-64 rounded-full" style={{ background: "radial-gradient(circle, rgba(0,180,216,0.20), transparent 70%)" }} />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/api/mascota-cal?v=4" alt="" className="hidden sm:block absolute right-4 -bottom-3 w-28 pointer-events-none select-none" />
-        <div className="relative">
-          <p className="text-sm text-white/60 capitalize">{fechaLarga}</p>
-          <h1 className="text-2xl font-bold mt-0.5">¡Hola, {primerNombre}! 👋</h1>
-          <p className="text-sm text-white/75 mt-1">{resumen}</p>
+      <div className="rounded-2xl p-6 text-white relative overflow-hidden" style={{ background: "linear-gradient(120deg, #14305a 0%, #1a3a6b 60%, #1e4a86 100%)" }}>
+        <div className="absolute -top-16 -right-10 w-64 h-64 rounded-full" style={{ background: "radial-gradient(circle, rgba(0,180,216,0.18), transparent 70%)" }} />
+        <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+          <div>
+            <p className="text-sm text-white/60 capitalize">{fechaLarga}</p>
+            <h1 className="text-2xl font-bold mt-0.5">¡Hola, {primerNombre}! 👋</h1>
+          </div>
+          <div className="flex gap-3">
+            {chips.map((c) => (
+              <Link key={c.label} href={c.href} className="rounded-xl px-4 py-2.5 text-center transition hover:bg-white/15" style={{ backgroundColor: "rgba(255,255,255,0.1)" }}>
+                <p className="text-2xl font-bold leading-none">{c.n}</p>
+                <p className="text-[11px] text-white/70 mt-1 whitespace-nowrap">{c.label}</p>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
 
