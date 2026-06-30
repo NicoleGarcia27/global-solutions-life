@@ -64,7 +64,7 @@ export default async function Dashboard() {
         <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-5">
           <div>
             <p className="text-sm text-white/60 capitalize">{fechaLarga}</p>
-            <h1 className="text-2xl font-bold mt-0.5">¡Hola, {primerNombre}! 👋</h1>
+            <h1 className="text-2xl font-bold mt-0.5">¡Hola, {primerNombre}!</h1>
           </div>
           <div className="flex gap-3">
             {chips.map((c) => (
