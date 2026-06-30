@@ -51,12 +51,10 @@ export default function CalendarioWidget({ eventos, soloLectura = false }: { eve
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-md max-w-3xl mx-auto">
-      <style>{`@keyframes gslFlota{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}`}</style>
-
-      {/* Mascota transparente, encima del calendario */}
+      {/* Mascota transparente, encima del calendario (estática) */}
       <div className="flex justify-center pt-3 bg-white">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/api/mascota-cal" alt="Mascota GSL" className="w-36 relative z-10" style={{ marginBottom: -28, animation: "gslFlota 3s ease-in-out infinite" }} />
+        <img src="/api/mascota-cal" alt="Mascota GSL" className="w-40 relative z-10" style={{ marginBottom: -24 }} />
       </div>
 
       {/* Barra del mes (azul) — la mascota apoya las patitas aquí */}
