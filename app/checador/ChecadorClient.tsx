@@ -69,7 +69,7 @@ export default function ChecadorClient({ nombre, vinculado, horaEntrada, minutos
         <div className="lg:col-span-2 rounded-2xl border border-gray-200 p-6 flex flex-col items-center text-center" style={{ background: "linear-gradient(160deg, #eaf4fb 0%, #ffffff 70%)" }}>
           <div className="w-full bg-white rounded-xl border border-gray-100 shadow-sm py-3 px-3">
             <div className="text-4xl lg:text-5xl font-bold tracking-tight whitespace-nowrap" style={{ color: "#1a3a6b" }}>{reloj}</div>
-            <p className="text-xs text-gray-400 capitalize mt-1">{fechaHoy}</p>
+            <p className="text-sm text-gray-500 capitalize mt-1">{fechaHoy}</p>
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/api/mascota" alt="Mascota GSL" className="w-full max-w-[340px] h-auto object-contain drop-shadow-lg my-2" />
