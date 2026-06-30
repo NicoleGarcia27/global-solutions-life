@@ -53,17 +53,17 @@ export default function CalendarioWidget({ eventos, soloLectura = false }: { eve
     <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-md max-w-3xl mx-auto">
       <style>{`@keyframes gslFlota{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}`}</style>
 
-      {/* Mascota sobre fondo blanco */}
-      <div className="flex justify-center pt-4 pb-1 bg-white">
+      {/* Mascota transparente, encima del calendario */}
+      <div className="flex justify-center pt-3 bg-white">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/api/mascota" alt="Mascota GSL" className="w-28 h-28 object-contain" style={{ animation: "gslFlota 3s ease-in-out infinite" }} />
+        <img src="/api/mascota-cal" alt="Mascota GSL" className="w-36 relative z-10" style={{ marginBottom: -28, animation: "gslFlota 3s ease-in-out infinite" }} />
       </div>
 
-      {/* Barra del mes (azul) */}
-      <div className="flex items-center justify-between px-4 py-2.5 text-white" style={{ backgroundColor: "#1a3a6b" }}>
-        <button onClick={() => cambiarMes(-1)} className="p-1 rounded-lg hover:bg-white/10"><ChevronLeft size={18} /></button>
+      {/* Barra del mes (azul) — la mascota apoya las patitas aquí */}
+      <div className="flex items-center justify-between px-4 pt-9 pb-2.5 text-white" style={{ backgroundColor: "#1a3a6b" }}>
+        <button onClick={() => cambiarMes(-1)} className="p-1 rounded-lg hover:bg-white/10 relative z-20"><ChevronLeft size={18} /></button>
         <span className="text-sm font-semibold capitalize">{nombreMes}</span>
-        <button onClick={() => cambiarMes(1)} className="p-1 rounded-lg hover:bg-white/10"><ChevronRight size={18} /></button>
+        <button onClick={() => cambiarMes(1)} className="p-1 rounded-lg hover:bg-white/10 relative z-20"><ChevronRight size={18} /></button>
       </div>
 
       <div className="grid md:grid-cols-5 gap-4 p-4">
