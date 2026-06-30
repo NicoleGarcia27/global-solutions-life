@@ -34,7 +34,7 @@ export default async function EmpleadoPage({ params }: Props) {
     <EmpleadoDetalle
       empleado={{
         id: e.id, nombre: e.nombre, puesto: e.puesto, area: e.area, tipo: e.tipo,
-        factura: e.factura, sueldoActual: e.sueldoActual, correo: e.correo, telefono: e.telefono,
+        factura: e.factura, sueldoActual: e.sueldoActual, bonoDespensa: e.bonoDespensa, bonoGasolina: e.bonoGasolina, correo: e.correo, telefono: e.telefono,
         notas: e.notas, activo: e.activo, diasVacaciones: e.diasVacaciones, diasExtra: e.diasExtra,
         horaEntrada: e.horaEntrada, usuarioId: e.usuarioId,
         fechaIngreso: e.fechaIngreso ? e.fechaIngreso.toISOString().slice(0, 10) : "",

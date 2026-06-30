@@ -2,12 +2,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Pencil, Check, X, TrendingUp, Trash2, Plus, Palmtree, Scale, CalendarClock, CalendarCheck } from "lucide-react";
+import { ArrowLeft, Pencil, Check, X, TrendingUp, Trash2, Plus, Palmtree, Scale, CalendarClock, CalendarCheck, Wallet } from "lucide-react";
 import { vacacionesPorLey, ventanaVacaciones } from "@/lib/vacaciones";
 
 type Empleado = {
   id: number; nombre: string; puesto: string; area: string; tipo: string; factura: boolean;
-  sueldoActual: number; correo: string; telefono: string; notas: string; activo: boolean; fechaIngreso: string;
+  sueldoActual: number; bonoDespensa: number; bonoGasolina: number; correo: string; telefono: string; notas: string; activo: boolean; fechaIngreso: string;
   diasVacaciones: number; diasExtra: number; horaEntrada: string; usuarioId: number | null;
 };
 type AsistenciaMes = { a_tiempo: number; retardo: number; falta: number; justificado: number };
@@ -50,6 +50,9 @@ export default function EmpleadoDetalle({ empleado, incrementos, vacaciones, asi
   const totalAsis = asistenciaMes.a_tiempo + asistenciaMes.retardo + asistenciaMes.falta + asistenciaMes.justificado;
   const pctPuntual = totalAsis ? Math.round((asistenciaMes.a_tiempo / totalAsis) * 100) : null;
   const mesNombre = new Date().toLocaleDateString("es-MX", { month: "long" });
+  const iva = empleado.factura ? Math.round(empleado.sueldoActual * 0.16) : 0;
+  const subtotal = empleado.sueldoActual + (empleado.bonoDespensa || 0) + (empleado.bonoGasolina || 0);
+  const totalPagar = subtotal + iva;
 
   async function registrarVacacion() {
     if (!vac.fechaInicio || !vac.fechaFin) return;
@@ -128,6 +131,8 @@ export default function EmpleadoDetalle({ empleado, incrementos, vacaciones, asi
               </div>
               <div><label className="text-xs text-gray-500">Fecha de ingreso</label><input type="date" className={`mt-1 ${inp}`} value={f.fechaIngreso} onChange={(e) => set("fechaIngreso", e.target.value)} /></div>
               <div><label className="text-xs text-gray-500">Sueldo actual</label><input type="number" className={`mt-1 ${inp}`} value={f.sueldoActual} onChange={(e) => set("sueldoActual", e.target.value as any)} /></div>
+              <div><label className="text-xs text-gray-500">Bono de despensa</label><input type="number" min={0} className={`mt-1 ${inp}`} value={f.bonoDespensa} onChange={(e) => set("bonoDespensa", e.target.value as any)} placeholder="0" /></div>
+              <div><label className="text-xs text-gray-500">Bono de gasolina</label><input type="number" min={0} className={`mt-1 ${inp}`} value={f.bonoGasolina} onChange={(e) => set("bonoGasolina", e.target.value as any)} placeholder="0" /></div>
               <div><label className="text-xs text-gray-500">Correo</label><input className={`mt-1 ${inp}`} value={f.correo} onChange={(e) => set("correo", e.target.value)} /></div>
               <div><label className="text-xs text-gray-500">Teléfono</label><input className={`mt-1 ${inp}`} value={f.telefono} onChange={(e) => set("telefono", e.target.value)} /></div>
               <div><label className="text-xs text-gray-500">Días extra de cortesía 🎁</label><input type="number" min={0} className={`mt-1 ${inp}`} value={f.diasExtra} onChange={(e) => set("diasExtra", e.target.value as any)} placeholder="0" /></div>
@@ -159,6 +164,20 @@ export default function EmpleadoDetalle({ empleado, incrementos, vacaciones, asi
             {empleado.notas && <div className="col-span-3 bg-gray-50 rounded-lg p-3"><p className="text-xs text-gray-400">Notas</p><p className="text-sm mt-0.5 text-gray-700 whitespace-pre-wrap">{empleado.notas}</p></div>}
           </div>
         )}
+      </div>
+
+      {/* Percepciones */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <h2 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2"><Wallet size={15} style={{ color: "#00b4d8" }} /> Percepciones (mensual)</h2>
+        <div className="text-sm space-y-2 max-w-sm">
+          <div className="flex justify-between"><span className="text-gray-500">Sueldo base</span><span className="text-gray-800">{money(empleado.sueldoActual)}</span></div>
+          {empleado.bonoDespensa > 0 && <div className="flex justify-between"><span className="text-gray-500">Bono de despensa</span><span className="text-gray-800">{money(empleado.bonoDespensa)}</span></div>}
+          {empleado.bonoGasolina > 0 && <div className="flex justify-between"><span className="text-gray-500">Bono de gasolina</span><span className="text-gray-800">{money(empleado.bonoGasolina)}</span></div>}
+          <div className="flex justify-between border-t border-gray-100 pt-2"><span className="text-gray-600 font-medium">Sueldo neto (sueldo + bonos)</span><span className="font-semibold text-gray-900">{money(subtotal)}</span></div>
+          {empleado.factura && <div className="flex justify-between"><span className="text-gray-500">IVA (16%)</span><span className="text-gray-800">{money(iva)}</span></div>}
+          <div className="flex justify-between border-t border-gray-200 pt-2"><span className="font-semibold" style={{ color: "#1a3a6b" }}>Total a pagar</span><span className="text-lg font-bold" style={{ color: "#1a3a6b" }}>{money(totalPagar)}</span></div>
+        </div>
+        {empleado.factura && <p className="text-xs text-gray-400 mt-3">Emite factura: se agrega IVA 16% sobre el sueldo base.</p>}
       </div>
 
       {/* Historial de sueldo */}

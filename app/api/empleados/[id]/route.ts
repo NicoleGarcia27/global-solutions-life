@@ -23,6 +23,8 @@ export async function PATCH(req: NextRequest, { params }: Params) {
       ...(b.factura !== undefined && { factura: b.factura }),
       ...(b.fechaIngreso !== undefined && { fechaIngreso: b.fechaIngreso ? new Date(b.fechaIngreso) : null }),
       ...(b.sueldoActual !== undefined && { sueldoActual: Number(b.sueldoActual) || 0 }),
+      ...(b.bonoDespensa !== undefined && { bonoDespensa: Number(b.bonoDespensa) || 0 }),
+      ...(b.bonoGasolina !== undefined && { bonoGasolina: Number(b.bonoGasolina) || 0 }),
       ...(b.correo !== undefined && { correo: b.correo }),
       ...(b.telefono !== undefined && { telefono: b.telefono }),
       ...(b.notas !== undefined && { notas: b.notas }),

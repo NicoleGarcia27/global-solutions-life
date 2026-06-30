@@ -124,6 +124,8 @@ model Empleado {
   factura      Boolean      @default(false)       // si emite factura
   fechaIngreso DateTime?
   sueldoActual Float        @default(0)
+  bonoDespensa Float        @default(0)
+  bonoGasolina Float        @default(0)
   correo       String       @default("")
   telefono     String       @default("")
   notas          String       @default("")
