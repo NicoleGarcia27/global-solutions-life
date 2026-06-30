@@ -73,14 +73,15 @@ export default function ChecadorClient({ nombre, vinculado, horaEntrada, minutos
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/api/mascota" alt="Mascota GSL" className="w-full max-w-[340px] h-auto object-contain drop-shadow-lg my-2" />
-          <p className="text-lg text-gray-700">¡Hola <strong style={{ color: "#1a3a6b" }}>{nombre}</strong>!</p>
-          <p className="text-xs text-gray-400 mt-0.5">Que tengas un excelente día 🐾</p>
+          <p className="text-xl text-gray-600 mt-1">¡Hola!</p>
+          <p className="text-2xl font-bold leading-snug" style={{ color: "#1a3a6b" }}>{nombre}</p>
+          <p className="text-sm text-gray-400 mt-1.5">Que tengas un excelente día 🐾</p>
         </div>
 
         {/* Panel derecho: acciones */}
         <div className="lg:col-span-3 bg-white rounded-2xl border border-gray-200 p-8">
-          <h2 className="text-lg font-semibold mb-1" style={{ color: "#1a3a6b" }}>Marca tu asistencia</h2>
-          <p className="text-sm text-gray-400 mb-5">Toca el botón que corresponde. La hora la registra el sistema.</p>
+          <h2 className="text-xl font-semibold mb-1 text-center" style={{ color: "#1a3a6b" }}>Marca tu asistencia</h2>
+          <p className="text-sm text-gray-400 mb-5 text-center">Toca el botón que corresponde. La hora la registra el sistema.</p>
 
           {!vinculado ? (
             <div className="text-sm bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-amber-800">
