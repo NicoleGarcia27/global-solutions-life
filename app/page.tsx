@@ -18,16 +18,24 @@ export default async function Dashboard() {
 
   await seedIfEmpty();
 
-  const [puestos, totalResp, empleadosCount, comunicados, eventos] = await Promise.all([
+  const [puestos, totalResp, empleadosCount, comunicados, eventos, noLeidas] = await Promise.all([
     prisma.puesto.findMany({ include: { departamento: true, usuario: { select: { nombre: true } } }, orderBy: { createdAt: "desc" } }),
     prisma.responsabilidad.count(),
     prisma.empleado.count(),
     prisma.comunicado.findMany({ orderBy: [{ fijado: "desc" }, { createdAt: "desc" }], take: 4 }),
     prisma.evento.findMany({ orderBy: { fecha: "asc" } }),
+    prisma.notificacion.count({ where: { leida: false } }),
   ]);
 
   const puestosEnviados = puestos.filter((p) => p.usuarioId !== null);
   const porRevisar = puestos.filter((p) => p.estado !== "activo");
+
+  const primerNombre = (sessionUser?.name as string)?.split(" ")[0] ?? "Administradora";
+  const resumenPartes: string[] = [];
+  if (porRevisar.length) resumenPartes.push(`${porRevisar.length} puesto${porRevisar.length !== 1 ? "s" : ""} por revisar`);
+  if (noLeidas) resumenPartes.push(`${noLeidas} aviso${noLeidas !== 1 ? "s" : ""} nuevo${noLeidas !== 1 ? "s" : ""}`);
+  const resumen = resumenPartes.length ? `Tienes ${resumenPartes.join(" y ")}.` : "Todo al día por aquí ✨";
+  const fechaLarga = new Date().toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 
   const stats = [
     { label: "Empleados", value: String(empleadosCount), sub: "en el sistema", icon: Users, chip: "#1a3a6b", chipBg: "#eaf0f8", href: "/empleados" },
@@ -48,9 +56,16 @@ export default async function Dashboard() {
 
   return (
     <div className="p-6 space-y-6 max-w-6xl mx-auto">
-      <div className="flex items-baseline justify-between">
-        <h1 className="text-xl font-semibold text-gray-900">Inicio</h1>
-        <p className="text-sm text-gray-400 capitalize">{new Date().toLocaleDateString("es-MX", { month: "long", year: "numeric" })}</p>
+      {/* Banner de bienvenida */}
+      <div className="rounded-2xl p-6 pr-32 text-white relative overflow-hidden" style={{ background: "linear-gradient(120deg, #14305a 0%, #1a3a6b 60%, #1e4a86 100%)" }}>
+        <div className="absolute -top-16 -right-10 w-64 h-64 rounded-full" style={{ background: "radial-gradient(circle, rgba(0,180,216,0.20), transparent 70%)" }} />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/api/mascota-cal?v=4" alt="" className="hidden sm:block absolute right-4 -bottom-3 w-28 pointer-events-none select-none" />
+        <div className="relative">
+          <p className="text-sm text-white/60 capitalize">{fechaLarga}</p>
+          <h1 className="text-2xl font-bold mt-0.5">¡Hola, {primerNombre}! 👋</h1>
+          <p className="text-sm text-white/75 mt-1">{resumen}</p>
+        </div>
       </div>
 
       {/* Comunicados — visibles para todos */}
