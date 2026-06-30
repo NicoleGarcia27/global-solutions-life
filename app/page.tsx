@@ -56,7 +56,7 @@ export default async function Dashboard() {
     prisma.evento.findMany({ orderBy: { fecha: "asc" } }),
     prisma.notificacion.count({ where: { leida: false } }),
   ]);
-  const notas = await prisma.nota.findMany({ orderBy: { createdAt: "desc" } });
+  const notas = await prisma.nota.findMany({ where: { usuarioId: Number(sessionUser.id) }, orderBy: { createdAt: "desc" } });
 
   const puestosEnviados = puestos.filter((p) => p.usuarioId !== null);
   const porRevisar = puestos.filter((p) => p.estado !== "activo");
@@ -188,7 +188,7 @@ async function EmpleadoHome({ user }: { user: any }) {
   const misPuestos = await prisma.puesto.count({ where: { usuarioId: Number(user.id) } });
   const eventos = await prisma.evento.findMany({ orderBy: { fecha: "asc" } });
   const eventosData = eventos.map((e) => ({ id: e.id, titulo: e.titulo, fecha: e.fecha.toISOString(), hora: e.hora, tipo: e.tipo }));
-  const notas = await prisma.nota.findMany({ orderBy: { createdAt: "desc" } });
+  const notas = await prisma.nota.findMany({ where: { usuarioId: Number(user.id) }, orderBy: { createdAt: "desc" } });
 
   const anio = new Date().getFullYear();
   const ahora = new Date();

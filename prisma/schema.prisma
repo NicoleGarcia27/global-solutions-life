@@ -200,6 +200,7 @@ model Nota {
   id        Int      @id @default(autoincrement())
   texto     String
   color     String   @default("amarillo")
+  usuarioId Int?
   createdAt DateTime @default(now())
 }
 

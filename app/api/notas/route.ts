@@ -9,6 +9,6 @@ export async function POST(req: NextRequest) {
   const b = await req.json();
   if (!b.texto?.trim()) return NextResponse.json({ error: "Escribe algo" }, { status: 400 });
 
-  const nota = await prisma.nota.create({ data: { texto: b.texto.slice(0, 500), color: b.color ?? "amarillo" } });
+  const nota = await prisma.nota.create({ data: { texto: b.texto.slice(0, 500), color: b.color ?? "amarillo", usuarioId: Number(token.sub) } });
   return NextResponse.json(nota);
 }
