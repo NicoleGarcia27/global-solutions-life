@@ -50,19 +50,20 @@ export default function CalendarioWidget({ eventos, soloLectura = false }: { eve
   async function eliminar(id: number) { if (!confirm("¿Eliminar este evento?")) return; await fetch(`/api/eventos/${id}`, { method: "DELETE" }); router.refresh(); }
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-md max-w-3xl mx-auto">
-      {/* Mascota transparente, encima del calendario (estática) */}
-      <div className="flex justify-center pt-3 bg-white">
+    <div className="max-w-3xl mx-auto">
+      {/* Mascota encima del calendario (transparente, sobre el fondo de la página) */}
+      <div className="flex justify-center relative z-20">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/api/mascota-cal" alt="Mascota GSL" className="w-40 relative z-10" style={{ marginBottom: -24 }} />
+        <img src="/api/mascota-cal?v=4" alt="Mascota GSL" className="w-40" style={{ marginBottom: -30 }} />
       </div>
 
-      {/* Barra del mes (azul) — la mascota apoya las patitas aquí */}
-      <div className="flex items-center justify-between px-4 pt-9 pb-2.5 text-white" style={{ backgroundColor: "#1a3a6b" }}>
-        <button onClick={() => cambiarMes(-1)} className="p-1 rounded-lg hover:bg-white/10 relative z-20"><ChevronLeft size={18} /></button>
-        <span className="text-sm font-semibold capitalize">{nombreMes}</span>
-        <button onClick={() => cambiarMes(1)} className="p-1 rounded-lg hover:bg-white/10 relative z-20"><ChevronRight size={18} /></button>
-      </div>
+      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-md relative z-10">
+        {/* Barra del mes (azul) — la mascota apoya las patitas aquí */}
+        <div className="flex items-center justify-between px-4 pt-6 pb-2.5 text-white" style={{ backgroundColor: "#1a3a6b" }}>
+          <button onClick={() => cambiarMes(-1)} className="p-1 rounded-lg hover:bg-white/10"><ChevronLeft size={18} /></button>
+          <span className="text-sm font-semibold capitalize">{nombreMes}</span>
+          <button onClick={() => cambiarMes(1)} className="p-1 rounded-lg hover:bg-white/10"><ChevronRight size={18} /></button>
+        </div>
 
       <div className="grid md:grid-cols-5 gap-4 p-4">
         {/* Días */}
@@ -155,6 +156,7 @@ export default function CalendarioWidget({ eventos, soloLectura = false }: { eve
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
