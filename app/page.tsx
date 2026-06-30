@@ -4,7 +4,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { vacacionesPorLey } from "@/lib/vacaciones";
 import Link from "next/link";
-import { AlertTriangle, CheckCircle2, Users, TrendingUp, Megaphone, Pin, Fingerprint, FileText, MessageSquareWarning, Palmtree, ArrowRight, CalendarDays, Video, Mail, ClipboardList } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Users, TrendingUp, Megaphone, Pin, Fingerprint, FileText, MessageSquareWarning, Palmtree, ArrowRight, ClipboardList } from "lucide-react";
+import CalendarioWidget from "@/components/CalendarioWidget";
 
 export const dynamic = "force-dynamic";
 
@@ -17,11 +18,12 @@ export default async function Dashboard() {
 
   await seedIfEmpty();
 
-  const [puestos, totalResp, empleadosCount, comunicados] = await Promise.all([
+  const [puestos, totalResp, empleadosCount, comunicados, eventos] = await Promise.all([
     prisma.puesto.findMany({ include: { departamento: true, usuario: { select: { nombre: true } } }, orderBy: { createdAt: "desc" } }),
     prisma.responsabilidad.count(),
     prisma.empleado.count(),
     prisma.comunicado.findMany({ orderBy: [{ fijado: "desc" }, { createdAt: "desc" }], take: 4 }),
+    prisma.evento.findMany({ orderBy: { fecha: "asc" } }),
   ]);
 
   const puestosEnviados = puestos.filter((p) => p.usuarioId !== null);
@@ -34,12 +36,7 @@ export default async function Dashboard() {
     { label: "Procesos mapeados", value: String(totalResp), sub: "tareas en FRP", icon: TrendingUp, chip: "#059669", chipBg: "#ecfdf5", href: "/frp" },
   ];
 
-  const tools = [
-    { label: "Calendario", desc: "Google Calendar", href: "https://calendar.google.com", icon: CalendarDays, color: "#2563eb", bg: "#eff6ff" },
-    { label: "Meet", desc: "Videollamada", href: "https://meet.google.com", icon: Video, color: "#059669", bg: "#ecfdf5" },
-    { label: "Zoom", desc: "Reunión", href: "https://zoom.us/join", icon: Video, color: "#1a3a6b", bg: "#eef2f8" },
-    { label: "Correo", desc: "Gmail", href: "https://mail.google.com", icon: Mail, color: "#dc2626", bg: "#fef2f2" },
-  ];
+  const eventosData = eventos.map((e) => ({ id: e.id, titulo: e.titulo, fecha: e.fecha.toISOString(), hora: e.hora, tipo: e.tipo }));
 
   return (
     <div className="p-6 space-y-6 max-w-6xl mx-auto">
@@ -85,23 +82,8 @@ export default async function Dashboard() {
         </div>
       )}
 
-      {/* Accesos rápidos a herramientas */}
-      <div>
-        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Accesos rápidos</p>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {tools.map((t) => (
-            <a key={t.label} href={t.href} target="_blank" rel="noopener noreferrer" className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md hover:border-gray-300 transition flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: t.bg }}>
-                <t.icon size={20} style={{ color: t.color }} />
-              </div>
-              <div className="min-w-0">
-                <p className="text-sm font-medium text-gray-900">{t.label}</p>
-                <p className="text-[11px] text-gray-400">{t.desc}</p>
-              </div>
-            </a>
-          ))}
-        </div>
-      </div>
+      {/* Calendario */}
+      <CalendarioWidget eventos={eventosData} />
 
       {/* Métricas */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">

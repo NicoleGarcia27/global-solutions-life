@@ -185,6 +185,16 @@ model Notificacion {
   createdAt DateTime @default(now())
 }
 
+model Evento {
+  id        Int      @id @default(autoincrement())
+  titulo    String
+  fecha     DateTime
+  hora      String   @default("")
+  tipo      String   @default("evento") // evento | recordatorio | reunion | importante
+  nota      String   @default("")
+  createdAt DateTime @default(now())
+}
+
 model Vacacion {
   id          Int      @id @default(autoincrement())
   empleadoId  Int
