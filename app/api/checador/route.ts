@@ -8,7 +8,6 @@ function ipDe(req: NextRequest) {
   return req.headers.get("x-real-ip") ?? "";
 }
 
-// Hora y fecha en zona horaria de México
 function ahoraMx() {
   const ahora = new Date();
   const hora = new Intl.DateTimeFormat("es-MX", { timeZone: "America/Mexico_City", hour12: false, hour: "2-digit", minute: "2-digit" }).format(ahora);
@@ -23,31 +22,37 @@ export async function POST(req: NextRequest) {
   const empleado = await prisma.empleado.findUnique({ where: { usuarioId: Number(token.sub) } });
   if (!empleado) return NextResponse.json({ error: "Tu cuenta no está vinculada a un empleado. Pídele a RH que la vincule." }, { status: 400 });
 
-  const { tipo } = await req.json(); // "entrada" | "salida"
+  const { tipo } = await req.json(); // entrada | comida_inicio | comida_fin | salida
   const ip = ipDe(req);
   const { hora, fechaStr } = ahoraMx();
   const fecha = new Date(`${fechaStr}T00:00:00.000Z`);
+  const llave = { empleadoId_fecha: { empleadoId: empleado.id, fecha } };
 
-  const existente = await prisma.asistencia.findUnique({ where: { empleadoId_fecha: { empleadoId: empleado.id, fecha } } });
+  // Asegura que exista el registro del día
+  async function asegurar() {
+    const ex = await prisma.asistencia.findUnique({ where: llave });
+    if (!ex) await prisma.asistencia.create({ data: { empleadoId: empleado!.id, fecha, estado: "a_tiempo", origen: "empleado" } });
+  }
 
   if (tipo === "entrada") {
     const estado = hora > (empleado.horaEntrada || "09:00") ? "retardo" : "a_tiempo";
     await prisma.asistencia.upsert({
-      where: { empleadoId_fecha: { empleadoId: empleado.id, fecha } },
+      where: llave,
       update: { horaLlegada: hora, ipLlegada: ip, estado, origen: "empleado" },
       create: { empleadoId: empleado.id, fecha, horaLlegada: hora, ipLlegada: ip, estado, origen: "empleado" },
     });
-    return NextResponse.json({ ok: true, hora, estado, ip });
+  } else if (tipo === "comida_inicio") {
+    await asegurar();
+    await prisma.asistencia.update({ where: llave, data: { comidaInicio: hora } });
+  } else if (tipo === "comida_fin") {
+    await asegurar();
+    await prisma.asistencia.update({ where: llave, data: { comidaFin: hora } });
+  } else if (tipo === "salida") {
+    await asegurar();
+    await prisma.asistencia.update({ where: llave, data: { horaSalida: hora, ipSalida: ip } });
+  } else {
+    return NextResponse.json({ error: "Tipo inválido" }, { status: 400 });
   }
 
-  if (tipo === "salida") {
-    if (!existente) {
-      await prisma.asistencia.create({ data: { empleadoId: empleado.id, fecha, horaSalida: hora, ipSalida: ip, estado: "a_tiempo", origen: "empleado" } });
-    } else {
-      await prisma.asistencia.update({ where: { empleadoId_fecha: { empleadoId: empleado.id, fecha } }, data: { horaSalida: hora, ipSalida: ip } });
-    }
-    return NextResponse.json({ ok: true, hora, ip });
-  }
-
-  return NextResponse.json({ error: "Tipo inválido" }, { status: 400 });
+  return NextResponse.json({ ok: true, hora, ip });
 }

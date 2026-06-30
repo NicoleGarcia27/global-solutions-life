@@ -19,14 +19,15 @@ export default async function AsistenciaPage({ searchParams }: Props) {
   const registros = await prisma.asistencia.findMany({ where: { fecha: new Date(`${dia}T00:00:00.000Z`) } });
   const config = await prisma.config.findFirst();
 
-  const mapa: Record<number, { estado: string; horaLlegada: string; horaSalida: string; ipLlegada: string; ipSalida: string; origen: string; verificado: boolean }> = {};
-  for (const r of registros) mapa[r.empleadoId] = { estado: r.estado, horaLlegada: r.horaLlegada, horaSalida: r.horaSalida, ipLlegada: r.ipLlegada, ipSalida: r.ipSalida, origen: r.origen, verificado: r.verificado };
+  const mapa: Record<number, { estado: string; horaLlegada: string; horaSalida: string; comidaInicio: string; comidaFin: string; ipLlegada: string; ipSalida: string; origen: string; verificado: boolean }> = {};
+  for (const r of registros) mapa[r.empleadoId] = { estado: r.estado, horaLlegada: r.horaLlegada, horaSalida: r.horaSalida, comidaInicio: r.comidaInicio, comidaFin: r.comidaFin, ipLlegada: r.ipLlegada, ipSalida: r.ipSalida, origen: r.origen, verificado: r.verificado };
 
   return (
     <AsistenciaClient
       dia={dia}
       hoy={hoy}
       ipOficina={config?.ipOficina ?? ""}
+      minutosComida={config?.minutosComida ?? 60}
       empleados={empleados.map((e) => ({ id: e.id, nombre: e.nombre, area: e.area, horaEntrada: e.horaEntrada, registro: mapa[e.id] ?? null }))}
     />
   );

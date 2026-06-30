@@ -19,14 +19,16 @@ export default async function ChecadorPage() {
     const r = await prisma.asistencia.findUnique({
       where: { empleadoId_fecha: { empleadoId: empleado.id, fecha: new Date(`${fechaStr}T00:00:00.000Z`) } },
     });
-    if (r) registro = { estado: r.estado, horaLlegada: r.horaLlegada, horaSalida: r.horaSalida, ipLlegada: r.ipLlegada, ipSalida: r.ipSalida };
+    if (r) registro = { estado: r.estado, horaLlegada: r.horaLlegada, horaSalida: r.horaSalida, comidaInicio: r.comidaInicio, comidaFin: r.comidaFin, ipLlegada: r.ipLlegada, ipSalida: r.ipSalida };
   }
+  const config = await prisma.config.findFirst();
 
   return (
     <ChecadorClient
       nombre={user.name ?? "Empleado"}
       vinculado={!!empleado}
       horaEntrada={empleado?.horaEntrada ?? "09:00"}
+      minutosComida={config?.minutosComida ?? 60}
       registro={registro}
     />
   );

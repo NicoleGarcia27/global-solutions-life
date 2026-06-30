@@ -4,7 +4,14 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { CalendarCheck, BarChart3, MapPin, Check } from "lucide-react";
 
-type Reg = { estado: string; horaLlegada: string; horaSalida: string; ipLlegada: string; ipSalida: string; origen: string; verificado: boolean };
+type Reg = { estado: string; horaLlegada: string; horaSalida: string; comidaInicio: string; comidaFin: string; ipLlegada: string; ipSalida: string; origen: string; verificado: boolean };
+
+function difMin(a: string, b: string): number | null {
+  if (!a || !b) return null;
+  const [ah, am] = a.split(":").map(Number);
+  const [bh, bm] = b.split(":").map(Number);
+  return (bh * 60 + bm) - (ah * 60 + am);
+}
 type Emp = { id: number; nombre: string; area: string; horaEntrada: string; registro: Reg | null };
 
 const ESTADOS = [
@@ -14,16 +21,17 @@ const ESTADOS = [
   { val: "justificado", label: "Justificado", color: "#2563eb", bg: "#eff6ff" },
 ];
 
-export default function AsistenciaClient({ dia, hoy, ipOficina, empleados }: { dia: string; hoy: string; ipOficina: string; empleados: Emp[] }) {
+export default function AsistenciaClient({ dia, hoy, ipOficina, minutosComida, empleados }: { dia: string; hoy: string; ipOficina: string; minutosComida: number; empleados: Emp[] }) {
   const router = useRouter();
   const [ipOf, setIpOf] = useState(ipOficina);
+  const [minCom, setMinCom] = useState(String(minutosComida));
   const [ipMsg, setIpMsg] = useState("");
 
-  async function guardarIp() {
-    await fetch("/api/config-ip", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ipOficina: ipOf }) });
-    setIpMsg("Guardada"); setTimeout(() => setIpMsg(""), 2000);
+  async function guardarConfig() {
+    await fetch("/api/config-ip", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ipOficina: ipOf, minutosComida: Number(minCom) || 0 }) });
+    setIpMsg("Guardado"); setTimeout(() => setIpMsg(""), 2000);
   }
-  const vacio: Reg = { estado: "", horaLlegada: "", horaSalida: "", ipLlegada: "", ipSalida: "", origen: "admin", verificado: false };
+  const vacio: Reg = { estado: "", horaLlegada: "", horaSalida: "", comidaInicio: "", comidaFin: "", ipLlegada: "", ipSalida: "", origen: "admin", verificado: false };
   const [rows, setRows] = useState<Record<number, Reg>>(() => {
     const o: Record<number, Reg> = {};
     empleados.forEach((e) => { o[e.id] = e.registro ?? { ...vacio }; });
@@ -69,14 +77,17 @@ export default function AsistenciaClient({ dia, hoy, ipOficina, empleados }: { d
 
       <p className="text-xs text-gray-400">{marcados} de {empleados.length} empleados registrados este día. Marca el estado o deja que ellos chequen desde su cuenta.</p>
 
-      {/* IP de oficina */}
-      <div className="bg-white rounded-xl border border-gray-200 p-3 flex items-center gap-2 flex-wrap">
+      {/* Configuración: IP de oficina + minutos de comida */}
+      <div className="bg-white rounded-xl border border-gray-200 p-3 flex items-center gap-3 flex-wrap">
         <MapPin size={14} className="text-gray-400" />
-        <span className="text-xs text-gray-500">IP de la oficina (para verificar checadas):</span>
-        <input value={ipOf} onChange={(e) => setIpOf(e.target.value)} placeholder="ej. 187.190.x.x" className="border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#00b4d8] w-40" />
-        <button onClick={guardarIp} className="px-3 py-1 text-xs text-white rounded-lg" style={{ backgroundColor: "#1a3a6b" }}>Guardar</button>
+        <label className="flex items-center gap-1.5 text-xs text-gray-500">IP de oficina:
+          <input value={ipOf} onChange={(e) => setIpOf(e.target.value)} placeholder="ej. 187.190.x.x" className="border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#00b4d8] w-36" />
+        </label>
+        <label className="flex items-center gap-1.5 text-xs text-gray-500">Comida permitida (min):
+          <input type="number" min={0} value={minCom} onChange={(e) => setMinCom(e.target.value)} className="border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#00b4d8] w-16" />
+        </label>
+        <button onClick={guardarConfig} className="px-3 py-1 text-xs text-white rounded-lg" style={{ backgroundColor: "#1a3a6b" }}>Guardar</button>
         {ipMsg && <span className="text-xs text-emerald-600">{ipMsg}</span>}
-        <span className="text-[11px] text-gray-400">Pídele a un empleado que cheque en la oficina y copia aquí la IP que aparezca.</span>
       </div>
 
       {empleados.length === 0 ? (
@@ -128,6 +139,20 @@ export default function AsistenciaClient({ dia, hoy, ipOficina, empleados }: { d
                           </>
                         )}
                     </div>
+                    {(r.comidaInicio || r.comidaFin) && (() => {
+                      const dur = difMin(r.comidaInicio, r.comidaFin);
+                      const excedida = dur !== null && dur > minutosComida;
+                      return (
+                        <div className="flex items-center gap-2 text-[11px] text-gray-500">
+                          <span>🍽️ Comida: {r.comidaInicio || "—"} → {r.comidaFin || "—"}</span>
+                          {dur !== null && (
+                            <span className="font-medium" style={{ color: excedida ? "#dc2626" : "#059669" }}>
+                              {dur} min{excedida ? ` · se pasó ${dur - minutosComida}` : ""}
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })()}
                     {(r.ipLlegada || r.ipSalida) && (
                       <div className="flex items-center gap-2 text-[11px] text-gray-400">
                         <MapPin size={11} />

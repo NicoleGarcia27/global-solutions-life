@@ -147,6 +147,8 @@ model Asistencia {
   estado      String   @default("a_tiempo") // a_tiempo | retardo | falta | justificado
   horaLlegada String   @default("")
   horaSalida  String   @default("")
+  comidaInicio String  @default("")
+  comidaFin   String   @default("")
   ipLlegada   String   @default("")
   ipSalida    String   @default("")
   origen      String   @default("admin") // admin | empleado (autoregistro)
@@ -157,8 +159,9 @@ model Asistencia {
 }
 
 model Config {
-  id        Int    @id @default(autoincrement())
-  ipOficina String @default("")
+  id            Int    @id @default(autoincrement())
+  ipOficina     String @default("")
+  minutosComida Int    @default(60)
 }
 
 model Comunicado {
