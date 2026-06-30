@@ -63,14 +63,21 @@ export default function ChecadorClient({ nombre, vinculado, horaEntrada, minutos
   }
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center p-6">
-      <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-[0_10px_40px_-12px_rgba(26,58,107,0.18)] p-8 text-center">
+    <div className="p-6 max-w-5xl mx-auto">
+      <div className="grid lg:grid-cols-5 gap-6 items-stretch">
+        {/* Panel izquierdo: mascota + reloj */}
+        <div className="lg:col-span-2 rounded-2xl border border-gray-200 p-8 flex flex-col items-center justify-center text-center relative overflow-hidden" style={{ background: "linear-gradient(160deg, #e6f8fc 0%, #ffffff 60%)" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/api/mascota" alt="Mascota GSL" width={120} height={120} className="mx-auto -mt-2 mb-1" style={{ objectFit: "contain" }} />
-          <p className="text-sm text-gray-400 capitalize">{fechaHoy}</p>
-          <div className="text-5xl font-bold my-2" style={{ color: "#1a3a6b" }}>{reloj}</div>
-          <p className="text-sm text-gray-500 mb-6">¡Hola <strong>{nombre}</strong>! Marca tu asistencia</p>
+          <img src="/api/mascota" alt="Mascota GSL" className="w-56 h-56 lg:w-64 lg:h-64 object-contain drop-shadow-md" />
+          <div className="text-5xl lg:text-6xl font-bold mt-2" style={{ color: "#1a3a6b" }}>{reloj}</div>
+          <p className="text-sm text-gray-400 capitalize mt-1">{fechaHoy}</p>
+          <p className="text-base text-gray-600 mt-3">¡Hola <strong>{nombre}</strong>!</p>
+        </div>
+
+        {/* Panel derecho: acciones */}
+        <div className="lg:col-span-3 bg-white rounded-2xl border border-gray-200 p-8">
+          <h2 className="text-lg font-semibold mb-1" style={{ color: "#1a3a6b" }}>Marca tu asistencia</h2>
+          <p className="text-sm text-gray-400 mb-5">Toca el botón que corresponde. La hora la registra el sistema.</p>
 
           {!vinculado ? (
             <div className="text-sm bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-amber-800">
@@ -92,7 +99,7 @@ export default function ChecadorClient({ nombre, vinculado, horaEntrada, minutos
               )}
               {msg && <p className="mt-2 text-sm font-medium" style={{ color: "#059669" }}>{msg}</p>}
 
-              <div className="mt-6 pt-5 border-t border-gray-100 text-left space-y-1.5">
+              <div className="mt-6 pt-5 border-t border-gray-100 space-y-1.5">
                 <p className="text-xs text-gray-400 mb-1">Tu registro de hoy (entrada esperada: {horaEntrada})</p>
                 <Linea label="Entrada" valor={registro?.horaLlegada} extra={registro?.estado === "retardo" ? "retardo" : registro?.horaLlegada ? "a tiempo" : ""} extraColor={registro?.estado === "retardo" ? "#d97706" : "#059669"} />
                 <Linea label="Salida a comer" valor={registro?.comidaInicio} />
@@ -102,10 +109,10 @@ export default function ChecadorClient({ nombre, vinculado, horaEntrada, minutos
               </div>
             </>
           )}
+          <p className="text-xs text-gray-400 mt-5 flex items-center gap-1">
+            <CheckCircle2 size={12} /> La hora la registra el sistema automáticamente, no se puede modificar.
+          </p>
         </div>
-        <p className="text-center text-xs text-gray-400 mt-4 flex items-center justify-center gap-1">
-          <CheckCircle2 size={12} /> La hora la registra el sistema automáticamente, no se puede modificar.
-        </p>
       </div>
     </div>
   );
