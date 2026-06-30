@@ -50,14 +50,14 @@ export default function ChecadorClient({ nombre, vinculado, horaEntrada, minutos
   function Accion({ tipo, label, hora, hecho, enabled, color, bg, Icon }: { tipo: string; label: string; hora: string; hecho: boolean; enabled: boolean; color: string; bg: string; Icon: any }) {
     if (hecho) {
       return (
-        <div className="flex flex-col items-center justify-center gap-1 py-4 rounded-xl font-medium border-2" style={{ borderColor: color, color, backgroundColor: bg }}>
-          <CheckCircle2 size={22} /> <span className="text-xs">{label} {hora}</span>
+        <div className="flex flex-col items-center justify-center gap-1.5 py-6 rounded-2xl font-medium border-2" style={{ borderColor: color, color, backgroundColor: bg }}>
+          <CheckCircle2 size={26} /> <span className="text-sm font-semibold">{label}</span><span className="text-xs opacity-70">{hora}</span>
         </div>
       );
     }
     return (
-      <button onClick={() => checar(tipo)} disabled={busy || !enabled} className="flex flex-col items-center gap-1.5 py-4 rounded-xl text-white font-medium disabled:opacity-40" style={{ backgroundColor: color }}>
-        <Icon size={22} /> <span className="text-xs">{label}</span>
+      <button onClick={() => checar(tipo)} disabled={busy || !enabled} className="flex flex-col items-center gap-2 py-6 rounded-2xl text-white font-semibold shadow-sm hover:shadow-md hover:brightness-105 active:scale-[0.98] transition disabled:opacity-30 disabled:shadow-none disabled:hover:brightness-100" style={{ backgroundColor: color }}>
+        <Icon size={28} /> <span className="text-sm">{label}</span>
       </button>
     );
   }
@@ -66,12 +66,15 @@ export default function ChecadorClient({ nombre, vinculado, horaEntrada, minutos
     <div className="p-6 max-w-5xl mx-auto">
       <div className="grid lg:grid-cols-5 gap-6 items-stretch">
         {/* Panel izquierdo: mascota + reloj */}
-        <div className="lg:col-span-2 rounded-2xl border border-gray-200 p-8 flex flex-col items-center justify-center text-center relative overflow-hidden" style={{ background: "linear-gradient(160deg, #e6f8fc 0%, #ffffff 60%)" }}>
+        <div className="lg:col-span-2 rounded-2xl border border-gray-200 p-6 flex flex-col items-center text-center" style={{ background: "linear-gradient(160deg, #eaf4fb 0%, #ffffff 70%)" }}>
+          <div className="w-full bg-white rounded-xl border border-gray-100 shadow-sm py-4 px-3">
+            <div className="text-4xl lg:text-5xl font-bold tracking-tight tabular-nums" style={{ color: "#1a3a6b" }}>{reloj}</div>
+            <p className="text-xs text-gray-400 capitalize mt-1">{fechaHoy}</p>
+          </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/api/mascota" alt="Mascota GSL" className="w-56 h-56 lg:w-64 lg:h-64 object-contain drop-shadow-md" />
-          <div className="text-5xl lg:text-6xl font-bold mt-2" style={{ color: "#1a3a6b" }}>{reloj}</div>
-          <p className="text-sm text-gray-400 capitalize mt-1">{fechaHoy}</p>
-          <p className="text-base text-gray-600 mt-3">¡Hola <strong>{nombre}</strong>!</p>
+          <img src="/api/mascota" alt="Mascota GSL" className="w-52 h-52 lg:w-60 lg:h-60 object-contain drop-shadow-lg my-3" />
+          <p className="text-base text-gray-700">¡Hola <strong style={{ color: "#1a3a6b" }}>{nombre}</strong>!</p>
+          <p className="text-xs text-gray-400 mt-0.5">Que tengas un excelente día 🐾</p>
         </div>
 
         {/* Panel derecho: acciones */}
