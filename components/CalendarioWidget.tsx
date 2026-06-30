@@ -52,14 +52,14 @@ export default function CalendarioWidget({ eventos, soloLectura = false }: { eve
   return (
     <div className="max-w-3xl mx-auto">
       {/* Mascota encima del calendario (transparente, sobre el fondo de la página) */}
-      <div className="flex justify-center relative z-20">
+      <div className="flex justify-center relative z-20 -mt-3">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/api/mascota-cal?v=4" alt="Mascota GSL" className="w-56" style={{ marginBottom: -38 }} />
+        <img src="/api/mascota-cal?v=4" alt="Mascota GSL" className="w-56" style={{ marginBottom: -46 }} />
       </div>
 
       <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-md relative z-10">
         {/* Barra del mes (azul) — la mascota apoya las patitas aquí */}
-        <div className="flex items-center justify-between px-4 pt-6 pb-2.5 text-white" style={{ backgroundColor: "#1a3a6b" }}>
+        <div className="flex items-center justify-between px-4 pt-5 pb-2.5 text-white" style={{ backgroundColor: "#1a3a6b" }}>
           <button onClick={() => cambiarMes(-1)} className="p-1 rounded-lg hover:bg-white/10"><ChevronLeft size={18} /></button>
           <span className="text-sm font-semibold capitalize">{nombreMes}</span>
           <button onClick={() => cambiarMes(1)} className="p-1 rounded-lg hover:bg-white/10"><ChevronRight size={18} /></button>
@@ -76,7 +76,7 @@ export default function CalendarioWidget({ eventos, soloLectura = false }: { eve
               const evs = porDia[key] ?? [];
               const esHoy = key === hoyKey;
               return (
-                <button key={key} onClick={() => abrirEn(day)} disabled={soloLectura} className="h-9 rounded-lg flex flex-col items-center justify-center hover:bg-blue-50 transition disabled:hover:bg-transparent disabled:cursor-default" style={esHoy ? { backgroundColor: "#1a3a6b" } : {}}>
+                <button key={key} onClick={() => abrirEn(day)} disabled={soloLectura} className="h-8 rounded-lg flex flex-col items-center justify-center hover:bg-blue-50 transition disabled:hover:bg-transparent disabled:cursor-default" style={esHoy ? { backgroundColor: "#1a3a6b" } : {}}>
                   <span className={`text-xs leading-none ${esHoy ? "text-white font-bold" : "text-gray-600"}`}>{day}</span>
                   {evs.length > 0 && (
                     <span className="flex gap-0.5 mt-0.5">
