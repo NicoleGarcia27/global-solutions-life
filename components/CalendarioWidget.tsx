@@ -50,7 +50,7 @@ export default function CalendarioWidget({ eventos, soloLectura = false }: { eve
   async function eliminar(id: number) { if (!confirm("¿Eliminar este evento?")) return; await fetch(`/api/eventos/${id}`, { method: "DELETE" }); router.refresh(); }
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div>
       {/* Mascota encima del calendario (transparente, sobre el fondo de la página) */}
       <div className="flex justify-center relative z-20 -mt-3">
         {/* eslint-disable-next-line @next/next/no-img-element */}
