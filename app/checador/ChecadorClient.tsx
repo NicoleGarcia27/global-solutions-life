@@ -66,9 +66,11 @@ export default function ChecadorClient({ nombre, vinculado, horaEntrada, minutos
     <div className="min-h-[80vh] flex items-center justify-center p-6">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-2xl border border-gray-200 shadow-[0_10px_40px_-12px_rgba(26,58,107,0.18)] p-8 text-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/api/mascota" alt="Mascota GSL" width={120} height={120} className="mx-auto -mt-2 mb-1" style={{ objectFit: "contain" }} />
           <p className="text-sm text-gray-400 capitalize">{fechaHoy}</p>
-          <div className="text-5xl font-bold my-3" style={{ color: "#1a3a6b" }}>{reloj}</div>
-          <p className="text-sm text-gray-500 mb-6">Hola <strong>{nombre}</strong></p>
+          <div className="text-5xl font-bold my-2" style={{ color: "#1a3a6b" }}>{reloj}</div>
+          <p className="text-sm text-gray-500 mb-6">¡Hola <strong>{nombre}</strong>! Marca tu asistencia</p>
 
           {!vinculado ? (
             <div className="text-sm bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-amber-800">
