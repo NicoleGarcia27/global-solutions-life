@@ -50,25 +50,27 @@ export default function CalendarioWidget({ eventos, soloLectura = false }: { eve
   async function eliminar(id: number) { if (!confirm("¿Eliminar este evento?")) return; await fetch(`/api/eventos/${id}`, { method: "DELETE" }); router.refresh(); }
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-      {/* Encabezado con mascota */}
-      <div className="flex items-center justify-between px-5 py-3" style={{ background: "linear-gradient(100deg, #eaf4fb 0%, #ffffff 70%)" }}>
-        <div className="flex items-center gap-2">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/api/mascota" alt="" className="w-12 h-12 object-contain -mb-1" />
+    <div className="relative pt-14">
+      <style>{`@keyframes gslFlota{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,-7px)}}`}</style>
+      {/* Mascota asomándose sobre el calendario */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/api/mascota" alt="" className="pointer-events-none select-none absolute left-1/2 top-0 w-32 z-0" style={{ transform: "translateX(-50%)", animation: "gslFlota 3s ease-in-out infinite" }} />
+
+      <div className="relative z-10 bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-md">
+        {/* Encabezado */}
+        <div className="flex items-center justify-between px-5 pt-4 pb-2" style={{ background: "linear-gradient(180deg, #eaf4fb 0%, #ffffff 100%)" }}>
           <div>
             <h2 className="text-base font-bold leading-tight" style={{ color: "#1a3a6b" }}>Calendario</h2>
             <p className="text-[11px] text-gray-400">Eventos y recordatorios</p>
           </div>
+          {!soloLectura && (
+            <button onClick={() => { setForm({ titulo: "", fecha: hoyKey, hora: "", tipo: "evento" }); setOpen(true); }} className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-white rounded-lg hover:brightness-110" style={{ backgroundColor: "#1a3a6b" }}>
+              <Plus size={13} /> Agregar
+            </button>
+          )}
         </div>
-        {!soloLectura && (
-          <button onClick={() => { setForm({ titulo: "", fecha: hoyKey, hora: "", tipo: "evento" }); setOpen(true); }} className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-white rounded-lg" style={{ backgroundColor: "#1a3a6b" }}>
-            <Plus size={13} /> Agregar
-          </button>
-        )}
-      </div>
 
-      <div className="grid md:grid-cols-5 gap-4 p-4">
+        <div className="grid md:grid-cols-5 gap-4 p-4">
         {/* Mes compacto */}
         <div className="md:col-span-3">
           <div className="flex items-center justify-between mb-1.5">
@@ -157,6 +159,7 @@ export default function CalendarioWidget({ eventos, soloLectura = false }: { eve
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
