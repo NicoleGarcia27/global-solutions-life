@@ -88,7 +88,6 @@ export default function Sidebar() {
           <img src="/api/logo" alt="GSL" width={36} height={36} className="flex-shrink-0 object-contain" />
           <div className="flex-1 min-w-0">
             <p className="text-xs font-bold text-white leading-tight">Global Solutions Life</p>
-            <p className="text-[10px]" style={{ color: "#00b4d8" }}>Consultoría en Seguros</p>
           </div>
           {isAdmin && (
             <Link href="/notificaciones" className="relative flex-shrink-0 text-white/70 hover:text-white" title="Notificaciones">
