@@ -37,7 +37,6 @@ export default async function Dashboard() {
   const chips = [
     { n: porRevisar.length, label: "Por revisar", href: "/puestos" },
     { n: noLeidas, label: "Avisos nuevos", href: "/notificaciones" },
-    { n: empleadosCount, label: "Empleados", href: "/empleados" },
   ];
 
   const stats = [
