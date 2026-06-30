@@ -54,7 +54,7 @@ export default function CalendarioWidget({ eventos, soloLectura = false }: { eve
       {/* Mascota encima del calendario (transparente, sobre el fondo de la página) */}
       <div className="flex justify-center relative z-20">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/api/mascota-cal?v=4" alt="Mascota GSL" className="w-40" style={{ marginBottom: -30 }} />
+        <img src="/api/mascota-cal?v=4" alt="Mascota GSL" className="w-56" style={{ marginBottom: -38 }} />
       </div>
 
       <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-md relative z-10">
