@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
+import { notificar } from "@/lib/notificaciones";
 
 export async function GET(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
@@ -72,5 +73,9 @@ export async function POST(req: NextRequest) {
       },
     },
   });
+
+  if (!esVacante) {
+    await notificar("puesto", `Nuevo formulario de puesto: ${puesto.nombre}`, `Enviado por ${(token.name as string) ?? body.titular ?? "un empleado"}`, `/puestos/${puesto.id}`);
+  }
   return NextResponse.json(puesto);
 }

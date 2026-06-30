@@ -175,6 +175,16 @@ model Comunicado {
   createdAt DateTime @default(now())
 }
 
+model Notificacion {
+  id        Int      @id @default(autoincrement())
+  tipo      String   @default("info") // puesto | buzon | vacaciones | info
+  titulo    String
+  mensaje   String   @default("")
+  link      String   @default("")
+  leida     Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
 model Vacacion {
   id          Int      @id @default(autoincrement())
   empleadoId  Int

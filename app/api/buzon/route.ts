@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { notificar } from "@/lib/notificaciones";
 
 // Endpoint público y anónimo: NO requiere sesión y NO guarda identidad.
 export async function POST(req: NextRequest) {
@@ -14,5 +15,7 @@ export async function POST(req: NextRequest) {
       mensaje: mensaje.slice(0, 4000),
     },
   });
+  const etiqueta = body.tipo === "sugerencia" ? "sugerencia" : body.tipo === "reconocimiento" ? "reconocimiento" : "queja";
+  await notificar("buzon", `Nuevo mensaje en el buzón (${etiqueta})`, mensaje, "/admin/buzon");
   return NextResponse.json({ ok: true });
 }

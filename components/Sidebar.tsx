@@ -1,12 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import {
   LayoutDashboard, Users, ListChecks, BarChart3, FileText, Network, LogOut,
   Shield, TrendingUp, Copy, Mail, Inbox, Wrench, MessageSquareWarning,
-  ChevronDown, ChevronRight, UserCog, Palmtree, CalendarCheck, Megaphone, Fingerprint,
+  ChevronDown, ChevronRight, UserCog, Palmtree, CalendarCheck, Megaphone, Fingerprint, Bell,
 } from "lucide-react";
 
 type Item = { href: string; label: string; icon: any };
@@ -59,6 +59,15 @@ export default function Sidebar() {
 
   const isActive = (href: string) => path === href || (href !== "/" && path.startsWith(href));
 
+  const [noLeidas, setNoLeidas] = useState(0);
+  useEffect(() => {
+    if (!isAdmin) return;
+    const cargar = () => fetch("/api/notificaciones").then((r) => r.json()).then((d) => setNoLeidas(d.noLeidas ?? 0)).catch(() => {});
+    cargar();
+    const id = setInterval(cargar, 60000);
+    return () => clearInterval(id);
+  }, [isAdmin, path]);
+
   const [open, setOpen] = useState<Record<string, boolean>>(() => {
     const o: Record<string, boolean> = {};
     for (const g of GRUPOS) {
@@ -76,10 +85,20 @@ export default function Sidebar() {
         <div className="flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/api/logo" alt="GSL" width={36} height={36} className="flex-shrink-0 object-contain" />
-          <div>
+          <div className="flex-1 min-w-0">
             <p className="text-xs font-bold text-white leading-tight">Global Solutions Life</p>
             <p className="text-[10px]" style={{ color: "#00b4d8" }}>Consultoría en Seguros</p>
           </div>
+          {isAdmin && (
+            <Link href="/notificaciones" className="relative flex-shrink-0 text-white/70 hover:text-white" title="Notificaciones">
+              <Bell size={18} />
+              {noLeidas > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-1 rounded-full text-[10px] font-bold flex items-center justify-center" style={{ backgroundColor: "#ff5a5f", color: "#fff" }}>
+                  {noLeidas > 9 ? "9+" : noLeidas}
+                </span>
+              )}
+            </Link>
+          )}
         </div>
       </div>
 
