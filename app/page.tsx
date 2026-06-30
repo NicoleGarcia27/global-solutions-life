@@ -6,6 +6,7 @@ import { vacacionesPorLey } from "@/lib/vacaciones";
 import Link from "next/link";
 import { AlertTriangle, CheckCircle2, Users, TrendingUp, Megaphone, Pin, Fingerprint, FileText, MessageSquareWarning, Palmtree, ArrowRight, ClipboardList, CalendarDays, Video, Mail, Palette } from "lucide-react";
 import CalendarioWidget from "@/components/CalendarioWidget";
+import NotasWidget from "@/components/NotasWidget";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +27,7 @@ export default async function Dashboard() {
     prisma.evento.findMany({ orderBy: { fecha: "asc" } }),
     prisma.notificacion.count({ where: { leida: false } }),
   ]);
+  const notas = await prisma.nota.findMany({ orderBy: { createdAt: "desc" } });
 
   const puestosEnviados = puestos.filter((p) => p.usuarioId !== null);
   const porRevisar = puestos.filter((p) => p.estado !== "activo");
@@ -106,6 +108,9 @@ export default async function Dashboard() {
           ))}
         </div>
       </div>
+
+      {/* Notas rápidas */}
+      <NotasWidget notas={notas.map((n) => ({ id: n.id, texto: n.texto, color: n.color }))} />
 
       {/* Calendario */}
       <CalendarioWidget eventos={eventosData} />

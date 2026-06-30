@@ -196,6 +196,13 @@ model Evento {
   createdAt DateTime @default(now())
 }
 
+model Nota {
+  id        Int      @id @default(autoincrement())
+  texto     String
+  color     String   @default("amarillo")
+  createdAt DateTime @default(now())
+}
+
 model Vacacion {
   id          Int      @id @default(autoincrement())
   empleadoId  Int
