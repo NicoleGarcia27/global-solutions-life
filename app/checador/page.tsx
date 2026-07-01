@@ -11,7 +11,10 @@ export default async function ChecadorPage() {
   const user = session?.user as any;
   if (!user) redirect("/login");
 
-  const empleado = await prisma.empleado.findUnique({ where: { usuarioId: Number(user.id) } });
+  const [empleado, config] = await Promise.all([
+    prisma.empleado.findUnique({ where: { usuarioId: Number(user.id) } }),
+    prisma.config.findFirst(),
+  ]);
 
   const fechaStr = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Mexico_City", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
   let registro = null;
@@ -21,7 +24,6 @@ export default async function ChecadorPage() {
     });
     if (r) registro = { estado: r.estado, horaLlegada: r.horaLlegada, horaSalida: r.horaSalida, comidaInicio: r.comidaInicio, comidaFin: r.comidaFin, ipLlegada: r.ipLlegada, ipSalida: r.ipSalida };
   }
-  const config = await prisma.config.findFirst();
 
   return (
     <ChecadorClient

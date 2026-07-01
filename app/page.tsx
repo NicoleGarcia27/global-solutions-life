@@ -48,15 +48,15 @@ export default async function Dashboard() {
 
   await seedIfEmpty();
 
-  const [puestos, totalResp, empleadosCount, comunicados, eventos, noLeidas] = await Promise.all([
+  const [puestos, totalResp, empleadosCount, comunicados, eventos, noLeidas, notas] = await Promise.all([
     prisma.puesto.findMany({ include: { departamento: true, usuario: { select: { nombre: true } } }, orderBy: { createdAt: "desc" } }),
     prisma.responsabilidad.count(),
     prisma.empleado.count(),
     prisma.comunicado.findMany({ orderBy: [{ fijado: "desc" }, { createdAt: "desc" }], take: 4 }),
     prisma.evento.findMany({ where: { usuarioId: Number(sessionUser.id) }, orderBy: { fecha: "asc" } }),
     prisma.notificacion.count({ where: { leida: false } }),
+    prisma.nota.findMany({ where: { usuarioId: Number(sessionUser.id) }, orderBy: { createdAt: "desc" } }),
   ]);
-  const notas = await prisma.nota.findMany({ where: { usuarioId: Number(sessionUser.id) }, orderBy: { createdAt: "desc" } });
 
   const puestosEnviados = puestos.filter((p) => p.usuarioId !== null);
   const porRevisar = puestos.filter((p) => p.estado !== "activo");
@@ -180,14 +180,13 @@ export default async function Dashboard() {
 }
 
 async function EmpleadoHome({ user }: { user: any }) {
-  const comunicados = await prisma.comunicado.findMany({ orderBy: [{ fijado: "desc" }, { createdAt: "desc" }], take: 4 });
-  const empleado = await prisma.empleado.findUnique({
-    where: { usuarioId: Number(user.id) },
-    include: { vacaciones: true, asistencias: true },
-  });
-  const eventos = await prisma.evento.findMany({ where: { usuarioId: Number(user.id) }, orderBy: { fecha: "asc" } });
+  const [comunicados, empleado, eventos, notas] = await Promise.all([
+    prisma.comunicado.findMany({ orderBy: [{ fijado: "desc" }, { createdAt: "desc" }], take: 4 }),
+    prisma.empleado.findUnique({ where: { usuarioId: Number(user.id) }, include: { vacaciones: true, asistencias: true } }),
+    prisma.evento.findMany({ where: { usuarioId: Number(user.id) }, orderBy: { fecha: "asc" } }),
+    prisma.nota.findMany({ where: { usuarioId: Number(user.id) }, orderBy: { createdAt: "desc" } }),
+  ]);
   const eventosData = eventos.map((e) => ({ id: e.id, titulo: e.titulo, fecha: e.fecha.toISOString(), hora: e.hora, tipo: e.tipo }));
-  const notas = await prisma.nota.findMany({ where: { usuarioId: Number(user.id) }, orderBy: { createdAt: "desc" } });
 
   const anio = new Date().getFullYear();
   const ahora = new Date();

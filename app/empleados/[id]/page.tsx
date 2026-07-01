@@ -14,21 +14,22 @@ export default async function EmpleadoPage({ params }: Props) {
   const { id } = await params;
   const ahora = new Date();
   const inicioMes = new Date(Date.UTC(ahora.getFullYear(), ahora.getMonth(), 1));
-  const e = await prisma.empleado.findUnique({
-    where: { id: Number(id) },
-    include: {
-      incrementos: { orderBy: { fecha: "desc" } },
-      vacaciones: { orderBy: { fechaInicio: "desc" } },
-      asistencias: { where: { fecha: { gte: inicioMes } } },
-    },
-  });
+  const [e, departamentos, usuarios] = await Promise.all([
+    prisma.empleado.findUnique({
+      where: { id: Number(id) },
+      include: {
+        incrementos: { orderBy: { fecha: "desc" } },
+        vacaciones: { orderBy: { fechaInicio: "desc" } },
+        asistencias: { where: { fecha: { gte: inicioMes } } },
+      },
+    }),
+    prisma.departamento.findMany({ orderBy: { nombre: "asc" } }),
+    prisma.usuario.findMany({ select: { id: true, nombre: true, email: true }, orderBy: { nombre: "asc" } }),
+  ]);
   if (!e) notFound();
 
   const asisMes = { a_tiempo: 0, retardo: 0, falta: 0, justificado: 0 };
   for (const a of e.asistencias) asisMes[a.estado as keyof typeof asisMes] = (asisMes[a.estado as keyof typeof asisMes] ?? 0) + 1;
-
-  const departamentos = await prisma.departamento.findMany({ orderBy: { nombre: "asc" } });
-  const usuarios = await prisma.usuario.findMany({ select: { id: true, nombre: true, email: true }, orderBy: { nombre: "asc" } });
 
   return (
     <EmpleadoDetalle

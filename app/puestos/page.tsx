@@ -14,16 +14,18 @@ export default async function PuestosPage() {
 
   if (isAdmin) {
     // Admin: ve todos los puestos enviados por empleados
-    const puestos = await prisma.puesto.findMany({
-      include: {
-        departamento: true,
-        responsabilidades: true,
-        kpis: true,
-        usuario: { select: { nombre: true, email: true } },
-      },
-      orderBy: { createdAt: "desc" },
-    });
-    const departamentos = await prisma.departamento.findMany({ orderBy: { nombre: "asc" } });
+    const [puestos, departamentos] = await Promise.all([
+      prisma.puesto.findMany({
+        include: {
+          departamento: true,
+          responsabilidades: true,
+          kpis: true,
+          usuario: { select: { nombre: true, email: true } },
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.departamento.findMany({ orderBy: { nombre: "asc" } }),
+    ]);
 
     return (
       <div className="p-6 max-w-6xl mx-auto space-y-4">

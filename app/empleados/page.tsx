@@ -10,9 +10,11 @@ export default async function EmpleadosPage() {
   const session = await getServerSession(authOptions);
   if ((session?.user as any)?.role !== "admin") redirect("/");
 
-  const empleados = await prisma.empleado.findMany({ orderBy: { nombre: "asc" } });
-  const departamentos = await prisma.departamento.findMany({ orderBy: { nombre: "asc" } });
-  const usuarios = await prisma.usuario.findMany({ select: { id: true, nombre: true, email: true }, orderBy: { nombre: "asc" } });
+  const [empleados, departamentos, usuarios] = await Promise.all([
+    prisma.empleado.findMany({ orderBy: { nombre: "asc" } }),
+    prisma.departamento.findMany({ orderBy: { nombre: "asc" } }),
+    prisma.usuario.findMany({ select: { id: true, nombre: true, email: true }, orderBy: { nombre: "asc" } }),
+  ]);
 
   return (
     <EmpleadosClient
