@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Palmtree } from "lucide-react";
 import { vacacionesPorLey } from "@/lib/vacaciones";
+import SolicitudesPendientes from "./SolicitudesPendientes";
 
 export const dynamic = "force-dynamic";
 const fmt = (d: Date) => d.toLocaleDateString("es-MX", { day: "numeric", month: "short" });
@@ -22,11 +23,26 @@ export default async function VacacionesPage() {
   });
 
   const filas = empleados.map((e) => {
-    const tomados = e.vacaciones.filter((v) => new Date(v.fechaInicio).getFullYear() === anio).reduce((s, v) => s + v.dias, 0);
-    const enVacaciones = e.vacaciones.find((v) => new Date(v.fechaInicio) <= hoy && new Date(v.fechaFin) >= hoy);
+    const delAnio = e.vacaciones.filter((v) => new Date(v.fechaInicio).getFullYear() === anio);
+    const tomados = delAnio.filter((v) => v.estado === "aprobada" || v.estado === "tomada").reduce((s, v) => s + v.dias, 0);
+    const enVacaciones = e.vacaciones.find((v) => (v.estado === "aprobada" || v.estado === "tomada") && new Date(v.fechaInicio) <= hoy && new Date(v.fechaFin) >= hoy);
     const corresponden = vacacionesPorLey(e.fechaIngreso).dias + (e.diasExtra || 0);
     return { id: e.id, nombre: e.nombre, area: e.area, corresponden, tomados, disponibles: corresponden - tomados, enVacaciones };
   });
+
+  const dispPorEmpleado = new Map(filas.map((f) => [f.id, f.disponibles]));
+  const pendientes = empleados.flatMap((e) =>
+    e.vacaciones.filter((v) => v.estado === "solicitada").map((v) => ({
+      id: v.id,
+      empleado: e.nombre,
+      area: e.area,
+      fechaInicio: v.fechaInicio.toISOString().slice(0, 10),
+      fechaFin: v.fechaFin.toISOString().slice(0, 10),
+      dias: v.dias,
+      nota: v.nota,
+      disponibles: dispPorEmpleado.get(e.id) ?? 0,
+    }))
+  ).sort((a, b) => a.fechaInicio.localeCompare(b.fechaInicio));
 
   const ahoraEnVacaciones = filas.filter((f) => f.enVacaciones);
 
@@ -38,6 +54,8 @@ export default async function VacacionesPage() {
         </h1>
         <p className="text-sm text-gray-400 mt-0.5">Días que corresponden, tomados y disponibles por empleado.</p>
       </div>
+
+      <SolicitudesPendientes solicitudes={pendientes} />
 
       {ahoraEnVacaciones.length > 0 && (
         <div className="rounded-xl border p-4" style={{ backgroundColor: "#f0fbfd", borderColor: "#9bdcec" }}>
