@@ -48,7 +48,7 @@ function VincularCuenta({ empleadoId, usuarioId, usuarios, ocupados }: { emplead
   }
 
   return (
-    <div className="min-w-[150px] max-w-[190px]">
+    <div className="w-[168px]">
       <div className="flex items-center gap-2">
         <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: vinculado ? "#10b981" : "#f59e0b" }} title={vinculado ? "Cuenta vinculada" : "Sin cuenta"} />
         <select
@@ -102,7 +102,6 @@ export default function EmpleadosClient({ empleados, departamentos, usuarios }: 
 
   const empleadosGSL = empleados.filter((e) => e.tipo === "empleado").length;
   const facturanGSL = empleados.filter((e) => e.tipo === "proveedor").length;
-  const facturanSky = empleados.filter((e) => e.tipo === "sky").length;
   const conCuenta = empleados.filter((e) => e.usuarioId != null).length;
   const ocupados = new Set(empleados.filter((e) => e.usuarioId != null).map((e) => e.usuarioId as number));
 
@@ -114,7 +113,7 @@ export default function EmpleadosClient({ empleados, departamentos, usuarios }: 
   ];
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
+    <div className="p-6 max-w-7xl mx-auto space-y-6">
       {/* Encabezado */}
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -154,7 +153,6 @@ export default function EmpleadosClient({ empleados, departamentos, usuarios }: 
               <thead>
                 <tr className="border-b border-gray-100" style={{ backgroundColor: "#f8fafc" }}>
                   <th className="text-left px-5 py-3 text-[11px] uppercase tracking-wider font-semibold text-gray-400">Empleado</th>
-                  <th className="text-left px-4 py-3 text-[11px] uppercase tracking-wider font-semibold text-gray-400">Área</th>
                   <th className="text-left px-4 py-3 text-[11px] uppercase tracking-wider font-semibold text-gray-400">Tipo</th>
                   <th className="text-left px-4 py-3 text-[11px] uppercase tracking-wider font-semibold text-gray-400 whitespace-nowrap">Antigüedad</th>
                   <th className="text-left px-4 py-3 text-[11px] uppercase tracking-wider font-semibold text-gray-400">Sueldo</th>
@@ -174,12 +172,9 @@ export default function EmpleadosClient({ empleados, departamentos, usuarios }: 
                           </div>
                           <div className="min-w-0">
                             <p className="font-medium text-gray-900 truncate">{e.nombre}</p>
-                            {e.puesto && <p className="text-xs text-gray-400 truncate">{e.puesto}</p>}
+                            {(e.puesto || e.area) && <p className="text-xs text-gray-400 truncate">{[e.puesto, e.area].filter(Boolean).join(" · ")}</p>}
                           </div>
                         </div>
-                      </td>
-                      <td className="px-4 py-3.5">
-                        {e.area ? <span className="text-xs text-gray-600">{e.area}</span> : <span className="text-xs text-gray-300">—</span>}
                       </td>
                       <td className="px-4 py-3.5">
                         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border whitespace-nowrap ${tipo.cls}`}>
