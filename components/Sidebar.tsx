@@ -60,7 +60,7 @@ const GRUPOS: Grupo[] = [
   },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const path = usePathname();
   const { data: session } = useSession();
   const user = session?.user as any;
@@ -101,7 +101,7 @@ export default function Sidebar() {
     const active = isActive(it.href);
     const Icon = it.icon;
     return (
-      <Link key={it.href} href={it.href} className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors" style={linkStyle(active)}
+      <Link key={it.href} href={it.href} onClick={onNavigate} className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors" style={linkStyle(active)}
         onMouseEnter={(e) => hoverOn(e, active)} onMouseLeave={(e) => hoverOff(e, active)}>
         <Icon size={16} /> {it.label}
       </Link>
@@ -127,7 +127,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-56 flex-shrink-0 flex flex-col" style={{ backgroundColor: "#1a3a6b" }}>
+    <aside className="w-56 h-full flex-shrink-0 flex flex-col" style={{ backgroundColor: "#1a3a6b" }}>
       <div className="px-4 py-5 border-b border-white/10">
         <div className="flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -136,7 +136,7 @@ export default function Sidebar() {
             <p className="text-xs font-bold text-white leading-tight">Global Solutions Life</p>
           </div>
           {isAdmin && (
-            <Link href="/notificaciones" className="relative flex-shrink-0 text-white/70 hover:text-white" title="Notificaciones">
+            <Link href="/notificaciones" onClick={onNavigate} className="relative flex-shrink-0 text-white/70 hover:text-white" title="Notificaciones">
               <Bell size={18} />
               {noLeidas > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-1 rounded-full text-[10px] font-bold flex items-center justify-center" style={{ backgroundColor: "#ff5a5f", color: "#fff" }}>
@@ -156,7 +156,7 @@ export default function Sidebar() {
             const active = isActive(g.href);
             const Icon = g.icon;
             return (
-              <Link key={g.href} href={g.href} className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors" style={linkStyle(active)}
+              <Link key={g.href} href={g.href} onClick={onNavigate} className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors" style={linkStyle(active)}
                 onMouseEnter={(e) => hoverOn(e, active)} onMouseLeave={(e) => hoverOff(e, active)}>
                 <Icon size={16} /> {g.label}
               </Link>
