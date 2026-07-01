@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { UserPlus, X, Users, Briefcase } from "lucide-react";
+import { UserPlus, X, Users, Briefcase, ChevronRight, UserCheck } from "lucide-react";
 
 type Empleado = {
   id: number; nombre: string; puesto: string; area: string; tipo: string;
@@ -21,17 +21,19 @@ function antiguedad(fecha: string | null) {
 }
 
 const money = (n: number) => "$" + n.toLocaleString("es-MX");
+const iniciales = (nombre: string) => nombre.trim().split(/\s+/).map((n) => n[0]).join("").slice(0, 2).toUpperCase();
 
 const TIPOS: Record<string, { label: string; cls: string }> = {
-  empleado: { label: "Empleado GSL", cls: "bg-blue-100 text-blue-700" },
-  proveedor: { label: "Factura a GSL", cls: "bg-purple-100 text-purple-700" },
-  sky: { label: "Factura a SKY SEGUROS", cls: "bg-amber-100 text-amber-700" },
+  empleado: { label: "Empleado GSL", cls: "bg-blue-50 text-blue-700 border-blue-100" },
+  proveedor: { label: "Factura a GSL", cls: "bg-purple-50 text-purple-700 border-purple-100" },
+  sky: { label: "Factura a SKY", cls: "bg-amber-50 text-amber-700 border-amber-100" },
 };
 
 function VincularCuenta({ empleadoId, usuarioId, usuarios, ocupados }: { empleadoId: number; usuarioId: number | null; usuarios: UsuarioOpt[]; ocupados: Set<number> }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState("");
+  const vinculado = usuarioId != null;
 
   async function cambiar(val: string) {
     setSaving(true); setErr("");
@@ -46,24 +48,27 @@ function VincularCuenta({ empleadoId, usuarioId, usuarios, ocupados }: { emplead
   }
 
   return (
-    <div className="min-w-[160px]">
-      <select
-        value={usuarioId != null ? String(usuarioId) : ""}
-        disabled={saving}
-        onChange={(e) => cambiar(e.target.value)}
-        className={`w-full text-xs border rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#00b4d8] ${usuarioId != null ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-amber-200 bg-amber-50 text-amber-700"}`}
-      >
-        <option value="">Sin cuenta — vincular…</option>
-        {usuarios.map((u) => {
-          const ocupadoPorOtro = ocupados.has(u.id) && u.id !== usuarioId;
-          return (
-            <option key={u.id} value={String(u.id)} disabled={ocupadoPorOtro}>
-              {u.nombre}{ocupadoPorOtro ? " (ya vinculado)" : ""}
-            </option>
-          );
-        })}
-      </select>
-      {err && <p className="text-[10px] text-red-500 mt-0.5">{err}</p>}
+    <div className="min-w-[150px] max-w-[190px]">
+      <div className="flex items-center gap-2">
+        <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: vinculado ? "#10b981" : "#f59e0b" }} title={vinculado ? "Cuenta vinculada" : "Sin cuenta"} />
+        <select
+          value={vinculado ? String(usuarioId) : ""}
+          disabled={saving}
+          onChange={(e) => cambiar(e.target.value)}
+          className={`flex-1 min-w-0 truncate text-xs bg-white border rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#00b4d8] ${vinculado ? "border-gray-200 text-gray-700" : "border-amber-200 text-amber-700"}`}
+        >
+          <option value="">Sin cuenta — vincular…</option>
+          {usuarios.map((u) => {
+            const ocupadoPorOtro = ocupados.has(u.id) && u.id !== usuarioId;
+            return (
+              <option key={u.id} value={String(u.id)} disabled={ocupadoPorOtro}>
+                {u.nombre}{ocupadoPorOtro ? " (ya vinculado)" : ""}
+              </option>
+            );
+          })}
+        </select>
+      </div>
+      {err && <p className="text-[10px] text-red-500 mt-1">{err}</p>}
     </div>
   );
 }
@@ -98,18 +103,42 @@ export default function EmpleadosClient({ empleados, departamentos, usuarios }: 
   const empleadosGSL = empleados.filter((e) => e.tipo === "empleado").length;
   const facturanGSL = empleados.filter((e) => e.tipo === "proveedor").length;
   const facturanSky = empleados.filter((e) => e.tipo === "sky").length;
+  const conCuenta = empleados.filter((e) => e.usuarioId != null).length;
   const ocupados = new Set(empleados.filter((e) => e.usuarioId != null).map((e) => e.usuarioId as number));
 
+  const stats = [
+    { n: empleados.length, label: "En total", color: "#1a3a6b" },
+    { n: empleadosGSL, label: "Nómina GSL", color: "#2563eb" },
+    { n: facturanGSL, label: "Factura a GSL", color: "#7c3aed" },
+    { n: conCuenta, label: "Con acceso", color: "#0a7d99" },
+  ];
+
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-5">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold text-gray-900">Empleados</h1>
-          <p className="text-sm text-gray-400 mt-0.5">{empleados.length} en total · {empleadosGSL} nómina GSL · {facturanGSL} factura GSL · {facturanSky} factura SKY</p>
+    <div className="p-6 max-w-6xl mx-auto space-y-6">
+      {/* Encabezado */}
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: "#eef2f8" }}>
+            <Users size={22} style={{ color: "#1a3a6b" }} />
+          </div>
+          <div>
+            <h1 className="text-xl font-semibold text-gray-900">Empleados</h1>
+            <p className="text-sm text-gray-400 mt-0.5">Directorio de personal, percepciones y accesos</p>
+          </div>
         </div>
-        <button onClick={() => setOpen(true)} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white rounded-lg" style={{ backgroundColor: "#1a3a6b" }}>
-          <UserPlus size={15} /> Agregar empleado
+        <button onClick={() => setOpen(true)} className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white rounded-lg shadow-sm flex-shrink-0 transition-opacity hover:opacity-90" style={{ backgroundColor: "#1a3a6b" }}>
+          <UserPlus size={16} /> Agregar empleado
         </button>
+      </div>
+
+      {/* Resumen */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {stats.map((s) => (
+          <div key={s.label} className="bg-white rounded-xl border border-gray-200 px-4 py-3.5">
+            <p className="text-2xl font-bold leading-none" style={{ color: s.color }}>{s.n}</p>
+            <p className="text-xs text-gray-500 mt-1.5">{s.label}</p>
+          </div>
+        ))}
       </div>
 
       {empleados.length === 0 ? (
@@ -120,44 +149,67 @@ export default function EmpleadosClient({ empleados, departamentos, usuarios }: 
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-xs text-gray-400 border-b border-gray-100 bg-gray-50">
-                <th className="text-left px-4 py-3 font-medium">Empleado</th>
-                <th className="text-left px-4 py-3 font-medium">Área</th>
-                <th className="text-left px-4 py-3 font-medium">Tipo</th>
-                <th className="text-left px-4 py-3 font-medium">Antigüedad</th>
-                <th className="text-left px-4 py-3 font-medium">Sueldo</th>
-                <th className="text-left px-4 py-3 font-medium">Cuenta de acceso</th>
-                <th className="px-4 py-3"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {empleados.map((e) => (
-                <tr key={e.id} className="border-b border-gray-50 hover:bg-gray-50">
-                  <td className="px-4 py-3">
-                    <p className="font-medium text-gray-900">{e.nombre}</p>
-                    {e.puesto && <p className="text-xs text-gray-400">{e.puesto}</p>}
-                  </td>
-                  <td className="px-4 py-3 text-gray-500 text-xs">{e.area || "—"}</td>
-                  <td className="px-4 py-3">
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${(TIPOS[e.tipo] ?? TIPOS.empleado).cls}`}>
-                      {(TIPOS[e.tipo] ?? TIPOS.empleado).label}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-gray-600 text-xs">{antiguedad(e.fechaIngreso)}</td>
-                  <td className="px-4 py-3 text-gray-700">{e.sueldoActual ? money(e.sueldoActual) : "—"}</td>
-                  <td className="px-4 py-3">
-                    <VincularCuenta empleadoId={e.id} usuarioId={e.usuarioId} usuarios={usuarios} ocupados={ocupados} />
-                  </td>
-                  <td className="px-4 py-3">
-                    <Link href={`/empleados/${e.id}`} className="text-xs hover:underline" style={{ color: "#00b4d8" }}>Ver ficha →</Link>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-100" style={{ backgroundColor: "#f8fafc" }}>
+                  <th className="text-left px-5 py-3 text-[11px] uppercase tracking-wider font-semibold text-gray-400">Empleado</th>
+                  <th className="text-left px-4 py-3 text-[11px] uppercase tracking-wider font-semibold text-gray-400">Área</th>
+                  <th className="text-left px-4 py-3 text-[11px] uppercase tracking-wider font-semibold text-gray-400">Tipo</th>
+                  <th className="text-left px-4 py-3 text-[11px] uppercase tracking-wider font-semibold text-gray-400 whitespace-nowrap">Antigüedad</th>
+                  <th className="text-left px-4 py-3 text-[11px] uppercase tracking-wider font-semibold text-gray-400">Sueldo</th>
+                  <th className="text-left px-4 py-3 text-[11px] uppercase tracking-wider font-semibold text-gray-400">Cuenta de acceso</th>
+                  <th className="px-4 py-3"></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {empleados.map((e) => {
+                  const tipo = TIPOS[e.tipo] ?? TIPOS.empleado;
+                  return (
+                    <tr key={e.id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/60 transition-colors">
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0" style={{ backgroundColor: "#e6f8fc", color: "#0a7d99" }}>
+                            {iniciales(e.nombre)}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="font-medium text-gray-900 truncate">{e.nombre}</p>
+                            {e.puesto && <p className="text-xs text-gray-400 truncate">{e.puesto}</p>}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3.5">
+                        {e.area ? <span className="text-xs text-gray-600">{e.area}</span> : <span className="text-xs text-gray-300">—</span>}
+                      </td>
+                      <td className="px-4 py-3.5">
+                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border whitespace-nowrap ${tipo.cls}`}>
+                          <span className="w-1.5 h-1.5 rounded-full bg-current opacity-60" />
+                          {tipo.label}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3.5 text-gray-600 text-xs whitespace-nowrap">{antiguedad(e.fechaIngreso)}</td>
+                      <td className="px-4 py-3.5 text-gray-800 font-medium whitespace-nowrap">{e.sueldoActual ? money(e.sueldoActual) : "—"}</td>
+                      <td className="px-4 py-3.5">
+                        <VincularCuenta empleadoId={e.id} usuarioId={e.usuarioId} usuarios={usuarios} ocupados={ocupados} />
+                      </td>
+                      <td className="px-4 py-3.5 text-right">
+                        <Link href={`/empleados/${e.id}`} className="inline-flex items-center gap-1 text-xs font-medium whitespace-nowrap px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 transition-colors hover:border-[#00b4d8] hover:text-[#00b4d8]">
+                          Ver ficha <ChevronRight size={13} />
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
+      )}
+
+      {empleados.length > 0 && (
+        <p className="text-xs text-gray-400 flex items-center gap-1.5">
+          <UserCheck size={13} /> La cuenta de acceso permite al empleado checar asistencia y solicitar sus vacaciones. El punto verde indica que ya está vinculada.
+        </p>
       )}
 
       {open && (
