@@ -53,7 +53,7 @@ export default async function Dashboard() {
     prisma.responsabilidad.count(),
     prisma.empleado.count(),
     prisma.comunicado.findMany({ orderBy: [{ fijado: "desc" }, { createdAt: "desc" }], take: 4 }),
-    prisma.evento.findMany({ orderBy: { fecha: "asc" } }),
+    prisma.evento.findMany({ where: { usuarioId: Number(sessionUser.id) }, orderBy: { fecha: "asc" } }),
     prisma.notificacion.count({ where: { leida: false } }),
   ]);
   const notas = await prisma.nota.findMany({ where: { usuarioId: Number(sessionUser.id) }, orderBy: { createdAt: "desc" } });
@@ -185,7 +185,7 @@ async function EmpleadoHome({ user }: { user: any }) {
     where: { usuarioId: Number(user.id) },
     include: { vacaciones: true, asistencias: true },
   });
-  const eventos = await prisma.evento.findMany({ orderBy: { fecha: "asc" } });
+  const eventos = await prisma.evento.findMany({ where: { usuarioId: Number(user.id) }, orderBy: { fecha: "asc" } });
   const eventosData = eventos.map((e) => ({ id: e.id, titulo: e.titulo, fecha: e.fecha.toISOString(), hora: e.hora, tipo: e.tipo }));
   const notas = await prisma.nota.findMany({ where: { usuarioId: Number(user.id) }, orderBy: { createdAt: "desc" } });
 
@@ -249,8 +249,8 @@ async function EmpleadoHome({ user }: { user: any }) {
       {/* Notas rápidas (tablero compartido) */}
       <NotasWidget notas={notas.map((n) => ({ id: n.id, texto: n.texto, color: n.color }))} />
 
-      {/* Calendario (solo lectura) */}
-      <CalendarioWidget eventos={eventosData} soloLectura />
+      {/* Calendario personal — cada quien administra el suyo */}
+      <CalendarioWidget eventos={eventosData} />
     </div>
   );
 }

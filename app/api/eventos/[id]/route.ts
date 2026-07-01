@@ -6,8 +6,9 @@ type Params = { params: Promise<{ id: string }> };
 
 export async function DELETE(req: NextRequest, { params }: Params) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-  if (token?.role !== "admin") return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  if (!token) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   const { id } = await params;
-  await prisma.evento.delete({ where: { id: Number(id) } });
+  // Solo puede borrar sus propios eventos
+  await prisma.evento.deleteMany({ where: { id: Number(id), usuarioId: Number(token.sub) } });
   return NextResponse.json({ ok: true });
 }

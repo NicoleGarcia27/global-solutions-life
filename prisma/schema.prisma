@@ -193,6 +193,7 @@ model Evento {
   tipo      String   @default("evento") // evento | recordatorio | reunion | importante
   nota      String   @default("")
   avisado   Boolean  @default(false)    // ya se mandó el aviso del día
+  usuarioId Int?                          // dueño (calendario privado por persona)
   createdAt DateTime @default(now())
 }
 

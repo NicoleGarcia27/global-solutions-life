@@ -17,8 +17,11 @@ export async function GET(req: NextRequest) {
   const fecha = new Date(`${ymd}T00:00:00.000Z`);
   const [, mm, dd] = ymd.split("-");
 
-  // 1) Eventos de hoy
-  const eventosHoy = await prisma.evento.findMany({ where: { fecha, avisado: false } });
+  // 1) Eventos de hoy — solo del calendario de los administradores.
+  // Los eventos de los empleados son privados y no deben avisar en la campana del admin.
+  const admins = await prisma.usuario.findMany({ where: { role: "admin" }, select: { id: true } });
+  const adminIds = admins.map((a) => a.id);
+  const eventosHoy = await prisma.evento.findMany({ where: { fecha, avisado: false, usuarioId: { in: adminIds } } });
   for (const e of eventosHoy) {
     await notificar("evento", `Hoy: ${e.titulo}`, e.hora ? `A las ${e.hora}` : "Durante el día", "/");
     await prisma.evento.update({ where: { id: e.id }, data: { avisado: true } });
