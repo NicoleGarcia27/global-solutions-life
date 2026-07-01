@@ -13,6 +13,13 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   if (!(await requireAdmin(req))) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   const { id } = await params;
   const b = await req.json();
+
+  // Una cuenta de acceso solo puede estar ligada a un empleado.
+  if (b.usuarioId) {
+    const ya = await prisma.empleado.findFirst({ where: { usuarioId: Number(b.usuarioId), id: { not: Number(id) } } });
+    if (ya) return NextResponse.json({ error: `Esa cuenta ya está vinculada a ${ya.nombre}.` }, { status: 400 });
+  }
+
   const empleado = await prisma.empleado.update({
     where: { id: Number(id) },
     data: {

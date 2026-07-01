@@ -7,7 +7,9 @@ import { UserPlus, X, Users, Briefcase } from "lucide-react";
 type Empleado = {
   id: number; nombre: string; puesto: string; area: string; tipo: string;
   factura: boolean; sueldoActual: number; fechaIngreso: string | null; activo: boolean;
+  usuarioId: number | null;
 };
+type UsuarioOpt = { id: number; nombre: string; email: string };
 
 function antiguedad(fecha: string | null) {
   if (!fecha) return "—";
@@ -26,7 +28,47 @@ const TIPOS: Record<string, { label: string; cls: string }> = {
   sky: { label: "Factura a SKY SEGUROS", cls: "bg-amber-100 text-amber-700" },
 };
 
-export default function EmpleadosClient({ empleados, departamentos }: { empleados: Empleado[]; departamentos: string[] }) {
+function VincularCuenta({ empleadoId, usuarioId, usuarios, ocupados }: { empleadoId: number; usuarioId: number | null; usuarios: UsuarioOpt[]; ocupados: Set<number> }) {
+  const router = useRouter();
+  const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState("");
+
+  async function cambiar(val: string) {
+    setSaving(true); setErr("");
+    const res = await fetch(`/api/empleados/${empleadoId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ usuarioId: val ? Number(val) : null }),
+    });
+    setSaving(false);
+    if (!res.ok) { const d = await res.json().catch(() => ({})); setErr(d.error ?? "No se pudo vincular"); return; }
+    router.refresh();
+  }
+
+  return (
+    <div className="min-w-[160px]">
+      <select
+        value={usuarioId != null ? String(usuarioId) : ""}
+        disabled={saving}
+        onChange={(e) => cambiar(e.target.value)}
+        className={`w-full text-xs border rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#00b4d8] ${usuarioId != null ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-amber-200 bg-amber-50 text-amber-700"}`}
+      >
+        <option value="">Sin cuenta — vincular…</option>
+        {usuarios.map((u) => {
+          const ocupadoPorOtro = ocupados.has(u.id) && u.id !== usuarioId;
+          return (
+            <option key={u.id} value={String(u.id)} disabled={ocupadoPorOtro}>
+              {u.nombre}{ocupadoPorOtro ? " (ya vinculado)" : ""}
+            </option>
+          );
+        })}
+      </select>
+      {err && <p className="text-[10px] text-red-500 mt-0.5">{err}</p>}
+    </div>
+  );
+}
+
+export default function EmpleadosClient({ empleados, departamentos, usuarios }: { empleados: Empleado[]; departamentos: string[]; usuarios: UsuarioOpt[] }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -56,6 +98,7 @@ export default function EmpleadosClient({ empleados, departamentos }: { empleado
   const empleadosGSL = empleados.filter((e) => e.tipo === "empleado").length;
   const facturanGSL = empleados.filter((e) => e.tipo === "proveedor").length;
   const facturanSky = empleados.filter((e) => e.tipo === "sky").length;
+  const ocupados = new Set(empleados.filter((e) => e.usuarioId != null).map((e) => e.usuarioId as number));
 
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-5">
@@ -85,6 +128,7 @@ export default function EmpleadosClient({ empleados, departamentos }: { empleado
                 <th className="text-left px-4 py-3 font-medium">Tipo</th>
                 <th className="text-left px-4 py-3 font-medium">Antigüedad</th>
                 <th className="text-left px-4 py-3 font-medium">Sueldo</th>
+                <th className="text-left px-4 py-3 font-medium">Cuenta de acceso</th>
                 <th className="px-4 py-3"></th>
               </tr>
             </thead>
@@ -103,6 +147,9 @@ export default function EmpleadosClient({ empleados, departamentos }: { empleado
                   </td>
                   <td className="px-4 py-3 text-gray-600 text-xs">{antiguedad(e.fechaIngreso)}</td>
                   <td className="px-4 py-3 text-gray-700">{e.sueldoActual ? money(e.sueldoActual) : "—"}</td>
+                  <td className="px-4 py-3">
+                    <VincularCuenta empleadoId={e.id} usuarioId={e.usuarioId} usuarios={usuarios} ocupados={ocupados} />
+                  </td>
                   <td className="px-4 py-3">
                     <Link href={`/empleados/${e.id}`} className="text-xs hover:underline" style={{ color: "#00b4d8" }}>Ver ficha →</Link>
                   </td>

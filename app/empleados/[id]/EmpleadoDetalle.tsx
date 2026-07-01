@@ -138,7 +138,7 @@ export default function EmpleadoDetalle({ empleado, incrementos, vacaciones, asi
               <div><label className="text-xs text-gray-500">Días extra de cortesía 🎁</label><input type="number" min={0} className={`mt-1 ${inp}`} value={f.diasExtra} onChange={(e) => set("diasExtra", e.target.value as any)} placeholder="0" /></div>
               <div><label className="text-xs text-gray-500">Hora de entrada</label><input type="time" className={`mt-1 ${inp}`} value={f.horaEntrada} onChange={(e) => set("horaEntrada", e.target.value)} /></div>
               <div>
-                <label className="text-xs text-gray-500">Cuenta de acceso (para checar)</label>
+                <label className="text-xs text-gray-500">Cuenta de acceso del empleado (checar y vacaciones)</label>
                 <select className={`mt-1 ${inp}`} value={f.usuarioId ?? ""} onChange={(e) => set("usuarioId", e.target.value as any)}>
                   <option value="">— Sin vincular —</option>
                   {usuarios.map((u) => <option key={u.id} value={u.id}>{u.nombre} ({u.email})</option>)}
