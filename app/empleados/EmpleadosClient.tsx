@@ -115,7 +115,7 @@ export default function EmpleadosClient({ empleados, departamentos, usuarios }: 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       {/* Encabezado */}
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-3">
           <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: "#eef2f8" }}>
             <Users size={22} style={{ color: "#1a3a6b" }} />
@@ -153,8 +153,8 @@ export default function EmpleadosClient({ empleados, departamentos, usuarios }: 
               <thead>
                 <tr className="border-b border-gray-100" style={{ backgroundColor: "#f8fafc" }}>
                   <th className="text-left px-5 py-3 text-[11px] uppercase tracking-wider font-semibold text-gray-400">Empleado</th>
-                  <th className="text-left px-4 py-3 text-[11px] uppercase tracking-wider font-semibold text-gray-400">Tipo</th>
-                  <th className="text-left px-4 py-3 text-[11px] uppercase tracking-wider font-semibold text-gray-400 whitespace-nowrap">Antigüedad</th>
+                  <th className="hidden md:table-cell text-left px-4 py-3 text-[11px] uppercase tracking-wider font-semibold text-gray-400">Tipo</th>
+                  <th className="hidden md:table-cell text-left px-4 py-3 text-[11px] uppercase tracking-wider font-semibold text-gray-400 whitespace-nowrap">Antigüedad</th>
                   <th className="text-left px-4 py-3 text-[11px] uppercase tracking-wider font-semibold text-gray-400">Sueldo</th>
                   <th className="text-left px-4 py-3 text-[11px] uppercase tracking-wider font-semibold text-gray-400">Cuenta de acceso</th>
                   <th className="px-4 py-3"></th>
@@ -176,13 +176,13 @@ export default function EmpleadosClient({ empleados, departamentos, usuarios }: 
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-3.5">
+                      <td className="hidden md:table-cell px-4 py-3.5">
                         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border whitespace-nowrap ${tipo.cls}`}>
                           <span className="w-1.5 h-1.5 rounded-full bg-current opacity-60" />
                           {tipo.label}
                         </span>
                       </td>
-                      <td className="px-4 py-3.5 text-gray-600 text-xs whitespace-nowrap">{antiguedad(e.fechaIngreso)}</td>
+                      <td className="hidden md:table-cell px-4 py-3.5 text-gray-600 text-xs whitespace-nowrap">{antiguedad(e.fechaIngreso)}</td>
                       <td className="px-4 py-3.5 text-gray-800 font-medium whitespace-nowrap">{e.sueldoActual ? money(e.sueldoActual) : "—"}</td>
                       <td className="px-4 py-3.5">
                         <VincularCuenta empleadoId={e.id} usuarioId={e.usuarioId} usuarios={usuarios} ocupados={ocupados} />

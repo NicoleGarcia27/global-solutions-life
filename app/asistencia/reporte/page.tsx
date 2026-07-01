@@ -53,6 +53,7 @@ export default async function ReporteAsistencia({ searchParams }: Props) {
 
       {/* Tabla */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="text-xs text-gray-400 border-b border-gray-100 bg-gray-50">
@@ -80,6 +81,7 @@ export default async function ReporteAsistencia({ searchParams }: Props) {
             ))}
           </tbody>
         </table>
+        </div>
         {filas.every((f) => f.total === 0) && (
           <p className="text-center text-gray-400 py-6 text-sm">Sin registros de asistencia en este periodo.</p>
         )}

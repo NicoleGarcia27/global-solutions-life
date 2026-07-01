@@ -76,6 +76,7 @@ export default async function VacacionesPage() {
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-xs text-gray-400 border-b border-gray-100 bg-gray-50">
@@ -103,6 +104,7 @@ export default async function VacacionesPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>

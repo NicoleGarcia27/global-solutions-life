@@ -40,8 +40,8 @@ export default function UsuariosAdminClient({ usuarios }: { usuarios: Usuario[] 
   }
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
+    <div className="p-4 sm:p-8 max-w-4xl mx-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Usuarios registrados</h1>
           <p className="text-gray-500 text-sm mt-1">Todas las personas que tienen acceso al sistema.</p>
@@ -57,22 +57,23 @@ export default function UsuariosAdminClient({ usuarios }: { usuarios: Usuario[] 
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-200">
               <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Nombre</th>
               <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Correo</th>
-              <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Área</th>
+              <th className="hidden md:table-cell text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Área</th>
               <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Rol</th>
-              <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Registro</th>
+              <th className="hidden md:table-cell text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Registro</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {usuarios.map((u) => (
               <tr key={u.id} className="hover:bg-gray-50">
                 <td className="px-4 py-3 font-medium text-gray-900">{u.nombre}</td>
-                <td className="px-4 py-3 text-gray-600">{u.email}</td>
-                <td className="px-4 py-3 text-gray-600">
+                <td className="px-4 py-3 text-gray-600 break-all">{u.email}</td>
+                <td className="hidden md:table-cell px-4 py-3 text-gray-600">
                   {u.departamento?.nombre ?? <span className="text-gray-400 italic">Sin área</span>}
                 </td>
                 <td className="px-4 py-3">
@@ -82,13 +83,14 @@ export default function UsuariosAdminClient({ usuarios }: { usuarios: Usuario[] 
                     {u.role === "admin" ? "Administrador/a" : "Empleado"}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-gray-400 text-xs">
+                <td className="hidden md:table-cell px-4 py-3 text-gray-400 text-xs">
                   {new Date(u.createdAt).toLocaleDateString("es-MX")}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        </div>
         {usuarios.length === 0 && (
           <p className="text-center text-gray-400 py-8">No hay usuarios registrados aún.</p>
         )}

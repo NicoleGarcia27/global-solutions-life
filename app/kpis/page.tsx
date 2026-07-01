@@ -64,6 +64,7 @@ export default async function KpisPage() {
                 </div>
               </div>
             </div>
+            <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <tbody>
                 {p.kpis.map((k) => (
@@ -94,6 +95,7 @@ export default async function KpisPage() {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         );
       })}

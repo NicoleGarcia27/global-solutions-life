@@ -57,6 +57,7 @@ export default async function FrpPage() {
           {p.responsabilidades.length === 0 ? (
             <div className="px-5 py-4 text-sm text-gray-400">Sin responsabilidades registradas</div>
           ) : (
+            <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-xs text-gray-400 border-b border-gray-50 bg-gray-50">
@@ -83,6 +84,7 @@ export default async function FrpPage() {
                 ))}
               </tbody>
             </table>
+            </div>
           )}
         </div>
       ))}

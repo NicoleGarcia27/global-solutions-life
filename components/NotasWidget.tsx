@@ -36,7 +36,7 @@ export default function NotasWidget({ notas }: { notas: Nota[] }) {
       </h2>
 
       {/* Agregar */}
-      <div className="flex gap-2 items-center mb-4">
+      <div className="flex flex-wrap gap-2 items-center mb-4">
         <div className="flex gap-1.5 shrink-0">
           {Object.entries(COLORES).map(([k, c]) => (
             <button key={k} onClick={() => setColor(k)} aria-label={k} className="w-5 h-5 rounded-full border-2 transition" style={{ backgroundColor: c.bg, borderColor: color === k ? c.text : "transparent" }} />
@@ -47,10 +47,10 @@ export default function NotasWidget({ notas }: { notas: Nota[] }) {
           value={texto}
           onChange={(e) => setTexto(e.target.value)}
           onKeyDown={(e) => { if (e.key === "Enter") agregar(); }}
-          placeholder="Escribe una nota y presiona Enter…"
-          className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#00b4d8]"
+          placeholder="Escribe una nota…"
+          className="flex-1 min-w-[150px] border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#00b4d8]"
         />
-        <button onClick={agregar} disabled={busy || !texto.trim()} className="flex items-center gap-1.5 px-3 py-2 text-xs text-white rounded-lg disabled:opacity-50" style={{ backgroundColor: "#1a3a6b" }}>
+        <button onClick={agregar} disabled={busy || !texto.trim()} className="flex items-center gap-1.5 px-3 py-2 text-xs text-white rounded-lg disabled:opacity-50 shrink-0" style={{ backgroundColor: "#1a3a6b" }}>
           <Plus size={13} /> Anotar
         </button>
       </div>

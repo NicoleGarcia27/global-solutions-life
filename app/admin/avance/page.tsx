@@ -72,26 +72,28 @@ export default async function AvancePage() {
             <AlertCircle size={14} className="text-red-500" />
             <h2 className="text-sm font-semibold text-red-700">Aún no han llenado su formulario ({noLlenaron.length})</h2>
           </div>
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-xs text-gray-400 border-b border-gray-100 bg-gray-50">
                 <th className="text-left px-4 py-2 font-medium">Empleado</th>
                 <th className="text-left px-4 py-2 font-medium">Correo</th>
-                <th className="text-left px-4 py-2 font-medium">Área</th>
-                <th className="text-left px-4 py-2 font-medium">Registrado</th>
+                <th className="hidden md:table-cell text-left px-4 py-2 font-medium">Área</th>
+                <th className="hidden md:table-cell text-left px-4 py-2 font-medium">Registrado</th>
               </tr>
             </thead>
             <tbody>
               {noLlenaron.map((u) => (
                 <tr key={u.id} className="border-b border-gray-50 hover:bg-gray-50">
                   <td className="px-4 py-3 font-medium text-gray-700">{u.nombre}</td>
-                  <td className="px-4 py-3 text-gray-500">{u.email}</td>
-                  <td className="px-4 py-3 text-gray-400 text-xs">{u.departamento?.nombre ?? "Sin área"}</td>
-                  <td className="px-4 py-3 text-gray-400 text-xs">{new Date(u.createdAt).toLocaleDateString("es-MX")}</td>
+                  <td className="px-4 py-3 text-gray-500 break-all">{u.email}</td>
+                  <td className="hidden md:table-cell px-4 py-3 text-gray-400 text-xs">{u.departamento?.nombre ?? "Sin área"}</td>
+                  <td className="hidden md:table-cell px-4 py-3 text-gray-400 text-xs">{new Date(u.createdAt).toLocaleDateString("es-MX")}</td>
                 </tr>
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 
@@ -102,14 +104,15 @@ export default async function AvancePage() {
             <CheckCircle size={14} className="text-emerald-500" />
             <h2 className="text-sm font-semibold text-emerald-700">Han enviado su formulario ({llenaron.length})</h2>
           </div>
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-xs text-gray-400 border-b border-gray-100 bg-gray-50">
                 <th className="text-left px-4 py-2 font-medium">Empleado</th>
-                <th className="text-left px-4 py-2 font-medium">Puesto declarado</th>
+                <th className="hidden md:table-cell text-left px-4 py-2 font-medium">Puesto declarado</th>
                 <th className="text-left px-4 py-2 font-medium">Tareas</th>
                 <th className="text-left px-4 py-2 font-medium">Estado</th>
-                <th className="text-left px-4 py-2 font-medium">Enviado</th>
+                <th className="hidden md:table-cell text-left px-4 py-2 font-medium">Enviado</th>
                 <th className="px-4 py-2"></th>
               </tr>
             </thead>
@@ -118,7 +121,7 @@ export default async function AvancePage() {
                 u.puestos.map((p) => (
                   <tr key={p.id} className="border-b border-gray-50 hover:bg-gray-50">
                     <td className="px-4 py-3 font-medium text-gray-700">{u.nombre}</td>
-                    <td className="px-4 py-3 text-gray-600">{p.nombre}</td>
+                    <td className="hidden md:table-cell px-4 py-3 text-gray-600">{p.nombre}</td>
                     <td className="px-4 py-3 text-gray-400 text-xs">{p.responsabilidades.length} tareas</td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
@@ -131,7 +134,7 @@ export default async function AvancePage() {
                          "Pendiente"}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-gray-400 text-xs">{new Date(p.createdAt).toLocaleDateString("es-MX")}</td>
+                    <td className="hidden md:table-cell px-4 py-3 text-gray-400 text-xs">{new Date(p.createdAt).toLocaleDateString("es-MX")}</td>
                     <td className="px-4 py-3">
                       <Link href={`/puestos/${p.id}`} className="text-xs text-blue-600 hover:underline">Revisar →</Link>
                     </td>
@@ -140,6 +143,7 @@ export default async function AvancePage() {
               )}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 
